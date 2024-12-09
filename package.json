@@ -4,12 +4,21 @@
   "description": "A web application for online learning.",
   "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "build": "npx tsc",
+    "check-types": "tsc --noEmit"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  },
   "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.1",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "eslint": "^8",
     "eslint-config-airbnb-typescript": "^18.0.0",
@@ -20,6 +29,7 @@
     "eslint-plugin-prettier": "^5",
     "eslint-plugin-promise": "^6",
     "prettier": "^3",
+    "ts-node": "^10.9.2",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   }
