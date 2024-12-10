@@ -10,7 +10,8 @@
     "check-types": "tsc --noEmit",
     "create-migration": "cd src/db && npx knex migrate:make",
     "list-migrations": "cd src/db && npx knex migrate:list",
-    "migrate": "cd src/db && npx knex migrate:latest"
+    "migrate": "cd src/db && npx knex migrate:latest",
+    "update-db-types": "npx tsx ./src/scripts/generateDbTypes.ts"
   },
   "keywords": [],
   "author": "",
@@ -33,6 +34,7 @@
     "eslint-plugin-n": "^16",
     "eslint-plugin-prettier": "^5",
     "eslint-plugin-promise": "^6",
+    "knex-types": "^0.5.0",
     "prettier": "^3",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.2",
