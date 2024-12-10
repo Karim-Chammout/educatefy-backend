@@ -1,10 +1,10 @@
 type Query {
   """List of OpenId clients"""
-  openIdClients: [OpenIdClient!]!
+  openIdClients: [OpenidClient!]!
 }
 
 """The open id client providers to use for auth"""
-type OpenIdClient {
+type OpenidClient {
   """A unique id of this OIDC"""
   id: ID!
 
