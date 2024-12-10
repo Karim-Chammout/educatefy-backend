@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 
 import { db } from '../../db';
 import { ErrorType } from '../../utils/ErrorType';
+import { generateAccessToken, generateRefreshToken } from '../../utils/jwt';
 import createOrUpdateAccount from './createOrUpdateAccount';
 import { getOidcClient, providers } from './oidc';
 
@@ -64,7 +65,21 @@ export const handleCallback = async (req: Request, res: Response) => {
       const userinfo = await authClient.userinfo(tokens.access_token);
 
       // Create an account entry in the database
-      await createOrUpdateAccount(userinfo, provider, userRole);
+      const account = await createOrUpdateAccount(userinfo, provider, userRole);
+
+      if (account) {
+        // Create accessToken
+        const accessToken = generateAccessToken(account.id);
+
+        // Create refresh token
+        const refreshToken = await generateRefreshToken(account.id, db, req.headers);
+
+        res.json({ refreshToken, accessToken });
+        return;
+      }
+
+      res.status(500).json({ message: ErrorType.INTERNAL_SERVER_ERROR });
+      return;
     }
   } catch (error: any) {
     console.error('Failed to handle OIDC callback => ', error);
