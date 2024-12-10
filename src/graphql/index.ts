@@ -3,6 +3,8 @@ import { createYoga } from 'graphql-yoga';
 
 import { db } from '../db';
 import { createLoaders } from './ctx/db';
+import { createFsContext } from './ctx/fs';
+import { createUserContext } from './ctx/user';
 import Schema from './schema/Schema';
 
 export const yoga = createYoga({
@@ -10,9 +12,16 @@ export const yoga = createYoga({
   landingPage: false,
   graphqlEndpoint: '/',
   context: async (ctx) => {
+    // @ts-ignore FIXME
+    const { headers, tokenPayload, ip } = ctx.req;
+
+    const user = await createUserContext(headers['user-agent'], tokenPayload, ip);
+
     return {
+      user,
       db,
       loaders: { ...createLoaders(db) },
+      fs: createFsContext(),
     };
   },
 });
