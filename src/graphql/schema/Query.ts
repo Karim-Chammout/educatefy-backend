@@ -1,12 +1,23 @@
-import { GraphQLObjectType, GraphQLString } from 'graphql';
+import { GraphQLList, GraphQLNonNull, GraphQLObjectType } from 'graphql';
 
-const Query = new GraphQLObjectType({
+import { ContextType } from '../../types/types';
+import { OpenIdClient } from './types/openidClient';
+
+const Query = new GraphQLObjectType<any, ContextType>({
   name: 'Query',
   fields: {
-    sayHello: {
-      type: GraphQLString,
-      description: 'Say Hello',
-      resolve: () => 'Hello!',
+    openIdClients: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(OpenIdClient))),
+      description: 'List of OpenId clients',
+      resolve: async (_, __, { loaders }) => {
+        const oidc = await loaders.OpenidClient.loadAll();
+
+        if (!oidc || oidc.length === 0) {
+          return [];
+        }
+
+        return oidc;
+      },
     },
   },
 });
