@@ -19,6 +19,7 @@ const config = {
   GOOGLE_CLIENT_ID: getEnvVar("GOOGLE_CLIENT_ID"),
   GOOGLE_CLIENT_SECRET: getEnvVar("GOOGLE_CLIENT_SECRET"),
   GOOGLE_REDIRECT_URI: getEnvVar("GOOGLE_REDIRECT_URI"),
+  JWT_SECRET: getEnvVar("JWT_SECRET"),
 };
 
 export default config;
