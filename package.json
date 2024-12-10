@@ -30,6 +30,7 @@
     "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
     "knex": "^3.1.0",
+    "maxmind": "^4.3.23",
     "multer": "^1.4.5-lts.1",
     "nanoid": "^5.0.9",
     "openid-client": "^5.6.5",
