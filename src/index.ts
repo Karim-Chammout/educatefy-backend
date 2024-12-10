@@ -1,13 +1,21 @@
 import 'dotenv/config';
 import express, { Request, Response } from 'express';
+import helmet from 'helmet';
 
 import config from './config';
 import GraphQL from './graphql';
+import { accessLog, errorLog } from './middleware/logging';
 
 const app = express();
 
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  }),
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(accessLog);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Express Server');
@@ -15,8 +23,9 @@ app.get('/', (req: Request, res: Response) => {
 
 app.use('/graphql/', GraphQL());
 
-const PORT = config.PORT || 8080;
+app.use(errorLog);
 
+const PORT = config.PORT || 8080;
 app.listen(PORT, () => {
   console.info(`
   Server is running at:
