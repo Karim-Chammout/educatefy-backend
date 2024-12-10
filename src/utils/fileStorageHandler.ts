@@ -2,9 +2,9 @@ import { createClient } from '@supabase/supabase-js';
 
 import config from '../config';
 
-const bucketName = config.SUPABASE_BUCKET_NAME;
+const bucketName = config.S3_BUCKET_NAME;
 
-const supabase = createClient(config.SUPABASE_PROJECT_URL, config.SUPABASE_API_KEY);
+const supabase = createClient(config.S3_PROJECT_URL, config.S3_API_KEY);
 
 export const getFile = async (path: string) => {
   try {
