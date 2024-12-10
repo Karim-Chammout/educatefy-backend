@@ -7,14 +7,19 @@
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
     "build": "npx tsc",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "create-migration": "cd src/db && npx knex migrate:make",
+    "list-migrations": "cd src/db && npx knex migrate:list",
+    "migrate": "cd src/db && npx knex migrate:latest"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.4.7",
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "knex": "^3.1.0",
+    "pg": "^8.13.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
