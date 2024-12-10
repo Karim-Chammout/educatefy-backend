@@ -1,6 +1,24 @@
 type Query {
-  """Say Hello"""
-  sayHello: String
+  """List of OpenId clients"""
+  openIdClients: [OpenIdClient!]!
+}
+
+"""The open id client providers to use for auth"""
+type OpenIdClient {
+  """A unique id of this OIDC"""
+  id: ID!
+
+  """The openId provider"""
+  identity_provider: String!
+
+  """The text of the OIDC that should be displayed on the button"""
+  button_text: String
+
+  """The icon of the OIDC that should be displayed on the button"""
+  button_icon: String
+
+  """The button background color of the OIDC"""
+  button_background_color: String
 }
 
 type Mutation {
