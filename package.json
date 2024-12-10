@@ -8,6 +8,7 @@
     "start": "node dist/index.js",
     "build": "npx tsc",
     "check-types": "tsc --noEmit",
+    "gql-codegen": "graphql-codegen",
     "create-migration": "cd src/db && npx knex migrate:make",
     "list-migrations": "cd src/db && npx knex migrate:list",
     "migrate": "cd src/db && npx knex migrate:latest",
@@ -27,6 +28,8 @@
     "pg": "^8.13.1"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.0",
+    "@graphql-codegen/typescript": "^4.1.2",
     "@types/express": "^5.0.0",
     "@types/node": "^22.10.1",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
