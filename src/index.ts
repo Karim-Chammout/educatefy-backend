@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import express, { Request, Response } from 'express';
+import express from 'express';
 import helmet from 'helmet';
 
 import config from './config';
@@ -22,10 +22,6 @@ app.use(accessLog);
 
 app.use(attachToken);
 app.use(renewToken);
-
-app.get('/', (req: Request, res: Response) => {
-  res.send('Express Server');
-});
 
 app.use('/api', api);
 
