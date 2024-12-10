@@ -11,12 +11,14 @@
     "create-migration": "cd src/db && npx knex migrate:make",
     "list-migrations": "cd src/db && npx knex migrate:list",
     "migrate": "cd src/db && npx knex migrate:latest",
-    "update-db-types": "npx tsx ./src/scripts/generateDbTypes.ts"
+    "update-db-types": "npx tsx ./src/scripts/generateDbTypes.ts",
+    "generate-loaders": "npx tsx ./src/scripts/generateLoaders.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dataloader": "^2.2.3",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "graphql": "^16.9.0",
