@@ -19,6 +19,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@supabase/supabase-js": "^2.47.3",
     "dataloader": "^2.2.3",
     "date-fns": "^4.1.0",
     "date-fns-tz": "^3.2.0",
