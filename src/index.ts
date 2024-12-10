@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import config from './config';
 import GraphQL from './graphql';
 import { accessLog, errorLog } from './middleware/logging';
+import api from './routes';
 
 const app = express();
 
@@ -20,6 +21,8 @@ app.use(accessLog);
 app.get('/', (req: Request, res: Response) => {
   res.send('Express Server');
 });
+
+app.use('/api', api);
 
 app.use('/graphql/', GraphQL());
 
