@@ -1,0 +1,9 @@
+type Query {
+  """Say Hello"""
+  sayHello: String
+}
+
+type Mutation {
+  """Mutation for testing"""
+  isTesting: Boolean
+}
