@@ -125,8 +125,8 @@ export type Mutation = {
   __typename?: 'Mutation';
   /** Change the profile picture of a user. */
   changeProfilePicture?: Maybe<ChangeProfilePictureResult>;
-  /** Mutation for testing */
-  isTesting?: Maybe<Scalars['Boolean']['output']>;
+  /** Remove the profile picture of a user. */
+  removeProfilePicture?: Maybe<ChangeProfilePictureResult>;
   /** Updates a user account information. */
   updateAccountInfo?: Maybe<MutationResult>;
   /** Updates a user profile details. */
