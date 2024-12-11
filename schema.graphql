@@ -118,6 +118,12 @@ type Mutation {
     """The account information"""
     accountInfo: AccountInfoInput!
   ): MutationResult
+
+  """Updates a user profile details."""
+  updateProfile(
+    """The profile details to update"""
+    profileDetails: ProfileDetailsInput!
+  ): UpdateProfileResult
 }
 
 """The result of a mutation."""
@@ -157,6 +163,51 @@ input AccountInfoInput {
 
   """The date of birth of the user."""
   dateOfBirth: Date!
+
+  """The specialty of the teacher."""
+  teacherSpecialty: String
+
+  """The short bio about the teacher."""
+  teacherBio: String
+
+  """The short description about the teacher."""
+  teacherDescription: String
+}
+
+"""The result of the updateProfile mutation."""
+type UpdateProfileResult {
+  """Indicates if the mutation was successful."""
+  success: Boolean!
+
+  """A list of errors that occurred executing this mutation."""
+  errors: [Error!]!
+
+  """The updated user information."""
+  user: Account
+}
+
+"""Input for updating the user profile details"""
+input ProfileDetailsInput {
+  """The first name of the user."""
+  firstName: String
+
+  """The last name of the user."""
+  lastName: String
+
+  """The nickname name of the user."""
+  nickname: String
+
+  """The nationality of the user"""
+  nationalityId: ID
+
+  """The current country of the user"""
+  countryId: ID
+
+  """The gender of the user."""
+  gender: Gender
+
+  """The date of birth of the user."""
+  dateOfBirth: Date
 
   """The specialty of the teacher."""
   teacherSpecialty: String
