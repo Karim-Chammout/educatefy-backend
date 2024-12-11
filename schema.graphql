@@ -116,6 +116,9 @@ type Mutation {
     profilePictureDetails: ProfilePictureDetailsInput!
   ): ChangeProfilePictureResult
 
+  """Remove the profile picture of a user."""
+  removeProfilePicture: ChangeProfilePictureResult
+
   """Updates a user account information."""
   updateAccountInfo(
     """The account information"""
