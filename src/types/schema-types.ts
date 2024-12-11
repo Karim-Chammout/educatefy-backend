@@ -79,6 +79,17 @@ export enum AccountRole {
   Teacher = 'teacher'
 }
 
+/** The result of the changeProfilePicture mutation. */
+export type ChangeProfilePictureResult = {
+  __typename?: 'ChangeProfilePictureResult';
+  /** A list of errors that occurred executing this mutation. */
+  errors: Array<Error>;
+  /** Indicates if the mutation was successful. */
+  success: Scalars['Boolean']['output'];
+  /** The updated user information. */
+  user?: Maybe<Account>;
+};
+
 /** The country info */
 export type Country = {
   __typename?: 'Country';
@@ -112,12 +123,19 @@ export enum Gender {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  /** Change the profile picture of a user. */
+  changeProfilePicture?: Maybe<ChangeProfilePictureResult>;
   /** Mutation for testing */
   isTesting?: Maybe<Scalars['Boolean']['output']>;
   /** Updates a user account information. */
   updateAccountInfo?: Maybe<MutationResult>;
   /** Updates a user profile details. */
   updateProfile?: Maybe<UpdateProfileResult>;
+};
+
+
+export type MutationChangeProfilePictureArgs = {
+  profilePictureDetails: ProfilePictureDetailsInput;
 };
 
 
@@ -176,6 +194,20 @@ export type ProfileDetailsInput = {
   teacherDescription?: InputMaybe<Scalars['String']['input']>;
   /** The specialty of the teacher. */
   teacherSpecialty?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** Input for updating an account information */
+export type ProfilePictureDetailsInput = {
+  /** The file path in the bucket. */
+  filePath: Scalars['String']['input'];
+  /** The file size in bytes of this file. */
+  fileSize: Scalars['Int']['input'];
+  /** The mime type of the file. */
+  mimeType: Scalars['String']['input'];
+  /** The original file name. */
+  originalFileName: Scalars['String']['input'];
+  /** The uuid of the file. */
+  uuid: Scalars['String']['input'];
 };
 
 export type Query = {
