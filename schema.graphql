@@ -113,6 +113,12 @@ type Mutation {
   """Mutation for testing"""
   isTesting: Boolean
 
+  """Change the profile picture of a user."""
+  changeProfilePicture(
+    """The details of the profile picture"""
+    profilePictureDetails: ProfilePictureDetailsInput!
+  ): ChangeProfilePictureResult
+
   """Updates a user account information."""
   updateAccountInfo(
     """The account information"""
@@ -126,6 +132,42 @@ type Mutation {
   ): UpdateProfileResult
 }
 
+"""The result of the changeProfilePicture mutation."""
+type ChangeProfilePictureResult {
+  """Indicates if the mutation was successful."""
+  success: Boolean!
+
+  """A list of errors that occurred executing this mutation."""
+  errors: [Error!]!
+
+  """The updated user information."""
+  user: Account
+}
+
+"""An object type that wraps an error"""
+type Error {
+  """The message of this error."""
+  message: String!
+}
+
+"""Input for updating an account information"""
+input ProfilePictureDetailsInput {
+  """The uuid of the file."""
+  uuid: String!
+
+  """The file path in the bucket."""
+  filePath: String!
+
+  """The original file name."""
+  originalFileName: String!
+
+  """The mime type of the file."""
+  mimeType: String!
+
+  """The file size in bytes of this file."""
+  fileSize: Int!
+}
+
 """The result of a mutation."""
 type MutationResult {
   """Indicates if the mutation was successful."""
@@ -133,12 +175,6 @@ type MutationResult {
 
   """A list of errors that occurred executing this mutation."""
   errors: [Error!]!
-}
-
-"""An object type that wraps an error"""
-type Error {
-  """The message of this error."""
-  message: String!
 }
 
 """Input for updating an account information"""
