@@ -112,4 +112,58 @@ type OpenidClient {
 type Mutation {
   """Mutation for testing"""
   isTesting: Boolean
+
+  """Updates a user account information."""
+  updateAccountInfo(
+    """The account information"""
+    accountInfo: AccountInfoInput!
+  ): MutationResult
+}
+
+"""The result of a mutation."""
+type MutationResult {
+  """Indicates if the mutation was successful."""
+  success: Boolean!
+
+  """A list of errors that occurred executing this mutation."""
+  errors: [Error!]!
+}
+
+"""An object type that wraps an error"""
+type Error {
+  """The message of this error."""
+  message: String!
+}
+
+"""Input for updating an account information"""
+input AccountInfoInput {
+  """The first name of the user."""
+  firstName: String!
+
+  """The last name of the user."""
+  lastName: String!
+
+  """The nickname name of the user."""
+  nickname: String!
+
+  """The nationality of the user"""
+  nationalityId: ID!
+
+  """The current country of the user"""
+  countryId: ID!
+
+  """The gender of the user."""
+  gender: Gender!
+
+  """The date of birth of the user."""
+  dateOfBirth: Date!
+
+  """The specialty of the teacher."""
+  teacherSpecialty: String
+
+  """The short bio about the teacher."""
+  teacherBio: String
+
+  """The short description about the teacher."""
+  teacherDescription: String
 }
