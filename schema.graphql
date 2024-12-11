@@ -2,6 +2,9 @@ type Query {
   """The current user"""
   me: Account!
 
+  """List of countries"""
+  countries: [Country!]!
+
   """List of OpenId clients"""
   openIdClients: [OpenidClient!]!
 }
