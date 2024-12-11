@@ -3,6 +3,7 @@ import { GraphQLList, GraphQLNonNull, GraphQLObjectType } from 'graphql';
 import { ContextType } from '../../types/types';
 import { authenticated } from '../utils/auth';
 import { Account } from './types/Account';
+import { Country } from './types/Country';
 import OpenidClient from './types/OpenidClient';
 
 const Query = new GraphQLObjectType<any, ContextType>({
@@ -14,6 +15,19 @@ const Query = new GraphQLObjectType<any, ContextType>({
       resolve: authenticated((_, __, ctx) => {
         return ctx.loaders.Account.loadById(ctx.user.id);
       }),
+    },
+    countries: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Country))),
+      description: 'List of countries',
+      resolve: async (_, __, ctx) => {
+        const countries = await ctx.loaders.Country.loadAll();
+
+        if (!countries || countries.length === 0) {
+          return [];
+        }
+
+        return countries;
+      },
     },
     openIdClients: {
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(OpenidClient))),
