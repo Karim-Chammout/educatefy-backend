@@ -116,11 +116,18 @@ export type Mutation = {
   isTesting?: Maybe<Scalars['Boolean']['output']>;
   /** Updates a user account information. */
   updateAccountInfo?: Maybe<MutationResult>;
+  /** Updates a user profile details. */
+  updateProfile?: Maybe<UpdateProfileResult>;
 };
 
 
 export type MutationUpdateAccountInfoArgs = {
   accountInfo: AccountInfoInput;
+};
+
+
+export type MutationUpdateProfileArgs = {
+  profileDetails: ProfileDetailsInput;
 };
 
 /** The result of a mutation. */
@@ -147,6 +154,30 @@ export type OpenidClient = {
   identity_provider: Scalars['String']['output'];
 };
 
+/** Input for updating the user profile details */
+export type ProfileDetailsInput = {
+  /** The current country of the user */
+  countryId?: InputMaybe<Scalars['ID']['input']>;
+  /** The date of birth of the user. */
+  dateOfBirth?: InputMaybe<Scalars['Date']['input']>;
+  /** The first name of the user. */
+  firstName?: InputMaybe<Scalars['String']['input']>;
+  /** The gender of the user. */
+  gender?: InputMaybe<Gender>;
+  /** The last name of the user. */
+  lastName?: InputMaybe<Scalars['String']['input']>;
+  /** The nationality of the user */
+  nationalityId?: InputMaybe<Scalars['ID']['input']>;
+  /** The nickname name of the user. */
+  nickname?: InputMaybe<Scalars['String']['input']>;
+  /** The short bio about the teacher. */
+  teacherBio?: InputMaybe<Scalars['String']['input']>;
+  /** The short description about the teacher. */
+  teacherDescription?: InputMaybe<Scalars['String']['input']>;
+  /** The specialty of the teacher. */
+  teacherSpecialty?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   /** List of countries */
@@ -155,4 +186,15 @@ export type Query = {
   me: Account;
   /** List of OpenId clients */
   openIdClients: Array<OpenidClient>;
+};
+
+/** The result of the updateProfile mutation. */
+export type UpdateProfileResult = {
+  __typename?: 'UpdateProfileResult';
+  /** A list of errors that occurred executing this mutation. */
+  errors: Array<Error>;
+  /** Indicates if the mutation was successful. */
+  success: Scalars['Boolean']['output'];
+  /** The updated user information. */
+  user?: Maybe<Account>;
 };
