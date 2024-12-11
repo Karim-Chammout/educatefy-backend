@@ -110,9 +110,6 @@ type OpenidClient {
 }
 
 type Mutation {
-  """Mutation for testing"""
-  isTesting: Boolean
-
   """Change the profile picture of a user."""
   changeProfilePicture(
     """The details of the profile picture"""
