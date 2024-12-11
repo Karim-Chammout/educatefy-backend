@@ -1,5 +1,7 @@
 import { GraphQLBoolean, GraphQLObjectType } from 'graphql';
 
+import updateAccountInfo from './mutations/updateAccountInfo';
+
 const Mutation = new GraphQLObjectType({
   name: 'Mutation',
   fields: {
@@ -10,6 +12,7 @@ const Mutation = new GraphQLObjectType({
         return true;
       },
     },
+    updateAccountInfo,
   },
 });
 
