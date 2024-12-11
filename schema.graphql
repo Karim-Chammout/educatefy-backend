@@ -1,6 +1,91 @@
 type Query {
+  """The current user"""
+  me: Account!
+
   """List of OpenId clients"""
   openIdClients: [OpenidClient!]!
+}
+
+"""The properties of the account"""
+type Account {
+  """A unique id of this account"""
+  id: ID!
+
+  """The name of the account"""
+  name: String
+
+  """The nickname of the account"""
+  nickname: String
+
+  """The first name of the account"""
+  first_name: String
+
+  """The last name of the account"""
+  last_name: String
+
+  """The gender of the account"""
+  gender: Gender
+
+  """The date of birth of this account"""
+  date_of_birth: Date
+
+  """The avatar url of this account (provided by the openid-provider)"""
+  avatar_url: String
+
+  """The current country the user stated to live in."""
+  country: Country
+
+  """The nationality of the user"""
+  nationality: Country
+
+  """The role of the account."""
+  accountRole: AccountRole!
+
+  """Represents the subject a teacher is specialized in for teaching."""
+  specialty: String
+
+  """The bio of the teacher."""
+  bio: String
+
+  """A detailed overview about this teacher."""
+  description: String
+}
+
+"""Gender of the account."""
+enum Gender {
+  male
+  female
+  other
+}
+
+"""Date custom scalar type"""
+scalar Date
+
+"""The country info"""
+type Country {
+  """A unique id of this country"""
+  id: ID!
+
+  """The name of this country"""
+  denomination: String!
+
+  """The iso code of this country"""
+  iso: String!
+
+  """The iso3 code of this country"""
+  iso3: String
+
+  """The num_code code of this country"""
+  num_code: String
+
+  """The phone_code code of this country"""
+  phone_code: String!
+}
+
+"""The role of the account."""
+enum AccountRole {
+  teacher
+  student
 }
 
 """The open id client providers to use for auth"""
