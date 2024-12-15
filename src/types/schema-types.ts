@@ -118,7 +118,7 @@ export type Error = {
 export enum Gender {
   Female = 'female',
   Male = 'male',
-  Other = 'other'
+  Unknown = 'unknown'
 }
 
 export type Mutation = {
