@@ -1,17 +1,17 @@
-import { GraphQLEnumType } from "graphql";
+import { GraphQLEnumType } from 'graphql';
 
 const Gender = new GraphQLEnumType({
-  name: "Gender",
-  description: "Gender of the account.",
+  name: 'Gender',
+  description: 'Gender of the account.',
   values: {
     male: {
-      value: "male",
+      value: 'male',
     },
     female: {
-      value: "female",
+      value: 'female',
     },
-    other: {
-      value: "other",
+    unknown: {
+      value: 'unknown',
     },
   },
 });
