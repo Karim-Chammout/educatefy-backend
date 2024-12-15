@@ -99,7 +99,7 @@ export const Account = new GraphQLObjectType<AccountType, ContextType>({
       resolve: async (parent, _, { loaders }): Promise<string> => {
         const role = await loaders.AccountRole.loadById(parent.role_id);
 
-        return role.denomination;
+        return role.code;
       },
     },
     specialty: {
