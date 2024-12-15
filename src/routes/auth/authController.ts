@@ -83,9 +83,9 @@ export const handleCallback = async (req: Request, res: Response) => {
     }
   } catch (error: any) {
     console.error('Failed to handle OIDC callback => ', error);
-    let message = `${ErrorType.INTERNAL_SERVER_ERROR}`;
+    let message = ErrorType.INTERNAL_SERVER_ERROR;
     if (error.message.includes(ErrorType.SIGN_UP_FIRST)) {
-      message += ` ${ErrorType.SIGN_UP_FIRST}`;
+      message = ErrorType.SIGN_UP_FIRST;
     }
     res.status(500).json({ message });
   }
