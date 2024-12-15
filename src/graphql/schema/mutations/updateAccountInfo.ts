@@ -1,6 +1,6 @@
 import { GraphQLFieldConfig, GraphQLNonNull } from "graphql";
 
-import { AccountInfoInput as AccountInfoType } from "../../../types/schema-types";
+import { AccountInfoInput as AccountInfoType, Gender } from "../../../types/schema-types";
 import { ContextType } from "../../../types/types";
 import { ErrorType } from "../../../utils/ErrorType";
 import { authenticated } from "../../utils/auth";
@@ -47,7 +47,7 @@ const updateAccountInfo: GraphQLFieldConfig<null, ContextType> = {
         !trimmedNickname ||
         !nationalityId ||
         !countryId ||
-        !["male", "female", "other"].includes(gender) ||
+        !Object.values(Gender).includes(gender) ||
         !dateOfBirth
       ) {
         return {
