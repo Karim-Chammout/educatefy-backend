@@ -93,6 +93,15 @@ export const Account = new GraphQLObjectType<AccountType, ContextType>({
         return nationality;
       },
     },
+    preferredLanguage: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The preferred language for the account',
+      resolve: async (parent, _, { loaders }) => {
+        const language = await loaders.Language.loadById(parent.preferred_language_id);
+
+        return language.code;
+      },
+    },
     accountRole: {
       type: new GraphQLNonNull(AccountRole),
       description: 'The role of the account.',
