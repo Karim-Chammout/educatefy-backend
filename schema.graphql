@@ -41,6 +41,9 @@ type Account {
   """The nationality of the user"""
   nationality: Country
 
+  """The preferred language for the account"""
+  preferredLanguage: String!
+
   """The role of the account."""
   accountRole: AccountRole!
 
@@ -238,6 +241,9 @@ input ProfileDetailsInput {
 
   """The current country of the user"""
   countryId: ID
+
+  """The preferred language for the user"""
+  selectedLanguage: String
 
   """The gender of the user."""
   gender: Gender
