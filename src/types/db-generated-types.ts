@@ -12,6 +12,7 @@ export enum Table {
   AccountRole = "account_role",
   Country = "country",
   File = "file",
+  Language = "language",
   Migrations = "migrations",
   MigrationsLock = "migrations_lock",
   OpenidClient = "openid_client",
@@ -23,6 +24,7 @@ export type Tables = {
   "account_role": AccountRole,
   "country": Country,
   "file": File,
+  "language": Language,
   "migrations": Migrations,
   "migrations_lock": MigrationsLock,
   "openid_client": OpenidClient,
@@ -49,6 +51,7 @@ export type Account = {
   description: string | null;
   created_at: Date;
   updated_at: Date;
+  preferred_language_id: number;
 };
 
 export type AccountRole = {
@@ -80,6 +83,12 @@ export type File = {
   account_id: number | null;
   created_at: Date;
   updated_at: Date;
+};
+
+export type Language = {
+  id: number;
+  code: string;
+  denomination: string;
 };
 
 export type Migrations = {
