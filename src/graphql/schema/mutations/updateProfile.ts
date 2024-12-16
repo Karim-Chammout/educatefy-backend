@@ -18,7 +18,11 @@ const updateProfile: GraphQLFieldConfig<null, ContextType> = {
     },
   },
   resolve: authenticated(
-    async (_, { profileDetails }: { profileDetails: ProfileDetailsType }, { db, user }) => {
+    async (
+      _,
+      { profileDetails }: { profileDetails: ProfileDetailsType },
+      { db, loaders, user },
+    ) => {
       const {
         firstName,
         lastName,
@@ -26,11 +30,19 @@ const updateProfile: GraphQLFieldConfig<null, ContextType> = {
         gender,
         nationalityId,
         countryId,
+        selectedLanguage,
         dateOfBirth,
         teacherSpecialty,
         teacherBio,
         teacherDescription,
       } = profileDetails;
+
+      let selectedLanguageId: number | null = null;
+      const SUPPORTED_LANGUAGES = ['en', 'ar'];
+      if (selectedLanguage && SUPPORTED_LANGUAGES.includes(selectedLanguage)) {
+        const language = await loaders.Language.loadByCode(selectedLanguage);
+        selectedLanguageId = language.id;
+      }
 
       const dataToUpdate = {
         ...(firstName && { first_name: firstName.trim() }),
@@ -40,6 +52,7 @@ const updateProfile: GraphQLFieldConfig<null, ContextType> = {
         ...(gender !== undefined && { gender }),
         ...(nationalityId !== undefined && { nationality_id: nationalityId }),
         ...(countryId !== undefined && { country_id: countryId }),
+        ...(selectedLanguageId && { preferred_language_id: selectedLanguageId }),
         ...(dateOfBirth && { date_of_birth: dateOfBirth }),
         ...(teacherSpecialty && { specialty: teacherSpecialty }),
         ...(teacherBio && { bio: teacherBio }),
