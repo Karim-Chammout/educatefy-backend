@@ -27,6 +27,10 @@ const ProfileDetailsInput = new GraphQLInputObjectType({
       type: GraphQLID,
       description: 'The current country of the user',
     },
+    selectedLanguage: {
+      type: GraphQLString,
+      description: "The preferred language for the user",
+    },
     gender: {
       type: Gender,
       description: 'The gender of the user.',
