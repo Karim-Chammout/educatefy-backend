@@ -45,6 +45,8 @@ export type Account = {
   nationality?: Maybe<Country>;
   /** The nickname of the account */
   nickname?: Maybe<Scalars['String']['output']>;
+  /** The preferred language for the account */
+  preferredLanguage: Scalars['String']['output'];
   /** Represents the subject a teacher is specialized in for teaching. */
   specialty?: Maybe<Scalars['String']['output']>;
 };
@@ -188,6 +190,8 @@ export type ProfileDetailsInput = {
   nationalityId?: InputMaybe<Scalars['ID']['input']>;
   /** The nickname name of the user. */
   nickname?: InputMaybe<Scalars['String']['input']>;
+  /** The preferred language for the user */
+  selectedLanguage?: InputMaybe<Scalars['String']['input']>;
   /** The short bio about the teacher. */
   teacherBio?: InputMaybe<Scalars['String']['input']>;
   /** The short description about the teacher. */
