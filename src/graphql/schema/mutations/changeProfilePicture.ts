@@ -66,10 +66,10 @@ const changeProfilePicture: GraphQLFieldConfig<null, ContextType> = {
           const [account] = await knexTransaction('account')
             .where('id', user.id)
             .update({
-              avatar_url: null,
+              avatar_url: filePath,
               updated_at: db.fn.now(),
             })
-            .returning('avatar_url');
+            .returning(['id', 'avatar_url']);
 
           return {
             success: true,

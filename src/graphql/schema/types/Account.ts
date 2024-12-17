@@ -47,16 +47,9 @@ export const Account = new GraphQLObjectType<AccountType, ContextType>({
       resolve: async (parent, _, { user, loaders }) => {
         if (!user.authenticated) return null;
 
-        if (parent.avatar_url) return parent.avatar_url;
+        if (parent.avatar_url) return getImageURL(parent.avatar_url);
 
-        const [profileImage] = await loaders.File.loadByAccountIdAndFileType(
-          user.id,
-          FileType.Profile_Image,
-        );
-
-        if (!profileImage || !profileImage.key) return null;
-
-        return getImageURL(profileImage.key);
+        return null;
       },
     },
     country: {

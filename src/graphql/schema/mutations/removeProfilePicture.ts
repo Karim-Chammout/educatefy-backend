@@ -28,7 +28,12 @@ const removeProfilePicture: GraphQLFieldConfig<null, ContextType> = {
           })
           .del();
 
-        const account = loaders.Account.loadById(user.id);
+        const [account] = await knexTransaction('account')
+          .update({
+            avatar_url: null,
+          })
+          .where('id', user.id)
+          .returning(['id', 'avatar_url']);
 
         return {
           success: true,
