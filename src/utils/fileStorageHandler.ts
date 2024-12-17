@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
 import config from '../config';
+import { FileOptions } from '@supabase/storage-js';
 
 const bucketName = config.S3_BUCKET_NAME;
 
@@ -33,9 +34,9 @@ export const getFileUrl = async (path: string) => {
   }
 };
 
-export const uploadFile = async (path: string, file: Buffer) => {
+export const uploadFile = async (path: string, file: Buffer, options?: FileOptions) => {
   try {
-    const { data, error } = await supabase.storage.from(bucketName).upload(path, file);
+    const { data, error } = await supabase.storage.from(bucketName).upload(path, file, options);
 
     if (error) {
       throw new Error(error.message);
