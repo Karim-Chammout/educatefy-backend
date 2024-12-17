@@ -21,7 +21,7 @@ const uploadPhoto = async (googlePhotoUrl: string, userId: string) => {
     const extension = contentType.split('/')[1];
 
     if (!contentType.startsWith('image/')) {
-      throw new Error('URL does not point to an image');
+      throw new Error(ErrorType.INVALID_URL);
     }
 
     const uploadedFile = await uploadFile(
@@ -35,7 +35,7 @@ const uploadPhoto = async (googlePhotoUrl: string, userId: string) => {
     return uploadedFile.path;
   } catch (error) {
     console.error('Error uploading photo: ', error);
-    throw error;
+    throw new Error(ErrorType.INTERNAL_SERVER_ERROR);
   }
 };
 
