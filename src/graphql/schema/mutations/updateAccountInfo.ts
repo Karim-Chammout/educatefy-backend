@@ -7,6 +7,7 @@ import { authenticated } from '../../utils/auth';
 import AccountInfoInput from '../inputs/AccountInfo';
 import MutationResult from '../types/MutationResult';
 import { AccountRoleEnum } from '../types/enum/AccountRole';
+import { getSelectedLanguageId } from '../../../utils/getSelectedLanguageId';
 
 const updateAccountInfo: GraphQLFieldConfig<null, ContextType> = {
   type: MutationResult,
@@ -20,6 +21,7 @@ const updateAccountInfo: GraphQLFieldConfig<null, ContextType> = {
   resolve: authenticated(
     async (_, { accountInfo }: { accountInfo: AccountInfoType }, { db, user, loaders }) => {
       const {
+        selectedLanguage,
         firstName,
         lastName,
         nickname,
@@ -37,6 +39,7 @@ const updateAccountInfo: GraphQLFieldConfig<null, ContextType> = {
       const trimmedNickname = nickname.trim();
 
       if (
+        !selectedLanguage ||
         !trimmedFirstName ||
         !trimmedLastName ||
         !trimmedNickname ||
@@ -56,6 +59,8 @@ const updateAccountInfo: GraphQLFieldConfig<null, ContextType> = {
         const teacherRole = await loaders.AccountRole.loadByCode(AccountRoleEnum.Teacher);
         const isTeacherAccount = teacherRole.id === user.roleId;
 
+        const selectedLanguageId = await getSelectedLanguageId(loaders, selectedLanguage);
+
         await db('account')
           .where('id', user.id)
           .update({
@@ -67,6 +72,7 @@ const updateAccountInfo: GraphQLFieldConfig<null, ContextType> = {
             country_id: countryId,
             gender,
             date_of_birth: dateOfBirth,
+            ...(selectedLanguageId && { preferred_language_id: selectedLanguageId }),
             ...(isTeacherAccount && {
               specialty: teacherSpecialty,
               bio: teacherBio,
