@@ -182,6 +182,9 @@ type MutationResult {
 
 """Input for updating an account information"""
 input AccountInfoInput {
+  """The preferred language for the user."""
+  selectedLanguage: String!
+
   """The first name of the user."""
   firstName: String!
 
