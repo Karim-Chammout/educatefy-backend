@@ -7,6 +7,10 @@ const AccountInfoInput = new GraphQLInputObjectType({
   name: 'AccountInfoInput',
   description: 'Input for updating an account information',
   fields: {
+    selectedLanguage: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The preferred language for the user.',
+    },
     firstName: {
       type: new GraphQLNonNull(GraphQLString),
       description: 'The first name of the user.',
