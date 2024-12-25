@@ -4,10 +4,10 @@ import { AccountInfoInput as AccountInfoType, Gender } from '../../../types/sche
 import { ContextType } from '../../../types/types';
 import { ErrorType } from '../../../utils/ErrorType';
 import { authenticated } from '../../utils/auth';
+import { getSelectedLanguageId } from '../../utils/getSelectedLanguageId';
 import AccountInfoInput from '../inputs/AccountInfo';
 import MutationResult from '../types/MutationResult';
 import { AccountRoleEnum } from '../types/enum/AccountRole';
-import { getSelectedLanguageId } from '../../../utils/getSelectedLanguageId';
 
 const updateAccountInfo: GraphQLFieldConfig<null, ContextType> = {
   type: MutationResult,

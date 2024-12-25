@@ -5,9 +5,9 @@ import { ContextType } from '../../../types/types';
 import { ErrorType } from '../../../utils/ErrorType';
 import { sanitizeText } from '../../../utils/sanitizeText';
 import { authenticated } from '../../utils/auth';
+import { getSelectedLanguageId } from '../../utils/getSelectedLanguageId';
 import ProfileDetailsInput from '../inputs/ProfileDetails';
 import UpdateProfileResult from '../types/UpdateProfileResult';
-import { getSelectedLanguageId } from '../../../utils/getSelectedLanguageId';
 
 const updateProfile: GraphQLFieldConfig<null, ContextType> = {
   type: UpdateProfileResult,
