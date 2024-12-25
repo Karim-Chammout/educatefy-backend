@@ -7,6 +7,7 @@ import { sanitizeText } from '../../../utils/sanitizeText';
 import { authenticated } from '../../utils/auth';
 import ProfileDetailsInput from '../inputs/ProfileDetails';
 import UpdateProfileResult from '../types/UpdateProfileResult';
+import { getSelectedLanguageId } from '../../../utils/getSelectedLanguageId';
 
 const updateProfile: GraphQLFieldConfig<null, ContextType> = {
   type: UpdateProfileResult,
@@ -37,12 +38,7 @@ const updateProfile: GraphQLFieldConfig<null, ContextType> = {
         teacherDescription,
       } = profileDetails;
 
-      let selectedLanguageId: number | null = null;
-      const SUPPORTED_LANGUAGES = ['en', 'ar'];
-      if (selectedLanguage && SUPPORTED_LANGUAGES.includes(selectedLanguage)) {
-        const language = await loaders.Language.loadByCode(selectedLanguage);
-        selectedLanguageId = language.id;
-      }
+      const selectedLanguageId = await getSelectedLanguageId(loaders, selectedLanguage as string);
 
       const dataToUpdate = {
         ...(firstName && { first_name: firstName.trim() }),
