@@ -67,6 +67,8 @@ export type AccountInfoInput = {
   nationalityId: Scalars['ID']['input'];
   /** The nickname name of the user. */
   nickname: Scalars['String']['input'];
+  /** The preferred language for the user. */
+  selectedLanguage: Scalars['String']['input'];
   /** The short bio about the teacher. */
   teacherBio?: InputMaybe<Scalars['String']['input']>;
   /** The short description about the teacher. */
