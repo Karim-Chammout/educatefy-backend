@@ -5,6 +5,9 @@ type Query {
   """List of countries"""
   countries: [Country!]!
 
+  """List of subjects"""
+  subjects: [Subject!]!
+
   """List of OpenId clients"""
   openIdClients: [OpenidClient!]!
 }
@@ -92,6 +95,15 @@ type Country {
 enum AccountRole {
   teacher
   student
+}
+
+"""The subject info"""
+type Subject {
+  """A unique id of this subject."""
+  id: ID!
+
+  """The name of this subject."""
+  denomination: String!
 }
 
 """The open id client providers to use for auth"""
