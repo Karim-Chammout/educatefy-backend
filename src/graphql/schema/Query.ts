@@ -4,7 +4,8 @@ import { ContextType } from '../../types/types';
 import { authenticated } from '../utils/auth';
 import { Account } from './types/Account';
 import { Country } from './types/Country';
-import OpenidClient from './types/OpenidClient';
+import { OpenidClient } from './types/OpenidClient';
+import { Subject } from './types/Subject';
 
 const Query = new GraphQLObjectType<any, ContextType>({
   name: 'Query',
@@ -27,6 +28,19 @@ const Query = new GraphQLObjectType<any, ContextType>({
         }
 
         return countries;
+      },
+    },
+    subjects: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Subject))),
+      description: 'List of subjects',
+      resolve: async (_, __, ctx) => {
+        const subjects = await ctx.loaders.Subject.loadAll();
+
+        if (!subjects || subjects.length === 0) {
+          return [];
+        }
+
+        return subjects;
       },
     },
     openIdClients: {
