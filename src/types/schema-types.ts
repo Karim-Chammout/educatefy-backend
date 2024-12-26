@@ -224,6 +224,17 @@ export type Query = {
   me: Account;
   /** List of OpenId clients */
   openIdClients: Array<OpenidClient>;
+  /** List of subjects */
+  subjects: Array<Subject>;
+};
+
+/** The subject info */
+export type Subject = {
+  __typename?: 'Subject';
+  /** The name of this subject. */
+  denomination: Scalars['String']['output'];
+  /** A unique id of this subject. */
+  id: Scalars['ID']['output'];
 };
 
 /** The result of the updateProfile mutation. */
