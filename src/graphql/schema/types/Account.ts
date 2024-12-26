@@ -1,6 +1,5 @@
 import { GraphQLID, GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql';
 
-import { FileType } from '../../../enum/fileType';
 import { Account as AccountType, Country as CountryType } from '../../../types/db-generated-types';
 import { ContextType } from '../../../types/types';
 import { getImageURL } from '../../../utils/getImageURL';
