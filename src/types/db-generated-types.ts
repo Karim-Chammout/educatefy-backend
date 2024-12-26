@@ -17,6 +17,7 @@ export enum Table {
   MigrationsLock = "migrations_lock",
   OpenidClient = "openid_client",
   RefreshToken = "refresh_token",
+  Subject = "subject",
 }
 
 export type Tables = {
@@ -29,6 +30,7 @@ export type Tables = {
   "migrations_lock": MigrationsLock,
   "openid_client": OpenidClient,
   "refresh_token": RefreshToken,
+  "subject": Subject,
 };
 
 export type Account = {
@@ -124,5 +126,10 @@ export type RefreshToken = {
   last_used_at: Date;
   created_at: Date;
   updated_at: Date;
+};
+
+export type Subject = {
+  id: number;
+  denomination: string;
 };
 
