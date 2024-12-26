@@ -6,6 +6,7 @@ import { CountryReader } from './loaders/Country';
 import { FileReader } from './loaders/File';
 import { LanguageReader } from './loaders/Language';
 import { OpenidClientReader } from './loaders/OpenidClient';
+import { SubjectReader } from './loaders/Subject';
 
 export type ReadersType = {
   Account: AccountReader;
@@ -14,6 +15,7 @@ export type ReadersType = {
   File: FileReader;
   Language: LanguageReader;
   OpenidClient: OpenidClientReader;
+  Subject: SubjectReader;
 };
 
 export function createLoaders(db: Knex): ReadersType {
@@ -24,5 +26,6 @@ export function createLoaders(db: Knex): ReadersType {
     File: new FileReader(db),
     Language: new LanguageReader(db),
     OpenidClient: new OpenidClientReader(db),
+    Subject: new SubjectReader(db),
   };
 }
