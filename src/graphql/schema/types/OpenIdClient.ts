@@ -2,7 +2,7 @@ import { GraphQLID, GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'gra
 
 import { ContextType } from '../../../types/types';
 
-const OpenidClient = new GraphQLObjectType<any, ContextType>({
+export const OpenidClient = new GraphQLObjectType<any, ContextType>({
   name: 'OpenidClient',
   description: 'The open id client providers to use for auth',
   fields: {
@@ -28,5 +28,3 @@ const OpenidClient = new GraphQLObjectType<any, ContextType>({
     },
   },
 });
-
-export default OpenidClient;
