@@ -35,7 +35,6 @@ const uploadPhoto = async (googlePhotoUrl: string, userId: string) => {
     return uploadedFile.path;
   } catch (error) {
     console.error('Error uploading photo: ', error);
-    throw new Error(ErrorType.INTERNAL_SERVER_ERROR);
   }
 };
 
