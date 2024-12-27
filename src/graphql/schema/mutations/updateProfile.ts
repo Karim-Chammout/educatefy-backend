@@ -91,6 +91,8 @@ const updateProfile: GraphQLFieldConfig<null, ContextType> = {
           }
         }
 
+        loaders.Account.loaders.byIdLoader.clear(user.id);
+
         return {
           success: true,
           errors: [],
