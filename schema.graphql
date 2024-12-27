@@ -53,6 +53,9 @@ type Account {
   """Represents the subject a teacher is specialized in for teaching."""
   specialty: String
 
+  """Represents the subjects a teacher is specialized in for teaching."""
+  subjects: [Subject!]!
+
   """The bio of the teacher."""
   bio: String
 
@@ -218,6 +221,9 @@ input AccountInfoInput {
   """The date of birth of the user."""
   dateOfBirth: Date!
 
+  """List of subject IDs a teacher is specialized in for teaching."""
+  teacherSpecialties: [ID!]
+
   """The specialty of the teacher."""
   teacherSpecialty: String
 
@@ -265,6 +271,9 @@ input ProfileDetailsInput {
 
   """The date of birth of the user."""
   dateOfBirth: Date
+
+  """List of subject IDs a teacher is specialized in for teaching."""
+  teacherSpecialties: [ID!]
 
   """The specialty of the teacher."""
   teacherSpecialty: String
