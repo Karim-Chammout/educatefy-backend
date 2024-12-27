@@ -50,7 +50,6 @@ export type Account = {
   nationality_id: number | null;
   country_id: number | null;
   role_id: number;
-  specialty: string | null;
   bio: string | null;
   description: string | null;
   created_at: Date;
