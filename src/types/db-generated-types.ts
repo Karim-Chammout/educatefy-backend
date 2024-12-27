@@ -9,6 +9,7 @@ export enum GenderType {
 
 export enum Table {
   Account = "account",
+  AccountSubject = "account__subject",
   AccountRole = "account_role",
   Country = "country",
   File = "file",
@@ -22,6 +23,7 @@ export enum Table {
 
 export type Tables = {
   "account": Account,
+  "account__subject": AccountSubject,
   "account_role": AccountRole,
   "country": Country,
   "file": File,
@@ -54,6 +56,12 @@ export type Account = {
   created_at: Date;
   updated_at: Date;
   preferred_language_id: number;
+};
+
+export type AccountSubject = {
+  id: number;
+  account_id: number;
+  subject_id: number;
 };
 
 export type AccountRole = {
