@@ -2,6 +2,7 @@ import { Knex } from 'knex';
 
 import { AccountReader } from './loaders/Account';
 import { AccountRoleReader } from './loaders/AccountRole';
+import { AccountSubjectReader } from './loaders/AccountSubject';
 import { CountryReader } from './loaders/Country';
 import { FileReader } from './loaders/File';
 import { LanguageReader } from './loaders/Language';
@@ -11,6 +12,7 @@ import { SubjectReader } from './loaders/Subject';
 export type ReadersType = {
   Account: AccountReader;
   AccountRole: AccountRoleReader;
+  AccountSubject: AccountSubjectReader;
   Country: CountryReader;
   File: FileReader;
   Language: LanguageReader;
@@ -22,6 +24,7 @@ export function createLoaders(db: Knex): ReadersType {
   return {
     Account: new AccountReader(db),
     AccountRole: new AccountRoleReader(db),
+    AccountSubject: new AccountSubjectReader(db),
     Country: new CountryReader(db),
     File: new FileReader(db),
     Language: new LanguageReader(db),
