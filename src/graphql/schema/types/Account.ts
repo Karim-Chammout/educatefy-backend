@@ -104,10 +104,6 @@ export const Account = new GraphQLObjectType<AccountType, ContextType>({
         return role.code;
       },
     },
-    specialty: {
-      type: GraphQLString,
-      description: 'Represents the subject a teacher is specialized in for teaching.',
-    },
     subjects: {
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Subject))),
       description: 'Represents the subjects a teacher is specialized in for teaching.',
