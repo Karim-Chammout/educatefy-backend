@@ -1,4 +1,10 @@
-import { GraphQLID, GraphQLInputObjectType, GraphQLString } from 'graphql';
+import {
+  GraphQLID,
+  GraphQLInputObjectType,
+  GraphQLList,
+  GraphQLNonNull,
+  GraphQLString,
+} from 'graphql';
 
 import Date from '../Scalars/Date';
 import Gender from '../types/enum/Gender';
@@ -29,7 +35,7 @@ const ProfileDetailsInput = new GraphQLInputObjectType({
     },
     selectedLanguage: {
       type: GraphQLString,
-      description: "The preferred language for the user",
+      description: 'The preferred language for the user',
     },
     gender: {
       type: Gender,
@@ -38,6 +44,10 @@ const ProfileDetailsInput = new GraphQLInputObjectType({
     dateOfBirth: {
       type: Date,
       description: 'The date of birth of the user.',
+    },
+    teacherSpecialties: {
+      type: new GraphQLList(new GraphQLNonNull(GraphQLID)),
+      description: 'List of subject IDs a teacher is specialized in for teaching.',
     },
     teacherSpecialty: {
       type: GraphQLString,
