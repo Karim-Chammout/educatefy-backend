@@ -32,7 +32,6 @@ const updateAccountInfo: GraphQLFieldConfig<null, ContextType> = {
         teacherBio,
         teacherDescription,
         teacherSpecialties,
-        teacherSpecialty,
       } = accountInfo;
 
       const trimmedFirstName = firstName.trim();
@@ -75,7 +74,6 @@ const updateAccountInfo: GraphQLFieldConfig<null, ContextType> = {
             date_of_birth: dateOfBirth,
             ...(selectedLanguageId && { preferred_language_id: selectedLanguageId }),
             ...(isTeacherAccount && {
-              specialty: teacherSpecialty,
               bio: teacherBio,
               description: teacherDescription,
             }),
