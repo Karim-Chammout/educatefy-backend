@@ -1,4 +1,4 @@
-import { GraphQLID, GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql';
+import { GraphQLID, GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql';
 
 import { Account as AccountType, Country as CountryType } from '../../../types/db-generated-types';
 import { ContextType } from '../../../types/types';
@@ -7,6 +7,7 @@ import GraphQLDate from '../Scalars/Date';
 import { Country } from './Country';
 import AccountRole from './enum/AccountRole';
 import Gender from './enum/Gender';
+import { Subject } from './Subject';
 
 export const Account = new GraphQLObjectType<AccountType, ContextType>({
   name: 'Account',
@@ -106,6 +107,29 @@ export const Account = new GraphQLObjectType<AccountType, ContextType>({
     specialty: {
       type: GraphQLString,
       description: 'Represents the subject a teacher is specialized in for teaching.',
+    },
+    subjects: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Subject))),
+      description: 'Represents the subjects a teacher is specialized in for teaching.',
+      resolve: async (parent, _, { loaders }) => {
+        const accountSubjects = await loaders.AccountSubject.loadByAccountId(parent.id);
+
+        if (accountSubjects.length === 0) {
+          return [];
+        }
+
+        const subjects = await Promise.all(
+          accountSubjects.map(async (accountSubject) =>
+            loaders.Subject.loadById(accountSubject.subject_id),
+          ),
+        );
+
+        if (subjects.length === 0) {
+          return [];
+        }
+
+        return subjects;
+      },
     },
     bio: {
       type: GraphQLString,
