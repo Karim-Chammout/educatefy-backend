@@ -1,4 +1,10 @@
-import { GraphQLID, GraphQLInputObjectType, GraphQLNonNull, GraphQLString } from 'graphql';
+import {
+  GraphQLID,
+  GraphQLInputObjectType,
+  GraphQLList,
+  GraphQLNonNull,
+  GraphQLString,
+} from 'graphql';
 
 import GraphQLDate from '../Scalars/Date';
 import Gender from '../types/enum/Gender';
@@ -38,6 +44,10 @@ const AccountInfoInput = new GraphQLInputObjectType({
     dateOfBirth: {
       type: new GraphQLNonNull(GraphQLDate),
       description: 'The date of birth of the user.',
+    },
+    teacherSpecialties: {
+      type: new GraphQLList(new GraphQLNonNull(GraphQLID)),
+      description: 'List of subject IDs a teacher is specialized in for teaching.',
     },
     teacherSpecialty: {
       type: GraphQLString,
