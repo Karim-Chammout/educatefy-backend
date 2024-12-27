@@ -50,9 +50,6 @@ type Account {
   """The role of the account."""
   accountRole: AccountRole!
 
-  """Represents the subject a teacher is specialized in for teaching."""
-  specialty: String
-
   """Represents the subjects a teacher is specialized in for teaching."""
   subjects: [Subject!]!
 
@@ -224,9 +221,6 @@ input AccountInfoInput {
   """List of subject IDs a teacher is specialized in for teaching."""
   teacherSpecialties: [ID!]
 
-  """The specialty of the teacher."""
-  teacherSpecialty: String
-
   """The short bio about the teacher."""
   teacherBio: String
 
@@ -274,9 +268,6 @@ input ProfileDetailsInput {
 
   """List of subject IDs a teacher is specialized in for teaching."""
   teacherSpecialties: [ID!]
-
-  """The specialty of the teacher."""
-  teacherSpecialty: String
 
   """The short bio about the teacher."""
   teacherBio: String
