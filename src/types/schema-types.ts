@@ -49,6 +49,8 @@ export type Account = {
   preferredLanguage: Scalars['String']['output'];
   /** Represents the subject a teacher is specialized in for teaching. */
   specialty?: Maybe<Scalars['String']['output']>;
+  /** Represents the subjects a teacher is specialized in for teaching. */
+  subjects: Array<Subject>;
 };
 
 /** Input for updating an account information */
@@ -73,6 +75,8 @@ export type AccountInfoInput = {
   teacherBio?: InputMaybe<Scalars['String']['input']>;
   /** The short description about the teacher. */
   teacherDescription?: InputMaybe<Scalars['String']['input']>;
+  /** List of subject IDs a teacher is specialized in for teaching. */
+  teacherSpecialties?: InputMaybe<Array<Scalars['ID']['input']>>;
   /** The specialty of the teacher. */
   teacherSpecialty?: InputMaybe<Scalars['String']['input']>;
 };
@@ -198,6 +202,8 @@ export type ProfileDetailsInput = {
   teacherBio?: InputMaybe<Scalars['String']['input']>;
   /** The short description about the teacher. */
   teacherDescription?: InputMaybe<Scalars['String']['input']>;
+  /** List of subject IDs a teacher is specialized in for teaching. */
+  teacherSpecialties?: InputMaybe<Array<Scalars['ID']['input']>>;
   /** The specialty of the teacher. */
   teacherSpecialty?: InputMaybe<Scalars['String']['input']>;
 };
