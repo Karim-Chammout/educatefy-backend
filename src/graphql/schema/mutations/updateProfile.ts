@@ -35,7 +35,6 @@ const updateProfile: GraphQLFieldConfig<null, ContextType> = {
         selectedLanguage,
         dateOfBirth,
         teacherSpecialties,
-        teacherSpecialty,
         teacherBio,
         teacherDescription,
       } = profileDetails;
@@ -52,7 +51,6 @@ const updateProfile: GraphQLFieldConfig<null, ContextType> = {
         ...(countryId !== undefined && { country_id: countryId }),
         ...(selectedLanguageId && { preferred_language_id: selectedLanguageId }),
         ...(dateOfBirth && { date_of_birth: dateOfBirth }),
-        ...(teacherSpecialty && { specialty: teacherSpecialty }),
         ...(teacherBio && { bio: teacherBio }),
         ...(teacherDescription && { description: sanitizeText(teacherDescription) }),
       };
