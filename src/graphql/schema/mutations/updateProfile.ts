@@ -8,6 +8,7 @@ import { authenticated } from '../../utils/auth';
 import { getSelectedLanguageId } from '../../utils/getSelectedLanguageId';
 import ProfileDetailsInput from '../inputs/ProfileDetails';
 import UpdateProfileResult from '../types/UpdateProfileResult';
+import { AccountRoleEnum } from '../types/enum/AccountRole';
 
 const updateProfile: GraphQLFieldConfig<null, ContextType> = {
   type: UpdateProfileResult,
@@ -33,6 +34,7 @@ const updateProfile: GraphQLFieldConfig<null, ContextType> = {
         countryId,
         selectedLanguage,
         dateOfBirth,
+        teacherSpecialties,
         teacherSpecialty,
         teacherBio,
         teacherDescription,
@@ -71,6 +73,25 @@ const updateProfile: GraphQLFieldConfig<null, ContextType> = {
             updated_at: db.fn.now(),
           })
           .returning('*');
+
+        // Update teacher specialties (account__subjects relation)
+        if (teacherSpecialties && teacherSpecialties.length > 0) {
+          const teacherRole = await loaders.AccountRole.loadByCode(AccountRoleEnum.Teacher);
+          const isTeacherAccount = teacherRole.id === user.roleId;
+
+          if (isTeacherAccount) {
+            db.transaction(async (transaction) => {
+              await transaction('account__subject').where('account_id', user.id).del();
+
+              for (const subjectId of teacherSpecialties) {
+                await transaction('account__subject').insert({
+                  account_id: user.id,
+                  subject_id: subjectId,
+                });
+              }
+            });
+          }
+        }
 
         return {
           success: true,
