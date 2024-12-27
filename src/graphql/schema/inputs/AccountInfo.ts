@@ -49,10 +49,6 @@ const AccountInfoInput = new GraphQLInputObjectType({
       type: new GraphQLList(new GraphQLNonNull(GraphQLID)),
       description: 'List of subject IDs a teacher is specialized in for teaching.',
     },
-    teacherSpecialty: {
-      type: GraphQLString,
-      description: 'The specialty of the teacher.',
-    },
     teacherBio: {
       type: GraphQLString,
       description: 'The short bio about the teacher.',
