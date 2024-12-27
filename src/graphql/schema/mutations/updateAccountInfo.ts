@@ -31,6 +31,7 @@ const updateAccountInfo: GraphQLFieldConfig<null, ContextType> = {
         dateOfBirth,
         teacherBio,
         teacherDescription,
+        teacherSpecialties,
         teacherSpecialty,
       } = accountInfo;
 
@@ -80,6 +81,15 @@ const updateAccountInfo: GraphQLFieldConfig<null, ContextType> = {
             }),
             updated_at: db.fn.now(),
           });
+
+        if (isTeacherAccount && teacherSpecialties && teacherSpecialties.length > 0) {
+          for (const subjectId of teacherSpecialties) {
+            await db('account__subject').insert({
+              account_id: user.id,
+              subject_id: subjectId,
+            });
+          }
+        }
 
         return {
           success: true,
