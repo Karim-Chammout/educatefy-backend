@@ -44,7 +44,7 @@ export const Account = new GraphQLObjectType<AccountType, ContextType>({
     avatar_url: {
       type: GraphQLString,
       description: 'The avatar url of this account (provided by the openid-provider)',
-      resolve: async (parent, _, { user, loaders }) => {
+      resolve: async (parent, _, { user }) => {
         if (!user.authenticated) return null;
 
         if (parent.avatar_url) return getImageURL(parent.avatar_url);

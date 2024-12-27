@@ -95,7 +95,7 @@ export function userIdFromToken(token: JwtPayload): number | null {
     if (!token.sub) return null;
 
     return token.sub;
-  } catch (error: any) {
+  } catch (_error: any) {
     return null;
   }
 }

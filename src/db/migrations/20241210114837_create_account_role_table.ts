@@ -9,7 +9,7 @@ export async function up(knex: Knex): Promise<void> {
       table.string('description').notNullable();
       table.timestamps(true, true);
 
-      table.index("code");
+      table.index('code');
     })
     .then(() => {
       return knex.schema.raw(`

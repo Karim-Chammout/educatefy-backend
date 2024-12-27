@@ -9,7 +9,7 @@ import ChangeProfilePictureResult from '../types/ChangeProfilePictureResult';
 const removeProfilePicture: GraphQLFieldConfig<null, ContextType> = {
   type: ChangeProfilePictureResult,
   description: 'Remove the profile picture of a user.',
-  resolve: authenticated(async (_, __, { db, user, loaders, fs }) => {
+  resolve: authenticated(async (_, __, { db, user, fs }) => {
     return db.transaction(async (knexTransaction) => {
       try {
         const oldProfilePics = await knexTransaction('file').where({

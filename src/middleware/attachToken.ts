@@ -7,14 +7,14 @@ export const tokenToRequest = async (token: string, req: Request) => {
     try {
       req.tokenPayload = await verifyJWT(token);
       req.token = token;
-    } catch (e) {
+    } catch (_e) {
       req.tokenPayload = null;
       req.token = null;
     }
   }
 };
 
-export async function attachToken(req: Request, res: Response, next: NextFunction) {
+export async function attachToken(req: Request, _res: Response, next: NextFunction) {
   // Initialize the properties
   if (!req.tokenPayload && !req.token) {
     req.tokenPayload = null;

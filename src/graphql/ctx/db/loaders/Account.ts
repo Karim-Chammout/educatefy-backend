@@ -5,6 +5,7 @@ import { Account as AccountType } from '../../../../types/db-generated-types';
 
 export class AccountReader {
   private byIdLoader: DataLoader<number, AccountType>;
+
   private byRoleIdLoader: DataLoader<number, ReadonlyArray<AccountType>>;
 
   /**
@@ -22,7 +23,7 @@ export class AccountReader {
         .table('account')
         .whereIn('id', ids)
         .select()
-        .then((rows) => ids.map((id) => rows.find((x) => x.id === id)));
+        .then((results) => ids.map((id) => results.find((x) => x.id === id)));
 
       return rows;
     });
@@ -36,7 +37,7 @@ export class AccountReader {
         .table('account')
         .whereIn('role_id', roleIds)
         .select()
-        .then((rows) => roleIds.map((id) => rows.filter((x) => x.role_id === id)));
+        .then((results) => roleIds.map((id) => results.filter((x) => x.role_id === id)));
 
       return rows;
     });

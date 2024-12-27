@@ -20,7 +20,7 @@ export function accessLog(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
-export function errorLog(err: Error, req: Request, res: Response, next: NextFunction) {
+export function errorLog(err: Error, req: Request, res: Response, _next: NextFunction) {
   const { hostname, method, path, protocol, headers } = req;
   const userAgent = headers['user-agent'] || 'Unknown User Agent';
   const errorTime = new Date().toISOString();

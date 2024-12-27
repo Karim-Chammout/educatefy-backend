@@ -5,7 +5,9 @@ import { AccountSubject as AccountSubjectType } from '../../../../types/db-gener
 
 export class AccountSubjectReader {
   private byIdLoader: DataLoader<number, AccountSubjectType>;
+
   private byAccountIdLoader: DataLoader<number, ReadonlyArray<AccountSubjectType>>;
+
   /**
    * Load all entities from the database.
    */
@@ -20,7 +22,7 @@ export class AccountSubjectReader {
         .table('account__subject')
         .whereIn('id', ids)
         .select()
-        .then((rows) => ids.map((id) => rows.find((x) => x.id === id)));
+        .then((results) => ids.map((id) => results.find((x) => x.id === id)));
 
       return rows;
     });
@@ -34,7 +36,7 @@ export class AccountSubjectReader {
         .table('account__subject')
         .whereIn('account_id', accountIds)
         .select()
-        .then((rows) => accountIds.map((id) => rows.filter((x) => x.account_id === id)));
+        .then((results) => accountIds.map((id) => results.filter((x) => x.account_id === id)));
 
       return rows;
     });

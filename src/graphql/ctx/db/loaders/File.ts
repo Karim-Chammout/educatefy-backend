@@ -5,7 +5,9 @@ import { File as FileType } from '../../../../types/db-generated-types';
 
 export class FileReader {
   private byIdLoader: DataLoader<number, FileType>;
+
   private byAccountIdLoader: DataLoader<number, ReadonlyArray<FileType>>;
+
   private byAccountIdAndFileTypeLoader: DataLoader<
     { accountId: number; file_type: string },
     ReadonlyArray<FileType>
@@ -26,7 +28,7 @@ export class FileReader {
         .table('file')
         .whereIn('id', ids)
         .select()
-        .then((rows) => ids.map((id) => rows.find((x) => x.id === id)));
+        .then((results) => ids.map((id) => results.find((x) => x.id === id)));
 
       return rows;
     });
@@ -40,7 +42,7 @@ export class FileReader {
         .table('file')
         .whereIn('account_id', accountIds)
         .select()
-        .then((rows) => accountIds.map((id) => rows.filter((x) => x.account_id === id)));
+        .then((results) => accountIds.map((id) => results.filter((x) => x.account_id === id)));
 
       return rows;
     });
@@ -62,9 +64,11 @@ export class FileReader {
             ),
           )
           .select()
-          .then((rows) =>
+          .then((results) =>
             keys.map((key) =>
-              rows.filter((x) => x.account_id === key.accountId && x.file_type === key.file_type),
+              results.filter(
+                (x) => x.account_id === key.accountId && x.file_type === key.file_type,
+              ),
             ),
           );
 

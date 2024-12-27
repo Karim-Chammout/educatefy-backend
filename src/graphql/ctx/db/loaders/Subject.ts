@@ -20,7 +20,7 @@ export class SubjectReader {
         .table('subject')
         .whereIn('id', ids)
         .select()
-        .then((rows) => ids.map((id) => rows.find((x) => x.id === id)));
+        .then((results) => ids.map((id) => results.find((x) => x.id === id)));
 
       return rows;
     });

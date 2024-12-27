@@ -5,6 +5,7 @@ import { Language as LanguageType } from '../../../../types/db-generated-types';
 
 export class LanguageReader {
   private byIdLoader: DataLoader<number, LanguageType>;
+
   private byCodeLoader: DataLoader<string, LanguageType>;
 
   /**
@@ -21,7 +22,7 @@ export class LanguageReader {
         .table('language')
         .whereIn('id', ids)
         .select()
-        .then((rows) => ids.map((id) => rows.find((x) => x.id === id)));
+        .then((results) => ids.map((id) => results.find((x) => x.id === id)));
 
       return rows;
     });
@@ -34,7 +35,7 @@ export class LanguageReader {
         .table('language')
         .whereIn('code', codes)
         .select()
-        .then((rows) => codes.map((code) => rows.find((x) => x.code === code)));
+        .then((results) => codes.map((code) => results.find((x) => x.code === code)));
 
       return rows;
     });
