@@ -7,11 +7,11 @@ import { authenticated } from '../../utils/auth';
 import { getSelectedLanguageId } from '../../utils/getSelectedLanguageId';
 import { isValidSlug } from '../../utils/isValidSlug';
 import CourseInfoInput from '../inputs/CourseInfo';
-import { CreateCourseResult } from '../types/CreateCourseResult';
+import { CreateOrUpdateCourseResult } from '../types/CreateOrUpdateCourseResult';
 import { AccountRoleEnum } from '../types/enum/AccountRole';
 
 const createCourse: GraphQLFieldConfig<null, ContextType> = {
-  type: CreateCourseResult,
+  type: CreateOrUpdateCourseResult,
   description: 'Creates a course.',
   args: {
     courseInfo: {

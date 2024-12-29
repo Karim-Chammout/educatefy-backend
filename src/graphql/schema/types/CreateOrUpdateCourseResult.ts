@@ -17,14 +17,14 @@ type MutationResultType =
       course: null;
     };
 
-export const CreateCourseResult = new GraphQLObjectType({
-  name: 'CreateCourseResult',
-  description: 'The result of creating a course.',
+export const CreateOrUpdateCourseResult = new GraphQLObjectType({
+  name: 'CreateOrUpdateCourseResult',
+  description: 'The result of the creating or updating a course.',
   fields: {
     ...defaultMutationFields,
     course: {
       type: Course,
-      description: 'The created course information.',
+      description: 'The created or updated course information.',
       resolve: authenticated(async (parent: MutationResultType, _, { loaders }) => {
         if (parent.success) {
           const course = await loaders.Course.loadById(parent.course.id);
