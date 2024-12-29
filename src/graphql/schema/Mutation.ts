@@ -4,6 +4,7 @@ import changeProfilePicture from './mutations/changeProfilePicture';
 import createCourse from './mutations/createCourse';
 import removeProfilePicture from './mutations/removeProfilePicture';
 import updateAccountInfo from './mutations/updateAccountInfo';
+import updateCourse from './mutations/updateCourse';
 import updateProfile from './mutations/updateProfile';
 
 const Mutation = new GraphQLObjectType({
@@ -13,6 +14,7 @@ const Mutation = new GraphQLObjectType({
     createCourse,
     removeProfilePicture,
     updateAccountInfo,
+    updateCourse,
     updateProfile,
   },
 });
