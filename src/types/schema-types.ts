@@ -181,10 +181,10 @@ export enum CourseLevel {
   Intermediate = 'intermediate'
 }
 
-/** The result of creating a course. */
-export type CreateCourseResult = {
-  __typename?: 'CreateCourseResult';
-  /** The created course information. */
+/** The result of the creating or updating a course. */
+export type CreateOrUpdateCourseResult = {
+  __typename?: 'CreateOrUpdateCourseResult';
+  /** The created or updated course information. */
   course?: Maybe<Course>;
   /** A list of errors that occurred executing this mutation. */
   errors: Array<Error>;
@@ -211,11 +211,13 @@ export type Mutation = {
   /** Change the profile picture of a user. */
   changeProfilePicture?: Maybe<ChangeProfilePictureResult>;
   /** Creates a course. */
-  createCourse?: Maybe<CreateCourseResult>;
+  createCourse?: Maybe<CreateOrUpdateCourseResult>;
   /** Remove the profile picture of a user. */
   removeProfilePicture?: Maybe<ChangeProfilePictureResult>;
   /** Updates a user account information. */
   updateAccountInfo?: Maybe<MutationResult>;
+  /** Updates a course. */
+  updateCourse?: Maybe<CreateOrUpdateCourseResult>;
   /** Updates a user profile details. */
   updateProfile?: Maybe<UpdateProfileResult>;
 };
@@ -233,6 +235,11 @@ export type MutationCreateCourseArgs = {
 
 export type MutationUpdateAccountInfoArgs = {
   accountInfo: AccountInfoInput;
+};
+
+
+export type MutationUpdateCourseArgs = {
+  updateCourseInfo: UpdateCourseInfoInput;
 };
 
 
@@ -330,6 +337,36 @@ export type Subject = {
   denomination: Scalars['String']['output'];
   /** A unique id of this subject. */
   id: Scalars['ID']['output'];
+};
+
+/** Input for updating a course record. */
+export type UpdateCourseInfoInput = {
+  /** The denomination of this course */
+  denomination?: InputMaybe<Scalars['String']['input']>;
+  /** The description of this course */
+  description?: InputMaybe<Scalars['String']['input']>;
+  /** The end date of the course */
+  end_date?: InputMaybe<Scalars['Date']['input']>;
+  /** A link to an external meeting. */
+  external_meeting_link?: InputMaybe<Scalars['String']['input']>;
+  /** A link to an external resource. */
+  external_resource_link?: InputMaybe<Scalars['String']['input']>;
+  /** The ID of this course */
+  id: Scalars['ID']['input'];
+  /** The image of this course */
+  image?: InputMaybe<Scalars['String']['input']>;
+  /** A flag to indicate whether this course is published or not */
+  is_published?: InputMaybe<Scalars['Boolean']['input']>;
+  /** The language of this course. */
+  language?: InputMaybe<Scalars['String']['input']>;
+  /** The difficulty level of this course */
+  level?: InputMaybe<CourseLevel>;
+  /** The slug of this course */
+  slug?: InputMaybe<Scalars['String']['input']>;
+  /** The start date of the course */
+  start_date?: InputMaybe<Scalars['Date']['input']>;
+  /** The subtitle of this course */
+  subtitle?: InputMaybe<Scalars['String']['input']>;
 };
 
 /** The result of the updateProfile mutation. */
