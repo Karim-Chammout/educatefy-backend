@@ -10,6 +10,12 @@ type Query {
 
   """List of OpenId clients"""
   openIdClients: [OpenidClient!]!
+
+  """Retrieve a course by its slug"""
+  course(
+    """The slug of the course."""
+    slug: String!
+  ): Course
 }
 
 """The properties of the account"""
@@ -124,12 +130,73 @@ type OpenidClient {
   button_background_color: String
 }
 
+"""The course info."""
+type Course {
+  """A unique id of this course."""
+  id: ID!
+
+  """The denomination of this course."""
+  denomination: String!
+
+  """A unique slug of this course."""
+  slug: String!
+
+  """The subtitle of this course."""
+  subtitle: String!
+
+  """The description of this course."""
+  description: String!
+
+  """The difficulty level of this course."""
+  level: CourseLevel!
+
+  """A link to an external resource."""
+  external_resource_link: String
+
+  """A link to an external meeting."""
+  external_meeting_link: String
+
+  """A flag to indicate whether this course is published or not"""
+  is_published: Boolean!
+
+  """The image of this course"""
+  image: String
+
+  """The language of this course"""
+  language: String!
+
+  """The start date of the course"""
+  start_date: Date
+
+  """The end date of the course"""
+  end_date: Date
+
+  """The date of when this course was created."""
+  created_at: Date!
+
+  """The date of when this course was last updated."""
+  updated_at: Date!
+}
+
+"""The difficulty level of a course."""
+enum CourseLevel {
+  beginner
+  intermediate
+  advanced
+}
+
 type Mutation {
   """Change the profile picture of a user."""
   changeProfilePicture(
     """The details of the profile picture"""
     profilePictureDetails: ProfilePictureDetailsInput!
   ): ChangeProfilePictureResult
+
+  """Creates a course."""
+  createCourse(
+    """The course information"""
+    courseInfo: CourseInfoInput!
+  ): CreateCourseResult
 
   """Remove the profile picture of a user."""
   removeProfilePicture: ChangeProfilePictureResult
@@ -181,6 +248,57 @@ input ProfilePictureDetailsInput {
 
   """The file size in bytes of this file."""
   fileSize: Int!
+}
+
+"""The result of creating a course."""
+type CreateCourseResult {
+  """Indicates if the mutation was successful."""
+  success: Boolean!
+
+  """A list of errors that occurred executing this mutation."""
+  errors: [Error!]!
+
+  """The created course information."""
+  course: Course
+}
+
+"""Input for createing a course record."""
+input CourseInfoInput {
+  """The denomination of this course."""
+  denomination: String!
+
+  """The slug of this course."""
+  slug: String!
+
+  """The subtitle of this course."""
+  subtitle: String!
+
+  """The description of this course."""
+  description: String!
+
+  """The language of this course."""
+  language: String!
+
+  """The difficulty level of this course."""
+  level: CourseLevel!
+
+  """The image of this course."""
+  image: String
+
+  """A link to an external resource."""
+  external_resource_link: String
+
+  """A link to an external meeting."""
+  external_meeting_link: String
+
+  """A flag to indicate whether this course is published or not."""
+  is_published: Boolean!
+
+  """The start date of the course."""
+  start_date: Date
+
+  """The end date of the course."""
+  end_date: Date
 }
 
 """The result of a mutation."""
