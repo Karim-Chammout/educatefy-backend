@@ -12,6 +12,11 @@ export const getSelectedLanguageId = async (
 
   if (lowerCaseLang && (skipSupportedLangCheck || SUPPORTED_LANGUAGES.includes(lowerCaseLang))) {
     const language = await loaders.Language.loadByCode(lowerCaseLang);
+
+    if (!language) {
+      return null;
+    }
+
     selectedLanguageId = language.id;
   }
 
