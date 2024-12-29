@@ -1,6 +1,12 @@
 // The TypeScript definitions below are automatically generated.
 // Do not touch them, or risk, your modifications being lost.
 
+export enum CourseLevelEnumType {
+  Beginner = "beginner",
+  Intermediate = "intermediate",
+  Advanced = "advanced",
+}
+
 export enum GenderType {
   Male = "male",
   Female = "female",
@@ -12,6 +18,7 @@ export enum Table {
   AccountSubject = "account__subject",
   AccountRole = "account_role",
   Country = "country",
+  Course = "course",
   File = "file",
   Language = "language",
   Migrations = "migrations",
@@ -26,6 +33,7 @@ export type Tables = {
   "account__subject": AccountSubject,
   "account_role": AccountRole,
   "country": Country,
+  "course": Course,
   "file": File,
   "language": Language,
   "migrations": Migrations,
@@ -79,6 +87,26 @@ export type Country = {
   iso3: string | null;
   num_code: number | null;
   phone_code: number | null;
+};
+
+export type Course = {
+  id: number;
+  denomination: string;
+  slug: string;
+  subtitle: string;
+  description: string;
+  level: CourseLevelEnumType;
+  image: string | null;
+  external_resource_link: string | null;
+  external_meeting_link: string | null;
+  is_published: boolean;
+  language_id: number;
+  teacher_id: number;
+  start_date: Date | null;
+  end_date: Date | null;
+  deleted_at: Date | null;
+  created_at: Date;
+  updated_at: Date;
 };
 
 export type File = {
