@@ -196,7 +196,7 @@ type Mutation {
   createCourse(
     """The course information"""
     courseInfo: CourseInfoInput!
-  ): CreateCourseResult
+  ): CreateOrUpdateCourseResult
 
   """Remove the profile picture of a user."""
   removeProfilePicture: ChangeProfilePictureResult
@@ -206,6 +206,12 @@ type Mutation {
     """The account information"""
     accountInfo: AccountInfoInput!
   ): MutationResult
+
+  """Updates a course."""
+  updateCourse(
+    """The course information to be updated."""
+    updateCourseInfo: UpdateCourseInfoInput!
+  ): CreateOrUpdateCourseResult
 
   """Updates a user profile details."""
   updateProfile(
@@ -250,15 +256,15 @@ input ProfilePictureDetailsInput {
   fileSize: Int!
 }
 
-"""The result of creating a course."""
-type CreateCourseResult {
+"""The result of the creating or updating a course."""
+type CreateOrUpdateCourseResult {
   """Indicates if the mutation was successful."""
   success: Boolean!
 
   """A list of errors that occurred executing this mutation."""
   errors: [Error!]!
 
-  """The created course information."""
+  """The created or updated course information."""
   course: Course
 }
 
@@ -344,6 +350,48 @@ input AccountInfoInput {
 
   """The short description about the teacher."""
   teacherDescription: String
+}
+
+"""Input for updating a course record."""
+input UpdateCourseInfoInput {
+  """The ID of this course"""
+  id: ID!
+
+  """The denomination of this course"""
+  denomination: String
+
+  """The slug of this course"""
+  slug: String
+
+  """The subtitle of this course"""
+  subtitle: String
+
+  """The description of this course"""
+  description: String
+
+  """The language of this course."""
+  language: String
+
+  """The difficulty level of this course"""
+  level: CourseLevel
+
+  """The image of this course"""
+  image: String
+
+  """A link to an external resource."""
+  external_resource_link: String
+
+  """A link to an external meeting."""
+  external_meeting_link: String
+
+  """A flag to indicate whether this course is published or not"""
+  is_published: Boolean
+
+  """The start date of the course"""
+  start_date: Date
+
+  """The end date of the course"""
+  end_date: Date
 }
 
 """The result of the updateProfile mutation."""
