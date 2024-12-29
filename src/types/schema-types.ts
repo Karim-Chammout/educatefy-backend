@@ -111,6 +111,87 @@ export type Country = {
   phone_code: Scalars['String']['output'];
 };
 
+/** The course info. */
+export type Course = {
+  __typename?: 'Course';
+  /** The date of when this course was created. */
+  created_at: Scalars['Date']['output'];
+  /** The denomination of this course. */
+  denomination: Scalars['String']['output'];
+  /** The description of this course. */
+  description: Scalars['String']['output'];
+  /** The end date of the course */
+  end_date?: Maybe<Scalars['Date']['output']>;
+  /** A link to an external meeting. */
+  external_meeting_link?: Maybe<Scalars['String']['output']>;
+  /** A link to an external resource. */
+  external_resource_link?: Maybe<Scalars['String']['output']>;
+  /** A unique id of this course. */
+  id: Scalars['ID']['output'];
+  /** The image of this course */
+  image?: Maybe<Scalars['String']['output']>;
+  /** A flag to indicate whether this course is published or not */
+  is_published: Scalars['Boolean']['output'];
+  /** The language of this course */
+  language: Scalars['String']['output'];
+  /** The difficulty level of this course. */
+  level: CourseLevel;
+  /** A unique slug of this course. */
+  slug: Scalars['String']['output'];
+  /** The start date of the course */
+  start_date?: Maybe<Scalars['Date']['output']>;
+  /** The subtitle of this course. */
+  subtitle: Scalars['String']['output'];
+  /** The date of when this course was last updated. */
+  updated_at: Scalars['Date']['output'];
+};
+
+/** Input for createing a course record. */
+export type CourseInfoInput = {
+  /** The denomination of this course. */
+  denomination: Scalars['String']['input'];
+  /** The description of this course. */
+  description: Scalars['String']['input'];
+  /** The end date of the course. */
+  end_date?: InputMaybe<Scalars['Date']['input']>;
+  /** A link to an external meeting. */
+  external_meeting_link?: InputMaybe<Scalars['String']['input']>;
+  /** A link to an external resource. */
+  external_resource_link?: InputMaybe<Scalars['String']['input']>;
+  /** The image of this course. */
+  image?: InputMaybe<Scalars['String']['input']>;
+  /** A flag to indicate whether this course is published or not. */
+  is_published: Scalars['Boolean']['input'];
+  /** The language of this course. */
+  language: Scalars['String']['input'];
+  /** The difficulty level of this course. */
+  level: CourseLevel;
+  /** The slug of this course. */
+  slug: Scalars['String']['input'];
+  /** The start date of the course. */
+  start_date?: InputMaybe<Scalars['Date']['input']>;
+  /** The subtitle of this course. */
+  subtitle: Scalars['String']['input'];
+};
+
+/** The difficulty level of a course. */
+export enum CourseLevel {
+  Advanced = 'advanced',
+  Beginner = 'beginner',
+  Intermediate = 'intermediate'
+}
+
+/** The result of creating a course. */
+export type CreateCourseResult = {
+  __typename?: 'CreateCourseResult';
+  /** The created course information. */
+  course?: Maybe<Course>;
+  /** A list of errors that occurred executing this mutation. */
+  errors: Array<Error>;
+  /** Indicates if the mutation was successful. */
+  success: Scalars['Boolean']['output'];
+};
+
 /** An object type that wraps an error */
 export type Error = {
   __typename?: 'Error';
@@ -129,6 +210,8 @@ export type Mutation = {
   __typename?: 'Mutation';
   /** Change the profile picture of a user. */
   changeProfilePicture?: Maybe<ChangeProfilePictureResult>;
+  /** Creates a course. */
+  createCourse?: Maybe<CreateCourseResult>;
   /** Remove the profile picture of a user. */
   removeProfilePicture?: Maybe<ChangeProfilePictureResult>;
   /** Updates a user account information. */
@@ -140,6 +223,11 @@ export type Mutation = {
 
 export type MutationChangeProfilePictureArgs = {
   profilePictureDetails: ProfilePictureDetailsInput;
+};
+
+
+export type MutationCreateCourseArgs = {
+  courseInfo: CourseInfoInput;
 };
 
 
@@ -220,12 +308,19 @@ export type Query = {
   __typename?: 'Query';
   /** List of countries */
   countries: Array<Country>;
+  /** Retrieve a course by its slug */
+  course?: Maybe<Course>;
   /** The current user */
   me: Account;
   /** List of OpenId clients */
   openIdClients: Array<OpenidClient>;
   /** List of subjects */
   subjects: Array<Subject>;
+};
+
+
+export type QueryCourseArgs = {
+  slug: Scalars['String']['input'];
 };
 
 /** The subject info */
