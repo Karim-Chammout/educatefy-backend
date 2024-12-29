@@ -1,9 +1,10 @@
-import { GraphQLList, GraphQLNonNull, GraphQLObjectType } from 'graphql';
+import { GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql';
 
 import { ContextType } from '../../types/types';
 import { authenticated } from '../utils/auth';
 import { Account } from './types/Account';
 import { Country } from './types/Country';
+import { Course } from './types/Course';
 import { OpenidClient } from './types/OpenidClient';
 import { Subject } from './types/Subject';
 
@@ -54,6 +55,25 @@ const Query = new GraphQLObjectType<any, ContextType>({
         }
 
         return oidc;
+      },
+    },
+    course: {
+      type: Course,
+      description: 'Retrieve a course by its slug',
+      args: {
+        slug: {
+          type: new GraphQLNonNull(GraphQLString),
+          description: 'The slug of the course.',
+        },
+      },
+      resolve: async (_, { slug }: { slug: string }, { loaders }) => {
+        const course = await loaders.Course.loadBySlug(slug);
+
+        if (!course || !course.is_published) {
+          return null;
+        }
+
+        return course;
       },
     },
   },
