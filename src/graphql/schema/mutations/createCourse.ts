@@ -50,7 +50,7 @@ const createCourse: GraphQLFieldConfig<null, ContextType> = {
         };
       }
 
-      const languageId = await getSelectedLanguageId(loaders, language);
+      const languageId = await getSelectedLanguageId(loaders, language, true);
 
       if (!languageId) {
         return {
