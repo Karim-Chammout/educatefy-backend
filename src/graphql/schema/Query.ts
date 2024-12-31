@@ -1,12 +1,20 @@
-import { GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql';
+import {
+  GraphQLError,
+  GraphQLList,
+  GraphQLNonNull,
+  GraphQLObjectType,
+  GraphQLString,
+} from 'graphql';
 
 import { ContextType } from '../../types/types';
+import { ErrorType } from '../../utils/ErrorType';
 import { authenticated } from '../utils/auth';
 import { Account } from './types/Account';
 import { Country } from './types/Country';
 import { Course } from './types/Course';
 import { OpenidClient } from './types/OpenidClient';
 import { Subject } from './types/Subject';
+import { AccountRoleEnum } from './types/enum/AccountRole';
 
 const Query = new GraphQLObjectType<any, ContextType>({
   name: 'Query',
@@ -75,6 +83,25 @@ const Query = new GraphQLObjectType<any, ContextType>({
 
         return course;
       },
+    },
+    teacherCourses: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Course))),
+      description: 'List of courses created by the teacher',
+      resolve: authenticated(async (_, __, { loaders, user }) => {
+        const accountRole = await loaders.AccountRole.loadById(user.roleId);
+
+        if (accountRole.code !== AccountRoleEnum.Teacher) {
+          throw new GraphQLError(ErrorType.FORBIDDEN);
+        }
+
+        const courses = await loaders.Course.loadByTeacherId(user.id);
+
+        if (!courses) {
+          return [];
+        }
+
+        return courses;
+      }),
     },
   },
 });
