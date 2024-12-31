@@ -16,6 +16,9 @@ type Query {
     """The slug of the course."""
     slug: String!
   ): Course
+
+  """List of courses created by the teacher"""
+  teacherCourses: [Course!]!
 }
 
 """The properties of the account"""
