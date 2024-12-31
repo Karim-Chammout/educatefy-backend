@@ -323,6 +323,8 @@ export type Query = {
   openIdClients: Array<OpenidClient>;
   /** List of subjects */
   subjects: Array<Subject>;
+  /** List of courses created by the teacher */
+  teacherCourses: Array<Course>;
 };
 
 
