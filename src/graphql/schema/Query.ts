@@ -165,6 +165,19 @@ const Query = new GraphQLObjectType<any, ContextType>({
         return course;
       }),
     },
+    subjectsListWithLinkedCourses: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Subject))),
+      description: 'List of subjects that have courses associated with them',
+      resolve: async (_, __, { loaders }) => {
+        const subjects = await loaders.Subject.loadSubjectsWithLinkedCourses();
+
+        if (!subjects || subjects.length === 0) {
+          return [];
+        }
+
+        return subjects;
+      },
+    },
   },
 });
 
