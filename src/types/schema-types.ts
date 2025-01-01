@@ -206,6 +206,17 @@ export enum Gender {
   Unknown = 'unknown'
 }
 
+/** The language info */
+export type Language = {
+  __typename?: 'Language';
+  /** The code of this language */
+  code: Scalars['String']['output'];
+  /** The name of this language */
+  denomination: Scalars['String']['output'];
+  /** A unique id of this language */
+  id: Scalars['ID']['output'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   /** Change the profile picture of a user. */
@@ -317,6 +328,8 @@ export type Query = {
   countries: Array<Country>;
   /** Retrieve a course by its slug */
   course?: Maybe<Course>;
+  /** List of OpenId clients */
+  languages: Array<Language>;
   /** The current user */
   me: Account;
   /** List of OpenId clients */
