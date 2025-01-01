@@ -8,6 +8,12 @@ type Query {
   """List of subjects"""
   subjects: [Subject!]!
 
+  """Retrieve a subject by its id"""
+  subject(
+    """The id of the subject."""
+    id: ID!
+  ): Subject
+
   """List of OpenId clients"""
   openIdClients: [OpenidClient!]!
 
@@ -28,6 +34,9 @@ type Query {
     """The id of the course."""
     id: ID!
   ): Course
+
+  """List of subjects that have courses associated with them"""
+  subjectsListWithLinkedCourses: [Subject!]!
 }
 
 """The properties of the account"""
@@ -122,36 +131,9 @@ type Subject {
 
   """The name of this subject."""
   denomination: String!
-}
 
-"""The open id client providers to use for auth"""
-type OpenidClient {
-  """A unique id of this OIDC"""
-  id: ID!
-
-  """The openId provider"""
-  identity_provider: String!
-
-  """The text of the OIDC that should be displayed on the button"""
-  button_text: String
-
-  """The icon of the OIDC that should be displayed on the button"""
-  button_icon: String
-
-  """The button background color of the OIDC"""
-  button_background_color: String
-}
-
-"""The language info"""
-type Language {
-  """A unique id of this language"""
-  id: ID!
-
-  """The name of this language"""
-  denomination: String!
-
-  """The code of this language"""
-  code: String!
+  """The courses linked to this subject."""
+  courses: [Course!]!
 }
 
 """The course info."""
@@ -200,6 +182,9 @@ type Course {
 
   """The date of when this course was last updated."""
   updated_at: Date!
+
+  """The subjects linked to this course."""
+  subjects: [Subject!]!
 }
 
 """The difficulty level of a course."""
@@ -207,6 +192,36 @@ enum CourseLevel {
   beginner
   intermediate
   advanced
+}
+
+"""The open id client providers to use for auth"""
+type OpenidClient {
+  """A unique id of this OIDC"""
+  id: ID!
+
+  """The openId provider"""
+  identity_provider: String!
+
+  """The text of the OIDC that should be displayed on the button"""
+  button_text: String
+
+  """The icon of the OIDC that should be displayed on the button"""
+  button_icon: String
+
+  """The button background color of the OIDC"""
+  button_background_color: String
+}
+
+"""The language info"""
+type Language {
+  """A unique id of this language"""
+  id: ID!
+
+  """The name of this language"""
+  denomination: String!
+
+  """The code of this language"""
+  code: String!
 }
 
 type Mutation {
