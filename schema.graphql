@@ -11,6 +11,9 @@ type Query {
   """List of OpenId clients"""
   openIdClients: [OpenidClient!]!
 
+  """List of languages"""
+  languages: [Language!]!
+
   """Retrieve a course by its slug"""
   course(
     """The slug of the course."""
@@ -131,6 +134,18 @@ type OpenidClient {
 
   """The button background color of the OIDC"""
   button_background_color: String
+}
+
+"""The language info"""
+type Language {
+  """A unique id of this language"""
+  id: ID!
+
+  """The name of this language"""
+  denomination: String!
+
+  """The code of this language"""
+  code: String!
 }
 
 """The course info."""
