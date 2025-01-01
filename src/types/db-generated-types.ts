@@ -19,6 +19,7 @@ export enum Table {
   AccountRole = "account_role",
   Country = "country",
   Course = "course",
+  CourseSubject = "course__subject",
   File = "file",
   Language = "language",
   Migrations = "migrations",
@@ -34,6 +35,7 @@ export type Tables = {
   "account_role": AccountRole,
   "country": Country,
   "course": Course,
+  "course__subject": CourseSubject,
   "file": File,
   "language": Language,
   "migrations": Migrations,
@@ -107,6 +109,12 @@ export type Course = {
   deleted_at: Date | null;
   created_at: Date;
   updated_at: Date;
+};
+
+export type CourseSubject = {
+  id: number;
+  course_id: number;
+  subject_id: number;
 };
 
 export type File = {
