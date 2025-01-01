@@ -1,8 +1,10 @@
-import { GraphQLID, GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql';
+import { GraphQLID, GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql';
 
+import { Subject as SubjectType } from '../../../types/db-generated-types';
 import { ContextType } from '../../../types/types';
+import { Course } from './Course';
 
-export const Subject = new GraphQLObjectType<any, ContextType>({
+export const Subject = new GraphQLObjectType<SubjectType, ContextType>({
   name: 'Subject',
   description: 'The subject info',
   fields: {
@@ -13,6 +15,19 @@ export const Subject = new GraphQLObjectType<any, ContextType>({
     denomination: {
       type: new GraphQLNonNull(GraphQLString),
       description: 'The name of this subject.',
+    },
+    courses: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Course))),
+      description: 'The courses linked to this subject.',
+      resolve: async (parent, _, { loaders }) => {
+        const courses = await loaders.Course.loadBySubjectId(parent.id);
+
+        if (!courses || courses.length === 0) {
+          return [];
+        }
+
+        return courses;
+      },
     },
   },
 });
