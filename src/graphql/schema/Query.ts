@@ -1,5 +1,6 @@
 import {
   GraphQLError,
+  GraphQLID,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
@@ -115,6 +116,33 @@ const Query = new GraphQLObjectType<any, ContextType>({
         }
 
         return courses;
+      }),
+    },
+    editableCourse: {
+      type: Course,
+      description: 'Retrieve a course to be edited by the teacher.',
+      args: {
+        id: {
+          type: new GraphQLNonNull(GraphQLID),
+          description: 'The id of the course.',
+        },
+      },
+      resolve: authenticated(async (_, { id }: { id: string }, { loaders, user }) => {
+        const courseId = parseInt(id, 10);
+
+        const accountRole = await loaders.AccountRole.loadById(user.roleId);
+
+        if (accountRole.code !== AccountRoleEnum.Teacher) {
+          throw new GraphQLError(ErrorType.FORBIDDEN);
+        }
+
+        const course = await loaders.Course.loadById(courseId);
+
+        if (!course || course.teacher_id !== user.id) {
+          return null;
+        }
+
+        return course;
       }),
     },
   },
