@@ -22,6 +22,12 @@ type Query {
 
   """List of courses created by the teacher"""
   teacherCourses: [Course!]!
+
+  """Retrieve a course to be edited by the teacher."""
+  editableCourse(
+    """The id of the course."""
+    id: ID!
+  ): Course
 }
 
 """The properties of the account"""
