@@ -6,6 +6,8 @@ import { Subject as SubjectType } from '../../../../types/db-generated-types';
 export class SubjectReader {
   private byIdLoader: DataLoader<number, SubjectType>;
 
+  private byLinkedCoursesLoader: DataLoader<number, ReadonlyArray<SubjectType>>;
+
   /**
    * Load all entities from the database.
    */
@@ -25,6 +27,27 @@ export class SubjectReader {
       return rows;
     });
 
+    this.byLinkedCoursesLoader = new DataLoader(
+      async (keys) => {
+        const rows = await db
+          .table('subject')
+          .distinct('subject.*')
+          .join('course__subject', 'subject.id', 'course__subject.subject_id')
+          .select('subject.*');
+
+        // Prime the byIdLoader with the results
+        for (const row of rows) {
+          this.byIdLoader.prime(row.id, row);
+        }
+
+        return keys.map(() => rows);
+      },
+      {
+        // Since this loader doesn't use keys, we want to cache the result
+        cache: true,
+      },
+    );
+
     this.loadAll = async () => {
       const result = await db.table('subject').select();
 
@@ -41,6 +64,7 @@ export class SubjectReader {
   get loaders() {
     return {
       byIdLoader: this.byIdLoader,
+      byLinkedCoursesLoader: this.byLinkedCoursesLoader,
     };
   }
 
@@ -52,5 +76,11 @@ export class SubjectReader {
   /** Load entities with the matching primary key */
   loadManyByIds(ids: number[]): Promise<ReadonlyArray<SubjectType | Error>> {
     return this.byIdLoader.loadMany(ids);
+  }
+
+  /** Load all subjects that have associated courses */
+  loadSubjectsWithLinkedCourses(): Promise<ReadonlyArray<SubjectType>> {
+    // Use a dummy key (1) since we cannot pass undefined or null
+    return this.byLinkedCoursesLoader.load(1);
   }
 }
