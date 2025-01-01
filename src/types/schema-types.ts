@@ -140,6 +140,8 @@ export type Course = {
   slug: Scalars['String']['output'];
   /** The start date of the course */
   start_date?: Maybe<Scalars['Date']['output']>;
+  /** The subjects linked to this course. */
+  subjects: Array<Subject>;
   /** The subtitle of this course. */
   subtitle: Scalars['String']['output'];
   /** The date of when this course was last updated. */
@@ -336,8 +338,12 @@ export type Query = {
   me: Account;
   /** List of OpenId clients */
   openIdClients: Array<OpenidClient>;
+  /** Retrieve a subject by its id */
+  subject?: Maybe<Subject>;
   /** List of subjects */
   subjects: Array<Subject>;
+  /** List of subjects that have courses associated with them */
+  subjectsListWithLinkedCourses: Array<Subject>;
   /** List of courses created by the teacher */
   teacherCourses: Array<Course>;
 };
@@ -352,9 +358,16 @@ export type QueryEditableCourseArgs = {
   id: Scalars['ID']['input'];
 };
 
+
+export type QuerySubjectArgs = {
+  id: Scalars['ID']['input'];
+};
+
 /** The subject info */
 export type Subject = {
   __typename?: 'Subject';
+  /** The courses linked to this subject. */
+  courses: Array<Course>;
   /** The name of this subject. */
   denomination: Scalars['String']['output'];
   /** A unique id of this subject. */
