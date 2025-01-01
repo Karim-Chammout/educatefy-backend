@@ -54,6 +54,26 @@ const Query = new GraphQLObjectType<any, ContextType>({
         return subjects;
       },
     },
+    subject: {
+      type: Subject,
+      description: 'Retrieve a subject by its id',
+      args: {
+        id: {
+          type: new GraphQLNonNull(GraphQLID),
+          description: 'The id of the subject.',
+        },
+      },
+      resolve: async (_, { id }: { id: string }, ctx) => {
+        const subjectId = parseInt(id, 10);
+        const subject = await ctx.loaders.Subject.loadById(subjectId);
+
+        if (!subject) {
+          return null;
+        }
+
+        return subject;
+      },
+    },
     openIdClients: {
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(OpenidClient))),
       description: 'List of OpenId clients',
