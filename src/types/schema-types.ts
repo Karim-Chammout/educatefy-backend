@@ -328,7 +328,9 @@ export type Query = {
   countries: Array<Country>;
   /** Retrieve a course by its slug */
   course?: Maybe<Course>;
-  /** List of OpenId clients */
+  /** Retrieve a course to be edited by the teacher. */
+  editableCourse?: Maybe<Course>;
+  /** List of languages */
   languages: Array<Language>;
   /** The current user */
   me: Account;
@@ -343,6 +345,11 @@ export type Query = {
 
 export type QueryCourseArgs = {
   slug: Scalars['String']['input'];
+};
+
+
+export type QueryEditableCourseArgs = {
+  id: Scalars['ID']['input'];
 };
 
 /** The subject info */
