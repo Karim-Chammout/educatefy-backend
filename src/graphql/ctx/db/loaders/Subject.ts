@@ -6,6 +6,8 @@ import { Subject as SubjectType } from '../../../../types/db-generated-types';
 export class SubjectReader {
   private byIdLoader: DataLoader<number, SubjectType>;
 
+  private byCourseIdLoader: DataLoader<number, ReadonlyArray<SubjectType>>;
+
   private byLinkedCoursesLoader: DataLoader<number, ReadonlyArray<SubjectType>>;
 
   /**
@@ -23,6 +25,23 @@ export class SubjectReader {
         .whereIn('id', ids)
         .select()
         .then((results) => ids.map((id) => results.find((x) => x.id === id)));
+
+      return rows;
+    });
+
+    this.byCourseIdLoader = new DataLoader(async (courseIds) => {
+      if (courseIds.length === 0) {
+        return [];
+      }
+
+      const rows = await db
+        .table('subject')
+        .join('course__subject', 'subject.id', 'course__subject.subject_id')
+        .whereIn('course__subject.course_id', courseIds)
+        .select('subject.*', 'course__subject.course_id')
+        .then((results) =>
+          courseIds.map((courseId) => results.filter((x) => x.course_id === courseId)),
+        );
 
       return rows;
     });
@@ -64,6 +83,7 @@ export class SubjectReader {
   get loaders() {
     return {
       byIdLoader: this.byIdLoader,
+      byCourseIdLoader: this.byCourseIdLoader,
       byLinkedCoursesLoader: this.byLinkedCoursesLoader,
     };
   }
@@ -76,6 +96,10 @@ export class SubjectReader {
   /** Load entities with the matching primary key */
   loadManyByIds(ids: number[]): Promise<ReadonlyArray<SubjectType | Error>> {
     return this.byIdLoader.loadMany(ids);
+  }
+
+  loadByCourseId(courseIds: number): Promise<ReadonlyArray<SubjectType>> {
+    return this.byCourseIdLoader.load(courseIds);
   }
 
   /** Load all subjects that have associated courses */
