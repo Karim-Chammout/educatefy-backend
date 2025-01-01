@@ -12,9 +12,10 @@ import { authenticated } from '../utils/auth';
 import { Account } from './types/Account';
 import { Country } from './types/Country';
 import { Course } from './types/Course';
+import { AccountRoleEnum } from './types/enum/AccountRole';
+import { Language } from './types/Language';
 import { OpenidClient } from './types/OpenidClient';
 import { Subject } from './types/Subject';
-import { AccountRoleEnum } from './types/enum/AccountRole';
 
 const Query = new GraphQLObjectType<any, ContextType>({
   name: 'Query',
@@ -63,6 +64,19 @@ const Query = new GraphQLObjectType<any, ContextType>({
         }
 
         return oidc;
+      },
+    },
+    languages: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Language))),
+      description: 'List of languages',
+      resolve: async (_, __, { loaders }) => {
+        const languages = await loaders.Language.loadAll();
+
+        if (!languages || languages.length === 0) {
+          return [];
+        }
+
+        return languages;
       },
     },
     course: {
