@@ -225,6 +225,8 @@ export type Mutation = {
   changeProfilePicture?: Maybe<ChangeProfilePictureResult>;
   /** Creates a course. */
   createCourse?: Maybe<CreateOrUpdateCourseResult>;
+  /** Deletes a course. */
+  deleteCourse?: Maybe<MutationResult>;
   /** Remove the profile picture of a user. */
   removeProfilePicture?: Maybe<ChangeProfilePictureResult>;
   /** Updates a user account information. */
@@ -243,6 +245,11 @@ export type MutationChangeProfilePictureArgs = {
 
 export type MutationCreateCourseArgs = {
   courseInfo: CourseInfoInput;
+};
+
+
+export type MutationDeleteCourseArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
