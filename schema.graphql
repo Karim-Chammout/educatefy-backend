@@ -237,6 +237,12 @@ type Mutation {
     courseInfo: CourseInfoInput!
   ): CreateOrUpdateCourseResult
 
+  """Deletes a course."""
+  deleteCourse(
+    """The ID of the course to delete."""
+    id: ID!
+  ): MutationResult
+
   """Remove the profile picture of a user."""
   removeProfilePicture: ChangeProfilePictureResult
 
