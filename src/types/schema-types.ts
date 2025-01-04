@@ -172,6 +172,8 @@ export type CourseInfoInput = {
   slug: Scalars['String']['input'];
   /** The start date of the course. */
   start_date?: InputMaybe<Scalars['Date']['input']>;
+  /** List of subject IDs to associate with the course */
+  subjectIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   /** The subtitle of this course. */
   subtitle: Scalars['String']['input'];
 };
@@ -407,6 +409,8 @@ export type UpdateCourseInfoInput = {
   slug?: InputMaybe<Scalars['String']['input']>;
   /** The start date of the course */
   start_date?: InputMaybe<Scalars['Date']['input']>;
+  /** List of subject IDs to associate with the course */
+  subjectIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   /** The subtitle of this course */
   subtitle?: InputMaybe<Scalars['String']['input']>;
 };
