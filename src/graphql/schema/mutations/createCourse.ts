@@ -35,6 +35,7 @@ const createCourse: GraphQLFieldConfig<null, ContextType> = {
         external_resource_link,
         external_meeting_link,
         start_date,
+        subjectIds,
       } = courseInfo;
 
       if (
@@ -108,7 +109,30 @@ const createCourse: GraphQLFieldConfig<null, ContextType> = {
           teacher_id: user.id,
         };
 
-        const [createdCourse] = await db('course').insert(filteredCourseInfo).returning('id');
+        const createdCourse = await db.transaction(async (transaction) => {
+          const [course] = await transaction('course').insert(filteredCourseInfo).returning('id');
+
+          if (subjectIds && subjectIds.length > 0) {
+            // Verify that all subject IDs exist
+            const subjects = await transaction('subject').whereIn('id', subjectIds);
+            if (subjects.length !== subjectIds.length) {
+              return {
+                success: false,
+                errors: [new Error(ErrorType.INVALID_SUBJECTS)],
+                course: null,
+              };
+            }
+
+            for (const subjectId of subjectIds) {
+              await transaction('course__subject').insert({
+                course_id: course.id,
+                subject_id: subjectId,
+              });
+            }
+          }
+
+          return course;
+        });
 
         return {
           success: true,
