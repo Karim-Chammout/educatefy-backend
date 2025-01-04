@@ -1,4 +1,5 @@
 import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
+import { isEqual } from 'lodash';
 
 import {
   CourseLevel,
@@ -42,6 +43,7 @@ const updateCourse: GraphQLFieldConfig<null, ContextType> = {
         external_meeting_link,
         start_date,
         end_date,
+        subjectIds,
       } = updateCourseInfo;
 
       if (!id || (level && !Object.values(CourseLevel).includes(level))) {
@@ -121,10 +123,40 @@ const updateCourse: GraphQLFieldConfig<null, ContextType> = {
           ...(start_date && { start_date }),
         };
 
-        const [updatedCourse] = await db('course')
-          .where('id', course.id)
-          .update({ ...filteredUpdatedCourseInfo, updated_at: db.fn.now() })
-          .returning('*');
+        const updatedCourse = await db.transaction(async (transaction) => {
+          const [courseToUpdate] = await db('course')
+            .where('id', course.id)
+            .update({ ...filteredUpdatedCourseInfo, updated_at: db.fn.now() })
+            .returning('*');
+
+          if (subjectIds && subjectIds.length > 0) {
+            // Verify that all subject IDs exist
+            const subjects = await transaction('subject').whereIn('id', subjectIds);
+            if (subjects.length !== subjectIds.length) {
+              return {
+                success: false,
+                errors: [new Error(ErrorType.INVALID_SUBJECTS)],
+                course: null,
+              };
+            }
+
+            // Only update the "course__subject" table if the subject IDs have changed
+            const existingSubjects = await loaders.Subject.loadByCourseId(course.id);
+            const existingSubjectIds = existingSubjects.map((subject) => String(subject.id));
+            if (!isEqual(subjectIds, existingSubjectIds)) {
+              await transaction('course__subject').where('course_id', course.id).del();
+
+              for (const subjectId of subjectIds) {
+                await transaction('course__subject').insert({
+                  course_id: course.id,
+                  subject_id: subjectId,
+                });
+              }
+            }
+          }
+
+          return courseToUpdate;
+        });
 
         loaders.Course.loaders.byIdLoader.clear(course.id);
 
