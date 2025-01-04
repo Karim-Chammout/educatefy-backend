@@ -2,6 +2,7 @@ import {
   GraphQLBoolean,
   GraphQLID,
   GraphQLInputObjectType,
+  GraphQLList,
   GraphQLNonNull,
   GraphQLString,
 } from 'graphql';
@@ -64,6 +65,10 @@ const UpdateCourseInfoInput = new GraphQLInputObjectType({
     end_date: {
       type: GraphQLDate,
       description: 'The end date of the course',
+    },
+    subjectIds: {
+      type: new GraphQLList(new GraphQLNonNull(GraphQLID)),
+      description: 'List of subject IDs to associate with the course',
     },
   },
 });
