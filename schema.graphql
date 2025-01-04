@@ -350,6 +350,9 @@ input CourseInfoInput {
 
   """The end date of the course."""
   end_date: Date
+
+  """List of subject IDs to associate with the course"""
+  subjectIds: [ID!]
 }
 
 """The result of a mutation."""
@@ -437,6 +440,9 @@ input UpdateCourseInfoInput {
 
   """The end date of the course"""
   end_date: Date
+
+  """List of subject IDs to associate with the course"""
+  subjectIds: [ID!]
 }
 
 """The result of the updateProfile mutation."""
