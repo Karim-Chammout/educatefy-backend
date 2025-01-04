@@ -1,4 +1,11 @@
-import { GraphQLBoolean, GraphQLInputObjectType, GraphQLNonNull, GraphQLString } from 'graphql';
+import {
+  GraphQLBoolean,
+  GraphQLID,
+  GraphQLInputObjectType,
+  GraphQLList,
+  GraphQLNonNull,
+  GraphQLString,
+} from 'graphql';
 
 import GraphQLDate from '../Scalars/Date';
 import CourseLevel from '../types/enum/CourseLevel';
@@ -54,6 +61,10 @@ const CourseInfoInput = new GraphQLInputObjectType({
     end_date: {
       type: GraphQLDate,
       description: 'The end date of the course.',
+    },
+    subjectIds: {
+      type: new GraphQLList(new GraphQLNonNull(GraphQLID)),
+      description: 'List of subject IDs to associate with the course',
     },
   },
 });
