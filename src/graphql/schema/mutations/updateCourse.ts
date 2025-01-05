@@ -45,6 +45,7 @@ const updateCourse: GraphQLFieldConfig<null, ContextType> = {
         end_date,
         subjectIds,
         objectives,
+        requirements,
       } = updateCourseInfo;
 
       if (!id || (level && !Object.values(CourseLevel).includes(level))) {
@@ -171,6 +172,26 @@ const updateCourse: GraphQLFieldConfig<null, ContextType> = {
                 await transaction('course_objective').insert({
                   course_id: course.id,
                   objective: objectiveItem.objective,
+                });
+              }
+            }
+          }
+
+          if (requirements && requirements.length > 0) {
+            // Only update the "course_requirement" table if the requirements have changed
+            const existingRequirements = await loaders.CourseObjective.loadByCourseId(course.id);
+            const existingRequirementIds = existingRequirements.map((requirement) =>
+              String(requirement.id),
+            );
+            const newRequirementIds = requirements.map((requirement) => requirement.id);
+
+            if (!isEqual(existingRequirementIds, newRequirementIds)) {
+              await transaction('course_requirement').where('course_id', course.id).del();
+
+              for (const requirementItem of requirements) {
+                await transaction('course_requirement').insert({
+                  course_id: course.id,
+                  requirement: requirementItem.requirement,
                 });
               }
             }
