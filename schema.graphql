@@ -188,6 +188,9 @@ type Course {
 
   """The objectives of this course."""
   objectives: [CourseObjective!]!
+
+  """The requirements of this course."""
+  requirements: [CourseRequirement!]!
 }
 
 """The difficulty level of a course."""
@@ -204,6 +207,15 @@ type CourseObjective {
 
   """The objective of this course."""
   objective: String!
+}
+
+"""The course requirement info"""
+type CourseRequirement {
+  """A unique id of this course requirement."""
+  id: ID!
+
+  """The requirement of this course."""
+  requirement: String!
 }
 
 """The open id client providers to use for auth"""
@@ -368,6 +380,9 @@ input CourseInfoInput {
 
   """List of objectives for the course"""
   objectives: [String!]
+
+  """List of requirements for the course"""
+  requirements: [String!]
 }
 
 """The result of a mutation."""
@@ -461,6 +476,9 @@ input UpdateCourseInfoInput {
 
   """List of objectives for the course"""
   objectives: [CourseObjectiveInput!]
+
+  """List of requirements for the course"""
+  requirements: [CourseRequirementInput!]
 }
 
 """Input for a course objective record."""
@@ -470,6 +488,15 @@ input CourseObjectiveInput {
 
   """The objective of this course."""
   objective: String!
+}
+
+"""Input for a course requirement record."""
+input CourseRequirementInput {
+  """A unique id of this course requirement."""
+  id: ID!
+
+  """The requirement of this course."""
+  requirement: String!
 }
 
 """The result of the updateProfile mutation."""
