@@ -136,6 +136,8 @@ export type Course = {
   language: Scalars['String']['output'];
   /** The difficulty level of this course. */
   level: CourseLevel;
+  /** The objectives of this course. */
+  objectives: Array<CourseObjective>;
   /** A unique slug of this course. */
   slug: Scalars['String']['output'];
   /** The start date of the course */
@@ -168,6 +170,8 @@ export type CourseInfoInput = {
   language: Scalars['String']['input'];
   /** The difficulty level of this course. */
   level: CourseLevel;
+  /** List of objectives for the course */
+  objectives?: InputMaybe<Array<Scalars['String']['input']>>;
   /** The slug of this course. */
   slug: Scalars['String']['input'];
   /** The start date of the course. */
@@ -184,6 +188,23 @@ export enum CourseLevel {
   Beginner = 'beginner',
   Intermediate = 'intermediate'
 }
+
+/** The course objective info */
+export type CourseObjective = {
+  __typename?: 'CourseObjective';
+  /** A unique id of this course objective. */
+  id: Scalars['ID']['output'];
+  /** The objective of this course. */
+  objective: Scalars['String']['output'];
+};
+
+/** Input for a course objective record. */
+export type CourseObjectiveInput = {
+  /** A unique id of this course objective. */
+  id: Scalars['ID']['input'];
+  /** The objective of this course. */
+  objective: Scalars['String']['input'];
+};
 
 /** The result of the creating or updating a course. */
 export type CreateOrUpdateCourseResult = {
@@ -405,6 +426,8 @@ export type UpdateCourseInfoInput = {
   language?: InputMaybe<Scalars['String']['input']>;
   /** The difficulty level of this course */
   level?: InputMaybe<CourseLevel>;
+  /** List of objectives for the course */
+  objectives?: InputMaybe<Array<CourseObjectiveInput>>;
   /** The slug of this course */
   slug?: InputMaybe<Scalars['String']['input']>;
   /** The start date of the course */
