@@ -25,6 +25,21 @@ const CourseObjectiveInput = new GraphQLInputObjectType({
   },
 });
 
+const CourseRequirementInput = new GraphQLInputObjectType({
+  name: 'CourseRequirementInput',
+  description: 'Input for a course requirement record.',
+  fields: {
+    id: {
+      type: new GraphQLNonNull(GraphQLID),
+      description: 'A unique id of this course requirement.',
+    },
+    requirement: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The requirement of this course.',
+    },
+  },
+});
+
 const UpdateCourseInfoInput = new GraphQLInputObjectType({
   name: 'UpdateCourseInfoInput',
   description: 'Input for updating a course record.',
@@ -88,6 +103,10 @@ const UpdateCourseInfoInput = new GraphQLInputObjectType({
     objectives: {
       type: new GraphQLList(new GraphQLNonNull(CourseObjectiveInput)),
       description: 'List of objectives for the course',
+    },
+    requirements: {
+      type: new GraphQLList(new GraphQLNonNull(CourseRequirementInput)),
+      description: 'List of requirements for the course',
     },
   },
 });
