@@ -66,6 +66,10 @@ const CourseInfoInput = new GraphQLInputObjectType({
       type: new GraphQLList(new GraphQLNonNull(GraphQLID)),
       description: 'List of subject IDs to associate with the course',
     },
+    objectives: {
+      type: new GraphQLList(new GraphQLNonNull(GraphQLString)),
+      description: 'List of objectives for the course',
+    },
   },
 });
 
