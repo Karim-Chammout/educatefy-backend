@@ -138,6 +138,8 @@ export type Course = {
   level: CourseLevel;
   /** The objectives of this course. */
   objectives: Array<CourseObjective>;
+  /** The requirements of this course. */
+  requirements: Array<CourseRequirement>;
   /** A unique slug of this course. */
   slug: Scalars['String']['output'];
   /** The start date of the course */
@@ -172,6 +174,8 @@ export type CourseInfoInput = {
   level: CourseLevel;
   /** List of objectives for the course */
   objectives?: InputMaybe<Array<Scalars['String']['input']>>;
+  /** List of requirements for the course */
+  requirements?: InputMaybe<Array<Scalars['String']['input']>>;
   /** The slug of this course. */
   slug: Scalars['String']['input'];
   /** The start date of the course. */
@@ -204,6 +208,23 @@ export type CourseObjectiveInput = {
   id: Scalars['ID']['input'];
   /** The objective of this course. */
   objective: Scalars['String']['input'];
+};
+
+/** The course requirement info */
+export type CourseRequirement = {
+  __typename?: 'CourseRequirement';
+  /** A unique id of this course requirement. */
+  id: Scalars['ID']['output'];
+  /** The requirement of this course. */
+  requirement: Scalars['String']['output'];
+};
+
+/** Input for a course requirement record. */
+export type CourseRequirementInput = {
+  /** A unique id of this course requirement. */
+  id: Scalars['ID']['input'];
+  /** The requirement of this course. */
+  requirement: Scalars['String']['input'];
 };
 
 /** The result of the creating or updating a course. */
@@ -428,6 +449,8 @@ export type UpdateCourseInfoInput = {
   level?: InputMaybe<CourseLevel>;
   /** List of objectives for the course */
   objectives?: InputMaybe<Array<CourseObjectiveInput>>;
+  /** List of requirements for the course */
+  requirements?: InputMaybe<Array<CourseRequirementInput>>;
   /** The slug of this course */
   slug?: InputMaybe<Scalars['String']['input']>;
   /** The start date of the course */
