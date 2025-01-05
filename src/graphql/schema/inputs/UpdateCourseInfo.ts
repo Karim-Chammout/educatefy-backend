@@ -10,6 +10,21 @@ import {
 import GraphQLDate from '../Scalars/Date';
 import CourseLevel from '../types/enum/CourseLevel';
 
+const CourseObjectiveInput = new GraphQLInputObjectType({
+  name: 'CourseObjectiveInput',
+  description: 'Input for a course objective record.',
+  fields: {
+    id: {
+      type: new GraphQLNonNull(GraphQLID),
+      description: 'A unique id of this course objective.',
+    },
+    objective: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The objective of this course.',
+    },
+  },
+});
+
 const UpdateCourseInfoInput = new GraphQLInputObjectType({
   name: 'UpdateCourseInfoInput',
   description: 'Input for updating a course record.',
@@ -69,6 +84,10 @@ const UpdateCourseInfoInput = new GraphQLInputObjectType({
     subjectIds: {
       type: new GraphQLList(new GraphQLNonNull(GraphQLID)),
       description: 'List of subject IDs to associate with the course',
+    },
+    objectives: {
+      type: new GraphQLList(new GraphQLNonNull(CourseObjectiveInput)),
+      description: 'List of objectives for the course',
     },
   },
 });
