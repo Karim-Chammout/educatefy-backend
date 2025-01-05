@@ -7,13 +7,14 @@ import {
   GraphQLString,
 } from 'graphql';
 
-import { Course as CourseType } from '../../../types/db-generated-types';
+import { Course as CourseType, EnrollmentStatusType } from '../../../types/db-generated-types';
 import { ContextType } from '../../../types/types';
 import { getImageURL } from '../../../utils/getImageURL';
 import GraphQLDate from '../Scalars/Date';
 import { CourseObjective } from './CourseObjective';
 import { CourseRequirement } from './CourseRequirement';
 import CourseLevel from './enum/CourseLevel';
+import CourseStatus from './enum/CourseStatus';
 import { Subject } from './Subject';
 
 export const Course: GraphQLObjectType = new GraphQLObjectType<CourseType, ContextType>({
@@ -87,6 +88,23 @@ export const Course: GraphQLObjectType = new GraphQLObjectType<CourseType, Conte
     updated_at: {
       type: new GraphQLNonNull(GraphQLDate),
       description: 'The date of when this course was last updated.',
+    },
+    status: {
+      type: new GraphQLNonNull(CourseStatus),
+      description: 'The status of the course for the current user',
+      resolve: async (parent, _, { user, loaders }) => {
+        if (!user.authenticated) {
+          return EnrollmentStatusType.Available;
+        }
+
+        const enrollment = await loaders.Enrollment.loadByAccountIdAndCourseId(user.id, parent.id);
+
+        if (!enrollment || (enrollment && enrollment.status === EnrollmentStatusType.Unenrolled)) {
+          return EnrollmentStatusType.Available;
+        }
+
+        return enrollment.status;
+      },
     },
     subjects: {
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Subject))),
