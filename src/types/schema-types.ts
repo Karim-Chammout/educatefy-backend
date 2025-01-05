@@ -144,6 +144,8 @@ export type Course = {
   slug: Scalars['String']['output'];
   /** The start date of the course */
   start_date?: Maybe<Scalars['Date']['output']>;
+  /** The status of the course for the current user */
+  status: CourseStatus;
   /** The subjects linked to this course. */
   subjects: Array<Subject>;
   /** The subtitle of this course. */
@@ -227,6 +229,26 @@ export type CourseRequirementInput = {
   requirement: Scalars['String']['input'];
 };
 
+/** The status of the course for the current user. */
+export enum CourseStatus {
+  /** This course is available for enrollment. */
+  Available = 'available',
+  /** This course has been completed by the user. */
+  Completed = 'completed',
+  /** The user is currently enrolled in this course. */
+  Enrolled = 'enrolled',
+  /** The user unenrolled from this course. */
+  Unenrolled = 'unenrolled'
+}
+
+/** Input for updating a course status. */
+export type CourseStatusInput = {
+  /** The ID of the course */
+  id: Scalars['ID']['input'];
+  /** The new status of the course */
+  status: CourseStatus;
+};
+
 /** The result of the creating or updating a course. */
 export type CreateOrUpdateCourseResult = {
   __typename?: 'CreateOrUpdateCourseResult';
@@ -277,6 +299,8 @@ export type Mutation = {
   updateAccountInfo?: Maybe<MutationResult>;
   /** Updates a course. */
   updateCourse?: Maybe<CreateOrUpdateCourseResult>;
+  /** Updates the status of a course. */
+  updateCourseStatus?: Maybe<UpdateCourseStatusResult>;
   /** Updates a user profile details. */
   updateProfile?: Maybe<UpdateProfileResult>;
 };
@@ -304,6 +328,11 @@ export type MutationUpdateAccountInfoArgs = {
 
 export type MutationUpdateCourseArgs = {
   updateCourseInfo: UpdateCourseInfoInput;
+};
+
+
+export type MutationUpdateCourseStatusArgs = {
+  courseStatusInput: CourseStatusInput;
 };
 
 
@@ -459,6 +488,17 @@ export type UpdateCourseInfoInput = {
   subjectIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   /** The subtitle of this course */
   subtitle?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** The result of the updateCourseStatus mutation. */
+export type UpdateCourseStatusResult = {
+  __typename?: 'UpdateCourseStatusResult';
+  /** The updated course information. */
+  course?: Maybe<Course>;
+  /** A list of errors that occurred executing this mutation. */
+  errors: Array<Error>;
+  /** Indicates if the mutation was successful. */
+  success: Scalars['Boolean']['output'];
 };
 
 /** The result of the updateProfile mutation. */
