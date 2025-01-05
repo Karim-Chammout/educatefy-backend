@@ -7,6 +7,13 @@ export enum CourseLevelEnumType {
   Advanced = "advanced",
 }
 
+export enum EnrollmentStatusType {
+  Available = "available",
+  Enrolled = "enrolled",
+  Unenrolled = "unenrolled",
+  Completed = "completed",
+}
+
 export enum GenderType {
   Male = "male",
   Female = "female",
@@ -22,6 +29,8 @@ export enum Table {
   CourseSubject = "course__subject",
   CourseObjective = "course_objective",
   CourseRequirement = "course_requirement",
+  Enrollment = "enrollment",
+  EnrollmentHistory = "enrollment_history",
   File = "file",
   Language = "language",
   Migrations = "migrations",
@@ -40,6 +49,8 @@ export type Tables = {
   "course__subject": CourseSubject,
   "course_objective": CourseObjective,
   "course_requirement": CourseRequirement,
+  "enrollment": Enrollment,
+  "enrollment_history": EnrollmentHistory,
   "file": File,
   "language": Language,
   "migrations": Migrations,
@@ -131,6 +142,24 @@ export type CourseRequirement = {
   id: number;
   course_id: number;
   requirement: string;
+};
+
+export type Enrollment = {
+  id: number;
+  course_id: number;
+  account_id: number;
+  status: EnrollmentStatusType;
+  created_at: Date;
+  updated_at: Date;
+};
+
+export type EnrollmentHistory = {
+  id: number;
+  enrollment_id: number;
+  old_status: EnrollmentStatusType;
+  new_status: EnrollmentStatusType;
+  created_at: Date;
+  updated_at: Date;
 };
 
 export type File = {
