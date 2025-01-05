@@ -9,6 +9,7 @@ import { CourseObjectiveReader } from './loaders/CourseObjective';
 import { CourseRequirementReader } from './loaders/CourseRequirement';
 import { CourseSubjectReader } from './loaders/CourseSubject';
 import { EnrollmentReader } from './loaders/Enrollment';
+import { EnrollmentHistoryReader } from './loaders/EnrollmentHistory';
 import { FileReader } from './loaders/File';
 import { LanguageReader } from './loaders/Language';
 import { OpenidClientReader } from './loaders/OpenidClient';
@@ -24,6 +25,7 @@ export type ReadersType = {
   CourseRequirement: CourseRequirementReader;
   CourseSubject: CourseSubjectReader;
   Enrollment: EnrollmentReader;
+  EnrollmentHistory: EnrollmentHistoryReader;
   File: FileReader;
   Language: LanguageReader;
   OpenidClient: OpenidClientReader;
@@ -41,6 +43,7 @@ export function createLoaders(db: Knex): ReadersType {
     CourseRequirement: new CourseRequirementReader(db),
     CourseSubject: new CourseSubjectReader(db),
     Enrollment: new EnrollmentReader(db),
+    EnrollmentHistory: new EnrollmentHistoryReader(db),
     File: new FileReader(db),
     Language: new LanguageReader(db),
     OpenidClient: new OpenidClientReader(db),
