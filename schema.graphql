@@ -185,6 +185,9 @@ type Course {
 
   """The subjects linked to this course."""
   subjects: [Subject!]!
+
+  """The objectives of this course."""
+  objectives: [CourseObjective!]!
 }
 
 """The difficulty level of a course."""
@@ -192,6 +195,15 @@ enum CourseLevel {
   beginner
   intermediate
   advanced
+}
+
+"""The course objective info"""
+type CourseObjective {
+  """A unique id of this course objective."""
+  id: ID!
+
+  """The objective of this course."""
+  objective: String!
 }
 
 """The open id client providers to use for auth"""
@@ -353,6 +365,9 @@ input CourseInfoInput {
 
   """List of subject IDs to associate with the course"""
   subjectIds: [ID!]
+
+  """List of objectives for the course"""
+  objectives: [String!]
 }
 
 """The result of a mutation."""
@@ -443,6 +458,18 @@ input UpdateCourseInfoInput {
 
   """List of subject IDs to associate with the course"""
   subjectIds: [ID!]
+
+  """List of objectives for the course"""
+  objectives: [CourseObjectiveInput!]
+}
+
+"""Input for a course objective record."""
+input CourseObjectiveInput {
+  """A unique id of this course objective."""
+  id: ID!
+
+  """The objective of this course."""
+  objective: String!
 }
 
 """The result of the updateProfile mutation."""
