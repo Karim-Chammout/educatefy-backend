@@ -44,6 +44,7 @@ const updateCourse: GraphQLFieldConfig<null, ContextType> = {
         start_date,
         end_date,
         subjectIds,
+        objectives,
       } = updateCourseInfo;
 
       if (!id || (level && !Object.values(CourseLevel).includes(level))) {
@@ -150,6 +151,26 @@ const updateCourse: GraphQLFieldConfig<null, ContextType> = {
                 await transaction('course__subject').insert({
                   course_id: course.id,
                   subject_id: subjectId,
+                });
+              }
+            }
+          }
+
+          if (objectives && objectives.length > 0) {
+            // Only update the "course_objective" table if the objectives have changed
+            const existingObjectives = await loaders.CourseObjective.loadByCourseId(course.id);
+            const existingObjectiveIds = existingObjectives.map((objective) =>
+              String(objective.id),
+            );
+            const newObjectiveIds = objectives.map((objective) => objective.id);
+
+            if (!isEqual(existingObjectiveIds, newObjectiveIds)) {
+              await transaction('course_objective').where('course_id', course.id).del();
+
+              for (const objectiveItem of objectives) {
+                await transaction('course_objective').insert({
+                  course_id: course.id,
+                  objective: objectiveItem.objective,
                 });
               }
             }
