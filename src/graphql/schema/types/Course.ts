@@ -12,6 +12,7 @@ import { ContextType } from '../../../types/types';
 import { getImageURL } from '../../../utils/getImageURL';
 import GraphQLDate from '../Scalars/Date';
 import { CourseObjective } from './CourseObjective';
+import { CourseRequirement } from './CourseRequirement';
 import CourseLevel from './enum/CourseLevel';
 import { Subject } from './Subject';
 
@@ -111,6 +112,19 @@ export const Course: GraphQLObjectType = new GraphQLObjectType<CourseType, Conte
         }
 
         return courseObjectives;
+      },
+    },
+    requirements: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(CourseRequirement))),
+      description: 'The requirements of this course.',
+      resolve: async (parent, _, { loaders }) => {
+        const courseRequirements = await loaders.CourseRequirement.loadByCourseId(parent.id);
+
+        if (!courseRequirements || courseRequirements.length === 0) {
+          return [];
+        }
+
+        return courseRequirements;
       },
     },
   }),
