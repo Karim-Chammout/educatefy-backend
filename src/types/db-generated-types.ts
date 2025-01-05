@@ -20,6 +20,7 @@ export enum Table {
   Country = "country",
   Course = "course",
   CourseSubject = "course__subject",
+  CourseObjective = "course_objective",
   File = "file",
   Language = "language",
   Migrations = "migrations",
@@ -36,6 +37,7 @@ export type Tables = {
   "country": Country,
   "course": Course,
   "course__subject": CourseSubject,
+  "course_objective": CourseObjective,
   "file": File,
   "language": Language,
   "migrations": Migrations,
@@ -115,6 +117,12 @@ export type CourseSubject = {
   id: number;
   course_id: number;
   subject_id: number;
+};
+
+export type CourseObjective = {
+  id: number;
+  course_id: number;
+  objective: string;
 };
 
 export type File = {
