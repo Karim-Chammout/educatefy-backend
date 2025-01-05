@@ -37,6 +37,7 @@ const createCourse: GraphQLFieldConfig<null, ContextType> = {
         start_date,
         subjectIds,
         objectives,
+        requirements,
       } = courseInfo;
 
       if (
@@ -137,6 +138,15 @@ const createCourse: GraphQLFieldConfig<null, ContextType> = {
               await transaction('course_objective').insert({
                 course_id: course.id,
                 objective: objective,
+              });
+            }
+          }
+
+          if (requirements && requirements.length > 0) {
+            for (const requirement of requirements) {
+              await transaction('course_requirement').insert({
+                course_id: course.id,
+                requirement: requirement,
               });
             }
           }
