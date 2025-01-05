@@ -183,6 +183,9 @@ type Course {
   """The date of when this course was last updated."""
   updated_at: Date!
 
+  """The status of the course for the current user"""
+  status: CourseStatus!
+
   """The subjects linked to this course."""
   subjects: [Subject!]!
 
@@ -198,6 +201,21 @@ enum CourseLevel {
   beginner
   intermediate
   advanced
+}
+
+"""The status of the course for the current user."""
+enum CourseStatus {
+  """This course is available for enrollment."""
+  available
+
+  """The user is currently enrolled in this course."""
+  enrolled
+
+  """The user unenrolled from this course."""
+  unenrolled
+
+  """This course has been completed by the user."""
+  completed
 }
 
 """The course objective info"""
@@ -281,6 +299,12 @@ type Mutation {
     """The course information to be updated."""
     updateCourseInfo: UpdateCourseInfoInput!
   ): CreateOrUpdateCourseResult
+
+  """Updates the status of a course."""
+  updateCourseStatus(
+    """The course status to update"""
+    courseStatusInput: CourseStatusInput!
+  ): UpdateCourseStatusResult
 
   """Updates a user profile details."""
   updateProfile(
@@ -497,6 +521,27 @@ input CourseRequirementInput {
 
   """The requirement of this course."""
   requirement: String!
+}
+
+"""The result of the updateCourseStatus mutation."""
+type UpdateCourseStatusResult {
+  """Indicates if the mutation was successful."""
+  success: Boolean!
+
+  """A list of errors that occurred executing this mutation."""
+  errors: [Error!]!
+
+  """The updated course information."""
+  course: Course
+}
+
+"""Input for updating a course status."""
+input CourseStatusInput {
+  """The ID of the course"""
+  id: ID!
+
+  """The new status of the course"""
+  status: CourseStatus!
 }
 
 """The result of the updateProfile mutation."""
