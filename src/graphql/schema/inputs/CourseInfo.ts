@@ -70,6 +70,10 @@ const CourseInfoInput = new GraphQLInputObjectType({
       type: new GraphQLList(new GraphQLNonNull(GraphQLString)),
       description: 'List of objectives for the course',
     },
+    requirements: {
+      type: new GraphQLList(new GraphQLNonNull(GraphQLString)),
+      description: 'List of requirements for the course',
+    },
   },
 });
 
