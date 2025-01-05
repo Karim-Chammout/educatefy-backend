@@ -11,6 +11,7 @@ import { Course as CourseType } from '../../../types/db-generated-types';
 import { ContextType } from '../../../types/types';
 import { getImageURL } from '../../../utils/getImageURL';
 import GraphQLDate from '../Scalars/Date';
+import { CourseObjective } from './CourseObjective';
 import CourseLevel from './enum/CourseLevel';
 import { Subject } from './Subject';
 
@@ -97,6 +98,19 @@ export const Course: GraphQLObjectType = new GraphQLObjectType<CourseType, Conte
         }
 
         return subjects;
+      },
+    },
+    objectives: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(CourseObjective))),
+      description: 'The objectives of this course.',
+      resolve: async (parent, _, { loaders }) => {
+        const courseObjectives = await loaders.CourseObjective.loadByCourseId(parent.id);
+
+        if (!courseObjectives || courseObjectives.length === 0) {
+          return [];
+        }
+
+        return courseObjectives;
       },
     },
   }),
