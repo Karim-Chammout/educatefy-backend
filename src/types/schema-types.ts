@@ -260,6 +260,17 @@ export type CreateOrUpdateCourseResult = {
   success: Scalars['Boolean']['output'];
 };
 
+/** The result of the creating or updating mutation. */
+export type CreateOrUpdateLessonResult = {
+  __typename?: 'CreateOrUpdateLessonResult';
+  /** A list of errors that occurred executing this mutation. */
+  errors: Array<Error>;
+  /** The created or updated lesson. */
+  lesson?: Maybe<Lesson>;
+  /** Indicates if the mutation was successful. */
+  success: Scalars['Boolean']['output'];
+};
+
 /** An object type that wraps an error */
 export type Error = {
   __typename?: 'Error';
@@ -285,14 +296,43 @@ export type Language = {
   id: Scalars['ID']['output'];
 };
 
+/** The lesson info */
+export type Lesson = {
+  __typename?: 'Lesson';
+  /** The denomination of this lesson. */
+  denomination: Scalars['String']['output'];
+  /** The duration of this lesson. */
+  duration: Scalars['Int']['output'];
+  /** A unique id of this lesson. */
+  id: Scalars['ID']['output'];
+  /** A flag to indicate whether this lesson is published or not */
+  is_published: Scalars['Boolean']['output'];
+};
+
+/** Input for createing a lesson record. */
+export type LessonInfoInput = {
+  /** The ID of the course. */
+  courseId: Scalars['ID']['input'];
+  /** The denomination of this lesson. */
+  denomination: Scalars['String']['input'];
+  /** The duration of the lesson in minutes. */
+  duration: Scalars['Int']['input'];
+  /** A flag to indicate whether this lesson is published or not. */
+  is_published: Scalars['Boolean']['input'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   /** Change the profile picture of a user. */
   changeProfilePicture?: Maybe<ChangeProfilePictureResult>;
   /** Creates a course. */
   createCourse?: Maybe<CreateOrUpdateCourseResult>;
+  /** Creates a lesson. */
+  createLesson?: Maybe<CreateOrUpdateLessonResult>;
   /** Deletes a course. */
   deleteCourse?: Maybe<MutationResult>;
+  /** Deletes a lesson. */
+  deleteLesson?: Maybe<MutationResult>;
   /** Remove the profile picture of a user. */
   removeProfilePicture?: Maybe<ChangeProfilePictureResult>;
   /** Updates a user account information. */
@@ -301,6 +341,8 @@ export type Mutation = {
   updateCourse?: Maybe<CreateOrUpdateCourseResult>;
   /** Updates the status of a course. */
   updateCourseStatus?: Maybe<UpdateCourseStatusResult>;
+  /** Updates a lesson. */
+  updateLesson?: Maybe<CreateOrUpdateLessonResult>;
   /** Updates a user profile details. */
   updateProfile?: Maybe<UpdateProfileResult>;
 };
@@ -316,7 +358,17 @@ export type MutationCreateCourseArgs = {
 };
 
 
+export type MutationCreateLessonArgs = {
+  lessonInfo: LessonInfoInput;
+};
+
+
 export type MutationDeleteCourseArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationDeleteLessonArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -333,6 +385,11 @@ export type MutationUpdateCourseArgs = {
 
 export type MutationUpdateCourseStatusArgs = {
   courseStatusInput: CourseStatusInput;
+};
+
+
+export type MutationUpdateLessonArgs = {
+  lessonInfo: UpdateLessonInfoInput;
 };
 
 
@@ -499,6 +556,18 @@ export type UpdateCourseStatusResult = {
   errors: Array<Error>;
   /** Indicates if the mutation was successful. */
   success: Scalars['Boolean']['output'];
+};
+
+/** Input for updating a lesson record. */
+export type UpdateLessonInfoInput = {
+  /** The denomination of this lesson. */
+  denomination?: InputMaybe<Scalars['String']['input']>;
+  /** The duration of the lesson in minutes. */
+  duration?: InputMaybe<Scalars['Int']['input']>;
+  /** The ID of the lesson. */
+  id: Scalars['ID']['input'];
+  /** A flag to indicate whether this lesson is published or not. */
+  is_published?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 /** The result of the updateProfile mutation. */
