@@ -279,9 +279,21 @@ type Mutation {
     courseInfo: CourseInfoInput!
   ): CreateOrUpdateCourseResult
 
+  """Creates a lesson."""
+  createLesson(
+    """The lesson information"""
+    lessonInfo: LessonInfoInput!
+  ): CreateOrUpdateLessonResult
+
   """Deletes a course."""
   deleteCourse(
     """The ID of the course to delete."""
+    id: ID!
+  ): MutationResult
+
+  """Deletes a lesson."""
+  deleteLesson(
+    """The ID of the lesson to delete."""
     id: ID!
   ): MutationResult
 
@@ -305,6 +317,12 @@ type Mutation {
     """The course status to update"""
     courseStatusInput: CourseStatusInput!
   ): UpdateCourseStatusResult
+
+  """Updates a lesson."""
+  updateLesson(
+    """The lesson information"""
+    lessonInfo: UpdateLessonInfoInput!
+  ): CreateOrUpdateLessonResult
 
   """Updates a user profile details."""
   updateProfile(
@@ -407,6 +425,48 @@ input CourseInfoInput {
 
   """List of requirements for the course"""
   requirements: [String!]
+}
+
+"""The result of the creating or updating mutation."""
+type CreateOrUpdateLessonResult {
+  """Indicates if the mutation was successful."""
+  success: Boolean!
+
+  """A list of errors that occurred executing this mutation."""
+  errors: [Error!]!
+
+  """The created or updated lesson."""
+  lesson: Lesson
+}
+
+"""The lesson info"""
+type Lesson {
+  """A unique id of this lesson."""
+  id: ID!
+
+  """The denomination of this lesson."""
+  denomination: String!
+
+  """The duration of this lesson."""
+  duration: Int!
+
+  """A flag to indicate whether this lesson is published or not"""
+  is_published: Boolean!
+}
+
+"""Input for createing a lesson record."""
+input LessonInfoInput {
+  """The ID of the course."""
+  courseId: ID!
+
+  """The denomination of this lesson."""
+  denomination: String!
+
+  """A flag to indicate whether this lesson is published or not."""
+  is_published: Boolean!
+
+  """The duration of the lesson in minutes."""
+  duration: Int!
 }
 
 """The result of a mutation."""
@@ -542,6 +602,21 @@ input CourseStatusInput {
 
   """The new status of the course"""
   status: CourseStatus!
+}
+
+"""Input for updating a lesson record."""
+input UpdateLessonInfoInput {
+  """The ID of the lesson."""
+  id: ID!
+
+  """The denomination of this lesson."""
+  denomination: String
+
+  """A flag to indicate whether this lesson is published or not."""
+  is_published: Boolean
+
+  """The duration of the lesson in minutes."""
+  duration: Int
 }
 
 """The result of the updateProfile mutation."""
