@@ -33,6 +33,7 @@ export enum Table {
   EnrollmentHistory = "enrollment_history",
   File = "file",
   Language = "language",
+  Lesson = "lesson",
   Migrations = "migrations",
   MigrationsLock = "migrations_lock",
   OpenidClient = "openid_client",
@@ -53,6 +54,7 @@ export type Tables = {
   "enrollment_history": EnrollmentHistory,
   "file": File,
   "language": Language,
+  "lesson": Lesson,
   "migrations": Migrations,
   "migrations_lock": MigrationsLock,
   "openid_client": OpenidClient,
@@ -179,6 +181,18 @@ export type Language = {
   id: number;
   code: string;
   denomination: string;
+};
+
+export type Lesson = {
+  id: number;
+  denomination: string;
+  is_published: boolean;
+  duration: number;
+  course_id: number;
+  teacher_id: number;
+  deleted_at: Date | null;
+  created_at: Date;
+  updated_at: Date;
 };
 
 export type Migrations = {
