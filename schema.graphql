@@ -194,6 +194,9 @@ type Course {
 
   """The requirements of this course."""
   requirements: [CourseRequirement!]!
+
+  """The lessons of this course"""
+  lessons: [Lesson!]!
 }
 
 """The difficulty level of a course."""
@@ -234,6 +237,21 @@ type CourseRequirement {
 
   """The requirement of this course."""
   requirement: String!
+}
+
+"""The lesson info"""
+type Lesson {
+  """A unique id of this lesson."""
+  id: ID!
+
+  """The denomination of this lesson."""
+  denomination: String!
+
+  """The duration of this lesson."""
+  duration: Int!
+
+  """A flag to indicate whether this lesson is published or not"""
+  is_published: Boolean!
 }
 
 """The open id client providers to use for auth"""
@@ -437,21 +455,6 @@ type CreateOrUpdateLessonResult {
 
   """The created or updated lesson."""
   lesson: Lesson
-}
-
-"""The lesson info"""
-type Lesson {
-  """A unique id of this lesson."""
-  id: ID!
-
-  """The denomination of this lesson."""
-  denomination: String!
-
-  """The duration of this lesson."""
-  duration: Int!
-
-  """A flag to indicate whether this lesson is published or not"""
-  is_published: Boolean!
 }
 
 """Input for createing a lesson record."""
