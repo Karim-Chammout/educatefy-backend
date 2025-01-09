@@ -134,6 +134,8 @@ export type Course = {
   is_published: Scalars['Boolean']['output'];
   /** The language of this course */
   language: Scalars['String']['output'];
+  /** The lessons of this course */
+  lessons: Array<Lesson>;
   /** The difficulty level of this course. */
   level: CourseLevel;
   /** The objectives of this course. */
