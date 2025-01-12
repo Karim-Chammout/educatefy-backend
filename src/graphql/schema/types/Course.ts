@@ -15,7 +15,6 @@ import { CourseObjective } from './CourseObjective';
 import { CourseRequirement } from './CourseRequirement';
 import CourseLevel from './enum/CourseLevel';
 import CourseStatus from './enum/CourseStatus';
-import { Lesson } from './Lesson';
 import { Subject } from './Subject';
 
 export const Course: GraphQLObjectType = new GraphQLObjectType<CourseType, ContextType>({
@@ -145,11 +144,6 @@ export const Course: GraphQLObjectType = new GraphQLObjectType<CourseType, Conte
 
         return courseRequirements;
       },
-    },
-    lessons: {
-      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Lesson))),
-      description: 'The lessons of this course',
-      resolve: (parent, _, { loaders }) => loaders.Lesson.loadByCourseId(parent.id),
     },
   }),
 });
