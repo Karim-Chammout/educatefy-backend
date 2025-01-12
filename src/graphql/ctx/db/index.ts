@@ -3,6 +3,7 @@ import { Knex } from 'knex';
 import { AccountReader } from './loaders/Account';
 import { AccountRoleReader } from './loaders/AccountRole';
 import { AccountSubjectReader } from './loaders/AccountSubject';
+import { ContentComponentReader } from './loaders/ContentComponent';
 import { CountryReader } from './loaders/Country';
 import { CourseReader } from './loaders/Course';
 import { CourseObjectiveReader } from './loaders/CourseObjective';
@@ -20,6 +21,7 @@ export type ReadersType = {
   Account: AccountReader;
   AccountRole: AccountRoleReader;
   AccountSubject: AccountSubjectReader;
+  ContentComponent: ContentComponentReader;
   Country: CountryReader;
   Course: CourseReader;
   CourseObjective: CourseObjectiveReader;
@@ -39,6 +41,7 @@ export function createLoaders(db: Knex): ReadersType {
     Account: new AccountReader(db),
     AccountRole: new AccountRoleReader(db),
     AccountSubject: new AccountSubjectReader(db),
+    ContentComponent: new ContentComponentReader(db),
     Country: new CountryReader(db),
     Course: new CourseReader(db),
     CourseObjective: new CourseObjectiveReader(db),
