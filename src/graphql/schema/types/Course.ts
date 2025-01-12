@@ -13,6 +13,7 @@ import { getImageURL } from '../../../utils/getImageURL';
 import GraphQLDate from '../Scalars/Date';
 import { CourseObjective } from './CourseObjective';
 import { CourseRequirement } from './CourseRequirement';
+import { CourseSection } from './CourseSection';
 import CourseLevel from './enum/CourseLevel';
 import CourseStatus from './enum/CourseStatus';
 import { Subject } from './Subject';
@@ -143,6 +144,19 @@ export const Course: GraphQLObjectType = new GraphQLObjectType<CourseType, Conte
         }
 
         return courseRequirements;
+      },
+    },
+    sections: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(CourseSection))),
+      description: 'The sections of this course.',
+      resolve: async (parent, _, { loaders }) => {
+        const sections = await loaders.CourseSection.loadByCourseId(parent.id);
+
+        if (!sections || sections.length === 0) {
+          return [];
+        }
+
+        return sections.filter((section) => section.is_published);
       },
     },
   }),
