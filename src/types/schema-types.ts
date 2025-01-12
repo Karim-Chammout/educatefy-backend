@@ -94,6 +94,9 @@ export type ChangeProfilePictureResult = {
   user?: Maybe<Account>;
 };
 
+/** A content component which can be of various types. */
+export type ContentComponent = TextContent | VideoContent;
+
 /** The country info */
 export type Country = {
   __typename?: 'Country';
@@ -134,14 +137,14 @@ export type Course = {
   is_published: Scalars['Boolean']['output'];
   /** The language of this course */
   language: Scalars['String']['output'];
-  /** The lessons of this course */
-  lessons: Array<Lesson>;
   /** The difficulty level of this course. */
   level: CourseLevel;
   /** The objectives of this course. */
   objectives: Array<CourseObjective>;
   /** The requirements of this course. */
   requirements: Array<CourseRequirement>;
+  /** The sections of this course. */
+  sections: Array<CourseSection>;
   /** A unique slug of this course. */
   slug: Scalars['String']['output'];
   /** The start date of the course */
@@ -231,6 +234,22 @@ export type CourseRequirementInput = {
   requirement: Scalars['String']['input'];
 };
 
+/** The course section info */
+export type CourseSection = {
+  __typename?: 'CourseSection';
+  /** The denomination of this course section */
+  denomination: Scalars['String']['output'];
+  /** A unique id of this course section. */
+  id: Scalars['ID']['output'];
+  /** A flag to indicate whether this course section is published or not */
+  is_published: Scalars['Boolean']['output'];
+  /** The course section items */
+  items: Array<CourseSectionItem>;
+};
+
+/** Course section item which contains the course curriculum (e.g. lesson) */
+export type CourseSectionItem = Lesson;
+
 /** The status of the course for the current user. */
 export enum CourseStatus {
   /** This course is available for enrollment. */
@@ -301,6 +320,8 @@ export type Language = {
 /** The lesson info */
 export type Lesson = {
   __typename?: 'Lesson';
+  /** The content components of this lesson. */
+  components: Array<ContentComponent>;
   /** The denomination of this lesson. */
   denomination: Scalars['String']['output'];
   /** The duration of this lesson. */
@@ -513,6 +534,27 @@ export type Subject = {
   id: Scalars['ID']['output'];
 };
 
+/** A text content component. */
+export type TextContent = {
+  __typename?: 'TextContent';
+  /** The id of the component this text content belongs to. */
+  component_id: Scalars['ID']['output'];
+  /** The text content. */
+  content: Scalars['String']['output'];
+  /** The denomination of the component. */
+  denomination: Scalars['String']['output'];
+  /** A unique id of this text content component. */
+  id: Scalars['ID']['output'];
+  /** A flag indicating whether the component is published */
+  is_published: Scalars['Boolean']['output'];
+  /** A flag indicating whether the component is required to continue. */
+  is_required: Scalars['Boolean']['output'];
+  /** The rank of the component */
+  rank: Scalars['Int']['output'];
+  /** The type of the component. */
+  type: Scalars['String']['output'];
+};
+
 /** Input for updating a course record. */
 export type UpdateCourseInfoInput = {
   /** The denomination of this course */
@@ -581,4 +623,25 @@ export type UpdateProfileResult = {
   success: Scalars['Boolean']['output'];
   /** The updated user information. */
   user?: Maybe<Account>;
+};
+
+/** A video content component. */
+export type VideoContent = {
+  __typename?: 'VideoContent';
+  /** The id of the component this video content belongs to. */
+  component_id: Scalars['ID']['output'];
+  /** The denomination of the component. */
+  denomination: Scalars['String']['output'];
+  /** A unique id of this video content component. */
+  id: Scalars['ID']['output'];
+  /** A flag indicating whether the component is published */
+  is_published: Scalars['Boolean']['output'];
+  /** A flag indicating whether the component is required to continue. */
+  is_required: Scalars['Boolean']['output'];
+  /** The rank of the component */
+  rank: Scalars['Int']['output'];
+  /** The type of the component. */
+  type: Scalars['String']['output'];
+  /** The URL of the video. */
+  url: Scalars['String']['output'];
 };
