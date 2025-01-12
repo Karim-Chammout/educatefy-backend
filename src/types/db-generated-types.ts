@@ -1,10 +1,29 @@
 // The TypeScript definitions below are automatically generated.
 // Do not touch them, or risk, your modifications being lost.
 
+export enum ContentComponentParentTableEnumType {
+  Lesson = "lesson",
+  Course = "course",
+}
+
+export enum ContentComponentTypeEnumType {
+  Text = "text",
+  Video = "video",
+}
+
 export enum CourseLevelEnumType {
   Beginner = "beginner",
   Intermediate = "intermediate",
   Advanced = "advanced",
+}
+
+export enum CourseSectionContentTypeEnumType {
+  Lesson = "lesson",
+  ContentComponent = "content_component",
+}
+
+export enum CourseSectionItemContentTypeEnumType {
+  Lesson = "lesson",
 }
 
 export enum EnrollmentStatusType {
@@ -24,11 +43,14 @@ export enum Table {
   Account = "account",
   AccountSubject = "account__subject",
   AccountRole = "account_role",
+  ContentComponent = "content_component",
   Country = "country",
   Course = "course",
   CourseSubject = "course__subject",
   CourseObjective = "course_objective",
   CourseRequirement = "course_requirement",
+  CourseSection = "course_section",
+  CourseSectionItem = "course_section_item",
   Enrollment = "enrollment",
   EnrollmentHistory = "enrollment_history",
   File = "file",
@@ -39,17 +61,22 @@ export enum Table {
   OpenidClient = "openid_client",
   RefreshToken = "refresh_token",
   Subject = "subject",
+  TextContent = "text_content",
+  VideoContent = "video_content",
 }
 
 export type Tables = {
   "account": Account,
   "account__subject": AccountSubject,
   "account_role": AccountRole,
+  "content_component": ContentComponent,
   "country": Country,
   "course": Course,
   "course__subject": CourseSubject,
   "course_objective": CourseObjective,
   "course_requirement": CourseRequirement,
+  "course_section": CourseSection,
+  "course_section_item": CourseSectionItem,
   "enrollment": Enrollment,
   "enrollment_history": EnrollmentHistory,
   "file": File,
@@ -60,6 +87,8 @@ export type Tables = {
   "openid_client": OpenidClient,
   "refresh_token": RefreshToken,
   "subject": Subject,
+  "text_content": TextContent,
+  "video_content": VideoContent,
 };
 
 export type Account = {
@@ -95,6 +124,19 @@ export type AccountRole = {
   denomination: string;
   code: string;
   description: string;
+  created_at: Date;
+  updated_at: Date;
+};
+
+export type ContentComponent = {
+  id: number;
+  denomination: string;
+  parent_id: number;
+  parent_table: ContentComponentParentTableEnumType;
+  type: ContentComponentTypeEnumType;
+  is_published: boolean;
+  is_required: boolean;
+  rank: number;
   created_at: Date;
   updated_at: Date;
 };
@@ -144,6 +186,26 @@ export type CourseRequirement = {
   id: number;
   course_id: number;
   requirement: string;
+};
+
+export type CourseSection = {
+  id: number;
+  denomination: string;
+  course_id: number;
+  is_published: boolean;
+  rank: number;
+  created_at: Date;
+  updated_at: Date;
+};
+
+export type CourseSectionItem = {
+  id: number;
+  course_section_id: number;
+  content_id: number;
+  content_type: CourseSectionItemContentTypeEnumType;
+  rank: number;
+  created_at: Date;
+  updated_at: Date;
 };
 
 export type Enrollment = {
@@ -233,5 +295,21 @@ export type RefreshToken = {
 export type Subject = {
   id: number;
   denomination: string;
+};
+
+export type TextContent = {
+  id: number;
+  content: string;
+  component_id: number;
+  created_at: Date;
+  updated_at: Date;
+};
+
+export type VideoContent = {
+  id: number;
+  url: string;
+  component_id: number;
+  created_at: Date;
+  updated_at: Date;
 };
 
