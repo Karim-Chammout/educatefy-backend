@@ -195,8 +195,8 @@ type Course {
   """The requirements of this course."""
   requirements: [CourseRequirement!]!
 
-  """The lessons of this course"""
-  lessons: [Lesson!]!
+  """The sections of this course."""
+  sections: [CourseSection!]!
 }
 
 """The difficulty level of a course."""
@@ -239,6 +239,24 @@ type CourseRequirement {
   requirement: String!
 }
 
+"""The course section info"""
+type CourseSection {
+  """A unique id of this course section."""
+  id: ID!
+
+  """The denomination of this course section"""
+  denomination: String!
+
+  """A flag to indicate whether this course section is published or not"""
+  is_published: Boolean!
+
+  """The course section items"""
+  items: [CourseSectionItem!]!
+}
+
+"""Course section item which contains the course curriculum (e.g. lesson)"""
+union CourseSectionItem = Lesson
+
 """The lesson info"""
 type Lesson {
   """A unique id of this lesson."""
@@ -252,6 +270,66 @@ type Lesson {
 
   """A flag to indicate whether this lesson is published or not"""
   is_published: Boolean!
+
+  """The content components of this lesson."""
+  components: [ContentComponent!]!
+}
+
+"""A content component which can be of various types."""
+union ContentComponent = TextContent | VideoContent
+
+"""A text content component."""
+type TextContent {
+  """A unique id of this text content component."""
+  id: ID!
+
+  """The text content."""
+  content: String!
+
+  """The id of the component this text content belongs to."""
+  component_id: ID!
+
+  """The denomination of the component."""
+  denomination: String!
+
+  """The type of the component."""
+  type: String!
+
+  """A flag indicating whether the component is required to continue."""
+  is_required: Boolean!
+
+  """A flag indicating whether the component is published"""
+  is_published: Boolean!
+
+  """The rank of the component"""
+  rank: Int!
+}
+
+"""A video content component."""
+type VideoContent {
+  """A unique id of this video content component."""
+  id: ID!
+
+  """The URL of the video."""
+  url: String!
+
+  """The id of the component this video content belongs to."""
+  component_id: ID!
+
+  """The denomination of the component."""
+  denomination: String!
+
+  """The type of the component."""
+  type: String!
+
+  """A flag indicating whether the component is required to continue."""
+  is_required: Boolean!
+
+  """A flag indicating whether the component is published"""
+  is_published: Boolean!
+
+  """The rank of the component"""
+  rank: Int!
 }
 
 """The open id client providers to use for auth"""
