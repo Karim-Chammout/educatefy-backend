@@ -17,6 +17,7 @@ import { LessonReader } from './loaders/Lesson';
 import { OpenidClientReader } from './loaders/OpenidClient';
 import { SubjectReader } from './loaders/Subject';
 import { TextContentReader } from './loaders/TextContent';
+import { VideoContentReader } from './loaders/VideoContent';
 
 export type ReadersType = {
   Account: AccountReader;
@@ -36,6 +37,7 @@ export type ReadersType = {
   OpenidClient: OpenidClientReader;
   Subject: SubjectReader;
   TextContent: TextContentReader;
+  VideoContent: VideoContentReader;
 };
 
 export function createLoaders(db: Knex): ReadersType {
@@ -57,5 +59,6 @@ export function createLoaders(db: Knex): ReadersType {
     OpenidClient: new OpenidClientReader(db),
     Subject: new SubjectReader(db),
     TextContent: new TextContentReader(db),
+    VideoContent: new VideoContentReader(db),
   };
 }
