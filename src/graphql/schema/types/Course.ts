@@ -156,7 +156,7 @@ export const Course: GraphQLObjectType = new GraphQLObjectType<CourseType, Conte
           return [];
         }
 
-        return sections.filter((section) => section.is_published);
+        return sections.filter((section) => section.is_published).sort((a, b) => a.rank - b.rank);
       },
     },
   }),
