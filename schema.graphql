@@ -250,6 +250,9 @@ type CourseSection {
   """A flag to indicate whether this course section is published or not"""
   is_published: Boolean!
 
+  """The rank of this course section"""
+  rank: Int!
+
   """The course section items"""
   items: [CourseSectionItem!]!
 }
@@ -375,6 +378,12 @@ type Mutation {
     courseInfo: CourseInfoInput!
   ): CreateOrUpdateCourseResult
 
+  """Creates a course section."""
+  createCourseSection(
+    """The course section information"""
+    courseSectionInfo: CourseSectionInfoInput!
+  ): CreateOrUpdateCourseSectionResult
+
   """Creates a lesson."""
   createLesson(
     """The lesson information"""
@@ -384,6 +393,12 @@ type Mutation {
   """Deletes a course."""
   deleteCourse(
     """The ID of the course to delete."""
+    id: ID!
+  ): MutationResult
+
+  """Deletes a course section."""
+  deleteCourseSection(
+    """The ID of the course section to delete."""
     id: ID!
   ): MutationResult
 
@@ -407,6 +422,12 @@ type Mutation {
     """The course information to be updated."""
     updateCourseInfo: UpdateCourseInfoInput!
   ): CreateOrUpdateCourseResult
+
+  """Updates a course section."""
+  updateCourseSection(
+    """The course section information"""
+    courseSectionInfo: UpdateCourseSectionInfo!
+  ): CreateOrUpdateCourseSectionResult
 
   """Updates the status of a course."""
   updateCourseStatus(
@@ -521,6 +542,30 @@ input CourseInfoInput {
 
   """List of requirements for the course"""
   requirements: [String!]
+}
+
+"""The result of the creating or updating a course section."""
+type CreateOrUpdateCourseSectionResult {
+  """Indicates if the mutation was successful."""
+  success: Boolean!
+
+  """A list of errors that occurred executing this mutation."""
+  errors: [Error!]!
+
+  """The created or updated course section."""
+  courseSection: CourseSection
+}
+
+"""Input for createing a course section record."""
+input CourseSectionInfoInput {
+  """The ID of the course."""
+  courseId: ID!
+
+  """The denomination of this course section."""
+  denomination: String!
+
+  """A flag to indicate whether this course section is published or not."""
+  is_published: Boolean!
 }
 
 """The result of the creating or updating mutation."""
@@ -662,6 +707,18 @@ input CourseRequirementInput {
 
   """The requirement of this course."""
   requirement: String!
+}
+
+"""Input for updating a course section record."""
+input UpdateCourseSectionInfo {
+  """The ID of the course section."""
+  id: ID!
+
+  """The denomination of this course section."""
+  denomination: String
+
+  """A flag to indicate whether this course section is published or not."""
+  is_published: Boolean
 }
 
 """The result of the updateCourseStatus mutation."""
