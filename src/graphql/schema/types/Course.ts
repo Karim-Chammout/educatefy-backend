@@ -17,6 +17,7 @@ import { CourseSection } from './CourseSection';
 import CourseLevel from './enum/CourseLevel';
 import CourseStatus from './enum/CourseStatus';
 import { Subject } from './Subject';
+import { hasTeacherRole } from '../../utils/hasTeacherRole';
 
 export const Course: GraphQLObjectType = new GraphQLObjectType<CourseType, ContextType>({
   name: 'Course',
@@ -149,11 +150,18 @@ export const Course: GraphQLObjectType = new GraphQLObjectType<CourseType, Conte
     sections: {
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(CourseSection))),
       description: 'The sections of this course.',
-      resolve: async (parent, _, { loaders }) => {
+      resolve: async (parent, _, { loaders, user }) => {
         const sections = await loaders.CourseSection.loadByCourseId(parent.id);
 
         if (!sections || sections.length === 0) {
           return [];
+        }
+
+        const isTeacher = user.authenticated && (await hasTeacherRole(loaders, user.roleId));
+
+        // Return published & unpublished sections to the teacher account
+        if (isTeacher) {
+          return [...sections].sort((a, b) => a.rank - b.rank);
         }
 
         return sections.filter((section) => section.is_published).sort((a, b) => a.rank - b.rank);
