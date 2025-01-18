@@ -245,6 +245,18 @@ export type CourseSection = {
   is_published: Scalars['Boolean']['output'];
   /** The course section items */
   items: Array<CourseSectionItem>;
+  /** The rank of this course section */
+  rank: Scalars['Int']['output'];
+};
+
+/** Input for createing a course section record. */
+export type CourseSectionInfoInput = {
+  /** The ID of the course. */
+  courseId: Scalars['ID']['input'];
+  /** The denomination of this course section. */
+  denomination: Scalars['String']['input'];
+  /** A flag to indicate whether this course section is published or not. */
+  is_published: Scalars['Boolean']['input'];
 };
 
 /** Course section item which contains the course curriculum (e.g. lesson) */
@@ -275,6 +287,17 @@ export type CreateOrUpdateCourseResult = {
   __typename?: 'CreateOrUpdateCourseResult';
   /** The created or updated course information. */
   course?: Maybe<Course>;
+  /** A list of errors that occurred executing this mutation. */
+  errors: Array<Error>;
+  /** Indicates if the mutation was successful. */
+  success: Scalars['Boolean']['output'];
+};
+
+/** The result of the creating or updating a course section. */
+export type CreateOrUpdateCourseSectionResult = {
+  __typename?: 'CreateOrUpdateCourseSectionResult';
+  /** The created or updated course section. */
+  courseSection?: Maybe<CourseSection>;
   /** A list of errors that occurred executing this mutation. */
   errors: Array<Error>;
   /** Indicates if the mutation was successful. */
@@ -350,10 +373,14 @@ export type Mutation = {
   changeProfilePicture?: Maybe<ChangeProfilePictureResult>;
   /** Creates a course. */
   createCourse?: Maybe<CreateOrUpdateCourseResult>;
+  /** Creates a course section. */
+  createCourseSection?: Maybe<CreateOrUpdateCourseSectionResult>;
   /** Creates a lesson. */
   createLesson?: Maybe<CreateOrUpdateLessonResult>;
   /** Deletes a course. */
   deleteCourse?: Maybe<MutationResult>;
+  /** Deletes a course section. */
+  deleteCourseSection?: Maybe<MutationResult>;
   /** Deletes a lesson. */
   deleteLesson?: Maybe<MutationResult>;
   /** Remove the profile picture of a user. */
@@ -362,6 +389,8 @@ export type Mutation = {
   updateAccountInfo?: Maybe<MutationResult>;
   /** Updates a course. */
   updateCourse?: Maybe<CreateOrUpdateCourseResult>;
+  /** Updates a course section. */
+  updateCourseSection?: Maybe<CreateOrUpdateCourseSectionResult>;
   /** Updates the status of a course. */
   updateCourseStatus?: Maybe<UpdateCourseStatusResult>;
   /** Updates a lesson. */
@@ -381,12 +410,22 @@ export type MutationCreateCourseArgs = {
 };
 
 
+export type MutationCreateCourseSectionArgs = {
+  courseSectionInfo: CourseSectionInfoInput;
+};
+
+
 export type MutationCreateLessonArgs = {
   lessonInfo: LessonInfoInput;
 };
 
 
 export type MutationDeleteCourseArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationDeleteCourseSectionArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -403,6 +442,11 @@ export type MutationUpdateAccountInfoArgs = {
 
 export type MutationUpdateCourseArgs = {
   updateCourseInfo: UpdateCourseInfoInput;
+};
+
+
+export type MutationUpdateCourseSectionArgs = {
+  courseSectionInfo: UpdateCourseSectionInfo;
 };
 
 
@@ -589,6 +633,16 @@ export type UpdateCourseInfoInput = {
   subjectIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   /** The subtitle of this course */
   subtitle?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** Input for updating a course section record. */
+export type UpdateCourseSectionInfo = {
+  /** The denomination of this course section. */
+  denomination?: InputMaybe<Scalars['String']['input']>;
+  /** The ID of the course section. */
+  id: Scalars['ID']['input'];
+  /** A flag to indicate whether this course section is published or not. */
+  is_published?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 /** The result of the updateCourseStatus mutation. */
