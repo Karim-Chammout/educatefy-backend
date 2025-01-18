@@ -2,6 +2,7 @@ import { GraphQLObjectType } from 'graphql';
 
 import changeProfilePicture from './mutations/changeProfilePicture';
 import createCourse from './mutations/createCourse';
+import createCourseSection from './mutations/createCourseSection';
 import createLesson from './mutations/createLesson';
 import deleteCourse from './mutations/deleteCourse';
 import deleteLesson from './mutations/deleteLesson';
@@ -17,6 +18,7 @@ const Mutation = new GraphQLObjectType({
   fields: {
     changeProfilePicture,
     createCourse,
+    createCourseSection,
     createLesson,
     deleteCourse,
     deleteLesson,
