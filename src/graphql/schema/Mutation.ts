@@ -5,6 +5,7 @@ import createCourse from './mutations/createCourse';
 import createCourseSection from './mutations/createCourseSection';
 import createLesson from './mutations/createLesson';
 import deleteCourse from './mutations/deleteCourse';
+import deleteCourseSection from './mutations/deleteCourseSection';
 import deleteLesson from './mutations/deleteLesson';
 import removeProfilePicture from './mutations/removeProfilePicture';
 import updateAccountInfo from './mutations/updateAccountInfo';
@@ -22,6 +23,7 @@ const Mutation = new GraphQLObjectType({
     createCourseSection,
     createLesson,
     deleteCourse,
+    deleteCourseSection,
     deleteLesson,
     removeProfilePicture,
     updateAccountInfo,
