@@ -1,6 +1,7 @@
 import {
   GraphQLBoolean,
   GraphQLID,
+  GraphQLInt,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
@@ -29,6 +30,10 @@ export const CourseSection = new GraphQLObjectType<CourseSectionType, ContextTyp
     is_published: {
       type: new GraphQLNonNull(GraphQLBoolean),
       description: 'A flag to indicate whether this course section is published or not',
+    },
+    rank: {
+      type: new GraphQLNonNull(GraphQLInt),
+      description: 'The rank of this course section',
     },
     items: {
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(CourseSectionItem))),
