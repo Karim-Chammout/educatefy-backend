@@ -429,6 +429,12 @@ type Mutation {
     courseSectionInfo: UpdateCourseSectionInfo!
   ): CreateOrUpdateCourseSectionResult
 
+  """Updates the ranks of multiple course sections."""
+  updateCourseSectionRanks(
+    """The course sections and their new ranks"""
+    sectionRanks: [UpdateCourseSectionRankInput!]!
+  ): MutationResult
+
   """Updates the status of a course."""
   updateCourseStatus(
     """The course status to update"""
@@ -719,6 +725,15 @@ input UpdateCourseSectionInfo {
 
   """A flag to indicate whether this course section is published or not."""
   is_published: Boolean
+}
+
+"""Input for updating a course section rank"""
+input UpdateCourseSectionRankInput {
+  """The ID of the course section"""
+  id: String!
+
+  """The new rank of the course section"""
+  rank: Int!
 }
 
 """The result of the updateCourseStatus mutation."""
