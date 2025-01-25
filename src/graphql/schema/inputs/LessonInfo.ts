@@ -15,6 +15,10 @@ const LessonInfoInput = new GraphQLInputObjectType({
       type: new GraphQLNonNull(GraphQLID),
       description: 'The ID of the course.',
     },
+    sectionId: {
+      type: new GraphQLNonNull(GraphQLID),
+      description: 'The ID of the section where the lesson item is located.',
+    },
     denomination: {
       type: new GraphQLNonNull(GraphQLString),
       description: 'The denomination of this lesson.',
