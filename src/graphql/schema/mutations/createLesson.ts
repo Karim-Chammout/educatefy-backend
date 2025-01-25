@@ -19,9 +19,9 @@ const createLesson: GraphQLFieldConfig<null, ContextType> = {
   },
   resolve: authenticated(
     async (_, { lessonInfo }: { lessonInfo: LessonInfoInputType }, { db, loaders, user }) => {
-      const { courseId, denomination, duration, is_published } = lessonInfo;
+      const { courseId, sectionId, denomination, duration, is_published } = lessonInfo;
 
-      if (!courseId || !denomination || !duration) {
+      if (!courseId || !sectionId || !denomination || !duration) {
         return {
           success: false,
           errors: [new Error(ErrorType.INVALID_INPUT)],
@@ -51,15 +51,25 @@ const createLesson: GraphQLFieldConfig<null, ContextType> = {
           };
         }
 
-        const [createdLesson] = await db('lesson')
-          .insert({
-            denomination: denomination.trim(),
-            duration,
-            is_published,
-            course_id: course.id,
-            teacher_id: user.id,
-          })
-          .returning('id');
+        const createdLesson = await db.transaction(async (transaction) => {
+          const [lesson] = await transaction('lesson')
+            .insert({
+              denomination: denomination.trim(),
+              duration,
+              is_published,
+              course_id: course.id,
+              teacher_id: user.id,
+            })
+            .returning('id');
+
+          await transaction('course_section_item').insert({
+            course_section_id: sectionId,
+            content_id: lesson.id,
+            content_type: 'lesson',
+          });
+
+          return lesson;
+        });
 
         return {
           success: true,
