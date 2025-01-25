@@ -365,6 +365,8 @@ export type LessonInfoInput = {
   duration: Scalars['Int']['input'];
   /** A flag to indicate whether this lesson is published or not. */
   is_published: Scalars['Boolean']['input'];
+  /** The ID of the section where the lesson item is located. */
+  sectionId: Scalars['ID']['input'];
 };
 
 export type Mutation = {
