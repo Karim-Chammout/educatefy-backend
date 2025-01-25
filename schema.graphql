@@ -591,6 +591,9 @@ input LessonInfoInput {
   """The ID of the course."""
   courseId: ID!
 
+  """The ID of the section where the lesson item is located."""
+  sectionId: ID!
+
   """The denomination of this lesson."""
   denomination: String!
 
