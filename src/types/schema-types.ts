@@ -383,6 +383,8 @@ export type Mutation = {
   deleteCourse?: Maybe<MutationResult>;
   /** Deletes a course section. */
   deleteCourseSection?: Maybe<MutationResult>;
+  /** Deletes a course section item. */
+  deleteCourseSectionItem?: Maybe<MutationResult>;
   /** Deletes a lesson. */
   deleteLesson?: Maybe<MutationResult>;
   /** Remove the profile picture of a user. */
@@ -430,6 +432,11 @@ export type MutationDeleteCourseArgs = {
 
 
 export type MutationDeleteCourseSectionArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationDeleteCourseSectionItemArgs = {
   id: Scalars['ID']['input'];
 };
 
