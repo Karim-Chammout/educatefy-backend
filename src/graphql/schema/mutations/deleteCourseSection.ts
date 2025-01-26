@@ -44,10 +44,29 @@ const deleteCourseSection: GraphQLFieldConfig<null, ContextType> = {
       }
 
       await db.transaction(async (transaction) => {
-        await transaction('course_section_item').where('course_section_id', courseSection.id).del();
-        await transaction('course_section').where('id', courseSection.id).del();
+        await transaction('course_section').where('id', courseSection.id).update({
+          deleted_at: db.fn.now(),
+          updated_at: db.fn.now(),
+        });
+
+        const deletedCourseSectionItems = await transaction('course_section_item')
+          .where('course_section_id', courseSection.id)
+          .update({
+            deleted_at: db.fn.now(),
+            updated_at: db.fn.now(),
+          })
+          .returning(['content_id', 'content_type']);
+
+        // Delete the content attached to this 'deletedCourseSectionItems'
+        for (const item of deletedCourseSectionItems) {
+          await transaction(item.content_type).where('id', item.content_id).update({
+            deleted_at: db.fn.now(),
+            updated_at: db.fn.now(),
+          });
+        }
       });
 
+      loaders.CourseSectionItem.loaders.byCourseSectionIdLoader.clear(courseSection.id);
       loaders.CourseSection.loaders.byIdLoader.clear(courseSection.id);
 
       return {
