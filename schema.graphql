@@ -402,6 +402,12 @@ type Mutation {
     id: ID!
   ): MutationResult
 
+  """Deletes a course section item."""
+  deleteCourseSectionItem(
+    """The ID of the course section item to delete."""
+    id: ID!
+  ): MutationResult
+
   """Deletes a lesson."""
   deleteLesson(
     """The ID of the lesson to delete."""
