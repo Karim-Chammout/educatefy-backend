@@ -265,6 +265,9 @@ type Lesson {
   """A unique id of this lesson."""
   id: ID!
 
+  """The ID of the section item this lesson belongs to."""
+  itemId: ID!
+
   """The denomination of this lesson."""
   denomination: String!
 
