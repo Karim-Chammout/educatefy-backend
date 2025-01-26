@@ -353,6 +353,8 @@ export type Lesson = {
   id: Scalars['ID']['output'];
   /** A flag to indicate whether this lesson is published or not */
   is_published: Scalars['Boolean']['output'];
+  /** The ID of the section item this lesson belongs to. */
+  itemId: Scalars['ID']['output'];
 };
 
 /** Input for createing a lesson record. */
