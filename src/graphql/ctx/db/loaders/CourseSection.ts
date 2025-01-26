@@ -21,6 +21,7 @@ export class CourseSectionReader {
       const rows = await db
         .table('course_section')
         .whereIn('id', ids)
+        .whereNull('deleted_at')
         .select()
         .then((results) => ids.map((id) => results.find((x) => x.id === id)));
 
@@ -34,6 +35,7 @@ export class CourseSectionReader {
       const rows = await db
         .table('course_section')
         .whereIn('course_id', courseIds)
+        .whereNull('deleted_at')
         .select()
         .then((results) =>
           courseIds.map((courseId) => results.filter((x) => x.course_id === courseId)),
@@ -43,7 +45,7 @@ export class CourseSectionReader {
     });
 
     this.loadAll = async () => {
-      const result = await db.table('course_section').select();
+      const result = await db.table('course_section').whereNull('deleted_at').select();
 
       for (const row of result) {
         this.byIdLoader.prime(row.id, row);
