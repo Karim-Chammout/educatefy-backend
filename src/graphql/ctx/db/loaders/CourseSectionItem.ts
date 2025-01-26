@@ -21,6 +21,7 @@ export class CourseSectionItemReader {
       const rows = await db
         .table('course_section_item')
         .whereIn('id', ids)
+        .whereNull('deleted_at')
         .select()
         .then((results) => ids.map((id) => results.find((x) => x.id === id)));
 
@@ -34,6 +35,7 @@ export class CourseSectionItemReader {
       const rows = await db
         .table('course_section_item')
         .whereIn('course_section_id', courseSectionIds)
+        .whereNull('deleted_at')
         .select()
         .then((results) =>
           courseSectionIds.map((courseSectionId) =>
@@ -45,7 +47,7 @@ export class CourseSectionItemReader {
     });
 
     this.loadAll = async () => {
-      const result = await db.table('course_section_item').select();
+      const result = await db.table('course_section_item').whereNull('deleted_at').select();
 
       for (const row of result) {
         this.byIdLoader.prime(row.id, row);
