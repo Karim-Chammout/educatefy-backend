@@ -42,8 +42,9 @@ export const CourseSection = new GraphQLObjectType<CourseSectionType, ContextTyp
         const courseSectionItems = await loaders.CourseSectionItem.loadByCourseSectionId(parent.id);
 
         const sectionItems = await Promise.all(
-          courseSectionItems.map(async ({ content_id, content_type, rank }) => {
+          courseSectionItems.map(async ({ id, content_id, content_type, rank }) => {
             const courseSectionItemValuesToInject = {
+              itemId: id,
               content_type,
               rank,
             };

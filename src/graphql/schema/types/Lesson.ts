@@ -23,6 +23,10 @@ export const Lesson = new GraphQLObjectType<LessonType, ContextType>({
       type: new GraphQLNonNull(GraphQLID),
       description: 'A unique id of this lesson.',
     },
+    itemId: {
+      type: new GraphQLNonNull(GraphQLID),
+      description: 'The ID of the section item this lesson belongs to.',
+    },
     denomination: {
       type: new GraphQLNonNull(GraphQLString),
       description: 'The denomination of this lesson.',
