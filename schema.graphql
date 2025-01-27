@@ -444,6 +444,12 @@ type Mutation {
     sectionRanks: [UpdateCourseSectionRankInput!]!
   ): MutationResult
 
+  """Updates the ranks of multiple course section items."""
+  updateCourseSectionItemRanks(
+    """The course section items and their new ranks"""
+    sectionItemRanks: [UpdateCourseSectionItemRankInput!]!
+  ): MutationResult
+
   """Updates the status of a course."""
   updateCourseStatus(
     """The course status to update"""
@@ -745,6 +751,15 @@ input UpdateCourseSectionRankInput {
   id: String!
 
   """The new rank of the course section"""
+  rank: Int!
+}
+
+"""Input for updating a course section item rank"""
+input UpdateCourseSectionItemRankInput {
+  """The ID of the course section item"""
+  id: String!
+
+  """The new rank of the course section item"""
   rank: Int!
 }
 
