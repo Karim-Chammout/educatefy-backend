@@ -397,6 +397,8 @@ export type Mutation = {
   updateCourse?: Maybe<CreateOrUpdateCourseResult>;
   /** Updates a course section. */
   updateCourseSection?: Maybe<CreateOrUpdateCourseSectionResult>;
+  /** Updates the ranks of multiple course section items. */
+  updateCourseSectionItemRanks?: Maybe<MutationResult>;
   /** Updates the ranks of multiple course sections. */
   updateCourseSectionRanks?: Maybe<MutationResult>;
   /** Updates the status of a course. */
@@ -460,6 +462,11 @@ export type MutationUpdateCourseArgs = {
 
 export type MutationUpdateCourseSectionArgs = {
   courseSectionInfo: UpdateCourseSectionInfo;
+};
+
+
+export type MutationUpdateCourseSectionItemRanksArgs = {
+  sectionItemRanks: Array<UpdateCourseSectionItemRankInput>;
 };
 
 
@@ -661,6 +668,14 @@ export type UpdateCourseSectionInfo = {
   id: Scalars['ID']['input'];
   /** A flag to indicate whether this course section is published or not. */
   is_published?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** Input for updating a course section item rank */
+export type UpdateCourseSectionItemRankInput = {
+  /** The ID of the course section item */
+  id: Scalars['String']['input'];
+  /** The new rank of the course section item */
+  rank: Scalars['Int']['input'];
 };
 
 /** Input for updating a course section rank */
