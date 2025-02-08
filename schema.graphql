@@ -374,6 +374,16 @@ type Mutation {
     """The details of the profile picture"""
     profilePictureDetails: ProfilePictureDetailsInput!
   ): ChangeProfilePictureResult
+  createContentComponent(
+    """The base component data"""
+    baseComponentInfo: ContentComponentBaseInput!
+
+    """The text content for the component."""
+    textContent: TextContentInput
+
+    """The video content for the component."""
+    videoContent: VideoContentInput
+  ): MutationResult
 
   """Creates a course."""
   createCourse(
@@ -505,6 +515,56 @@ input ProfilePictureDetailsInput {
   fileSize: Int!
 }
 
+"""The result of a mutation."""
+type MutationResult {
+  """Indicates if the mutation was successful."""
+  success: Boolean!
+
+  """A list of errors that occurred executing this mutation."""
+  errors: [Error!]!
+}
+
+input ContentComponentBaseInput {
+  """The ID of the parent of the component."""
+  parentId: ID!
+
+  """The parent table name of the component"""
+  parentType: ComponentParentType!
+
+  """The type of the component."""
+  type: ComponentType!
+
+  """The denomination of the component."""
+  denomination: String!
+
+  """A flag indicating whether the component is required to continue."""
+  isRequired: Boolean!
+
+  """A flag indicating whether the component is published."""
+  isPublished: Boolean!
+}
+
+"""The parent table name of the component"""
+enum ComponentParentType {
+  lesson
+}
+
+"""The type of the component."""
+enum ComponentType {
+  text
+  video
+}
+
+input TextContentInput {
+  """The text content."""
+  content: String!
+}
+
+input VideoContentInput {
+  """The URL of the video."""
+  url: String!
+}
+
 """The result of the creating or updating a course."""
 type CreateOrUpdateCourseResult {
   """Indicates if the mutation was successful."""
@@ -617,15 +677,6 @@ input LessonInfoInput {
 
   """The duration of the lesson in minutes."""
   duration: Int!
-}
-
-"""The result of a mutation."""
-type MutationResult {
-  """Indicates if the mutation was successful."""
-  success: Boolean!
-
-  """A list of errors that occurred executing this mutation."""
-  errors: [Error!]!
 }
 
 """Input for updating an account information"""
