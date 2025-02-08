@@ -94,8 +94,34 @@ export type ChangeProfilePictureResult = {
   user?: Maybe<Account>;
 };
 
+/** The parent table name of the component */
+export enum ComponentParentType {
+  Lesson = 'lesson'
+}
+
+/** The type of the component. */
+export enum ComponentType {
+  Text = 'text',
+  Video = 'video'
+}
+
 /** A content component which can be of various types. */
 export type ContentComponent = TextContent | VideoContent;
+
+export type ContentComponentBaseInput = {
+  /** The denomination of the component. */
+  denomination: Scalars['String']['input'];
+  /** A flag indicating whether the component is published. */
+  isPublished: Scalars['Boolean']['input'];
+  /** A flag indicating whether the component is required to continue. */
+  isRequired: Scalars['Boolean']['input'];
+  /** The ID of the parent of the component. */
+  parentId: Scalars['ID']['input'];
+  /** The parent table name of the component */
+  parentType: ComponentParentType;
+  /** The type of the component. */
+  type: ComponentType;
+};
 
 /** The country info */
 export type Country = {
@@ -375,6 +401,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   /** Change the profile picture of a user. */
   changeProfilePicture?: Maybe<ChangeProfilePictureResult>;
+  createContentComponent?: Maybe<MutationResult>;
   /** Creates a course. */
   createCourse?: Maybe<CreateOrUpdateCourseResult>;
   /** Creates a course section. */
@@ -412,6 +439,13 @@ export type Mutation = {
 
 export type MutationChangeProfilePictureArgs = {
   profilePictureDetails: ProfilePictureDetailsInput;
+};
+
+
+export type MutationCreateContentComponentArgs = {
+  baseComponentInfo: ContentComponentBaseInput;
+  textContent?: InputMaybe<TextContentInput>;
+  videoContent?: InputMaybe<VideoContentInput>;
 };
 
 
@@ -624,6 +658,11 @@ export type TextContent = {
   type: Scalars['String']['output'];
 };
 
+export type TextContentInput = {
+  /** The text content. */
+  content: Scalars['String']['input'];
+};
+
 /** Input for updating a course record. */
 export type UpdateCourseInfoInput = {
   /** The denomination of this course */
@@ -739,4 +778,9 @@ export type VideoContent = {
   type: Scalars['String']['output'];
   /** The URL of the video. */
   url: Scalars['String']['output'];
+};
+
+export type VideoContentInput = {
+  /** The URL of the video. */
+  url: Scalars['String']['input'];
 };
