@@ -8,6 +8,7 @@ import {
 
 import { ContentComponent as ContentComponentType } from '../../../types/db-generated-types';
 import { ContextType } from '../../../types/types';
+import { ComponentType } from './enum/ContentComponent';
 
 export const defaultContentComponentFields: GraphQLFieldConfigMap<
   ContentComponentType,
@@ -18,7 +19,7 @@ export const defaultContentComponentFields: GraphQLFieldConfigMap<
     description: 'The denomination of the component.',
   },
   type: {
-    type: new GraphQLNonNull(GraphQLString),
+    type: new GraphQLNonNull(ComponentType),
     description: 'The type of the component.',
   },
   is_required: {
