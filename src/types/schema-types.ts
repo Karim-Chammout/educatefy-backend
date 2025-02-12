@@ -408,6 +408,8 @@ export type Mutation = {
   createCourseSection?: Maybe<CreateOrUpdateCourseSectionResult>;
   /** Creates a lesson. */
   createLesson?: Maybe<CreateOrUpdateLessonResult>;
+  /** Deletes a content component. */
+  deleteContentComponent?: Maybe<MutationResult>;
   /** Deletes a course. */
   deleteCourse?: Maybe<MutationResult>;
   /** Deletes a course section. */
@@ -461,6 +463,12 @@ export type MutationCreateCourseSectionArgs = {
 
 export type MutationCreateLessonArgs = {
   lessonInfo: LessonInfoInput;
+};
+
+
+export type MutationDeleteContentComponentArgs = {
+  componentId: Scalars['ID']['input'];
+  componentType: ComponentType;
 };
 
 
@@ -655,7 +663,7 @@ export type TextContent = {
   /** The rank of the component */
   rank: Scalars['Int']['output'];
   /** The type of the component. */
-  type: Scalars['String']['output'];
+  type: ComponentType;
 };
 
 export type TextContentInput = {
@@ -775,7 +783,7 @@ export type VideoContent = {
   /** The rank of the component */
   rank: Scalars['Int']['output'];
   /** The type of the component. */
-  type: Scalars['String']['output'];
+  type: ComponentType;
   /** The URL of the video. */
   url: Scalars['String']['output'];
 };
