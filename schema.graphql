@@ -299,7 +299,7 @@ type TextContent {
   denomination: String!
 
   """The type of the component."""
-  type: String!
+  type: ComponentType!
 
   """A flag indicating whether the component is required to continue."""
   is_required: Boolean!
@@ -309,6 +309,12 @@ type TextContent {
 
   """The rank of the component"""
   rank: Int!
+}
+
+"""The type of the component."""
+enum ComponentType {
+  text
+  video
 }
 
 """A video content component."""
@@ -326,7 +332,7 @@ type VideoContent {
   denomination: String!
 
   """The type of the component."""
-  type: String!
+  type: ComponentType!
 
   """A flag indicating whether the component is required to continue."""
   is_required: Boolean!
@@ -402,6 +408,15 @@ type Mutation {
     """The lesson information"""
     lessonInfo: LessonInfoInput!
   ): CreateOrUpdateLessonResult
+
+  """Deletes a content component."""
+  deleteContentComponent(
+    """The ID of the content component to delete."""
+    componentId: ID!
+
+    """The ID of the content component to delete."""
+    componentType: ComponentType!
+  ): MutationResult
 
   """Deletes a course."""
   deleteCourse(
@@ -547,12 +562,6 @@ input ContentComponentBaseInput {
 """The parent table name of the component"""
 enum ComponentParentType {
   lesson
-}
-
-"""The type of the component."""
-enum ComponentType {
-  text
-  video
 }
 
 input TextContentInput {
