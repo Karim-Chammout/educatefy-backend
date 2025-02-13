@@ -451,6 +451,12 @@ type Mutation {
     accountInfo: AccountInfoInput!
   ): MutationResult
 
+  """Updates the ranks of multiple content components."""
+  updateContentComponentRanks(
+    """The content components and their new ranks"""
+    componentRanks: [UpdateContentComponentRankInput!]!
+  ): MutationResult
+
   """Updates a course."""
   updateCourse(
     """The course information to be updated."""
@@ -722,6 +728,15 @@ input AccountInfoInput {
 
   """The short description about the teacher."""
   teacherDescription: String
+}
+
+"""Input for updating a content component rank"""
+input UpdateContentComponentRankInput {
+  """The ID of the content component"""
+  id: String!
+
+  """The new rank of the content component"""
+  rank: Int!
 }
 
 """Input for updating a course record."""
