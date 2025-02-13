@@ -6,13 +6,14 @@ import {
   VideoContentInput as VideoContentInputType,
 } from '../../../types/schema-types';
 import { ContextType } from '../../../types/types';
+import { ErrorType } from '../../../utils/ErrorType';
+import { sanitizeText } from '../../../utils/sanitizeText';
+import { authenticated } from '../../utils/auth';
+import { hasTeacherRole } from '../../utils/hasTeacherRole';
 import ContentComponentBaseInput from '../inputs/ContentComponentBase';
 import TextContentInput from '../inputs/TextContent';
 import VideoContentInput from '../inputs/VideoContent';
 import MutationResult from '../types/MutationResult';
-import { ErrorType } from '../../../utils/ErrorType';
-import { authenticated } from '../../utils/auth';
-import { hasTeacherRole } from '../../utils/hasTeacherRole';
 
 export const createContentComponent: GraphQLFieldConfig<null, ContextType> = {
   type: MutationResult,
@@ -86,7 +87,7 @@ export const createContentComponent: GraphQLFieldConfig<null, ContextType> = {
 
               await transaction('text_content').insert({
                 component_id: component.id,
-                content: textContent.content,
+                content: sanitizeText(textContent.content),
               });
               break;
 
