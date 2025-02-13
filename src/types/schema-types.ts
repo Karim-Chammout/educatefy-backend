@@ -422,6 +422,8 @@ export type Mutation = {
   removeProfilePicture?: Maybe<ChangeProfilePictureResult>;
   /** Updates a user account information. */
   updateAccountInfo?: Maybe<MutationResult>;
+  /** Updates the ranks of multiple content components. */
+  updateContentComponentRanks?: Maybe<MutationResult>;
   /** Updates a course. */
   updateCourse?: Maybe<CreateOrUpdateCourseResult>;
   /** Updates a course section. */
@@ -494,6 +496,11 @@ export type MutationDeleteLessonArgs = {
 
 export type MutationUpdateAccountInfoArgs = {
   accountInfo: AccountInfoInput;
+};
+
+
+export type MutationUpdateContentComponentRanksArgs = {
+  componentRanks: Array<UpdateContentComponentRankInput>;
 };
 
 
@@ -669,6 +676,14 @@ export type TextContent = {
 export type TextContentInput = {
   /** The text content. */
   content: Scalars['String']['input'];
+};
+
+/** Input for updating a content component rank */
+export type UpdateContentComponentRankInput = {
+  /** The ID of the content component */
+  id: Scalars['String']['input'];
+  /** The new rank of the content component */
+  rank: Scalars['Int']['input'];
 };
 
 /** Input for updating a course record. */
