@@ -12,6 +12,7 @@ import deleteCourseSectionItem from './mutations/deleteCourseSectionItem';
 import deleteLesson from './mutations/deleteLesson';
 import removeProfilePicture from './mutations/removeProfilePicture';
 import updateAccountInfo from './mutations/updateAccountInfo';
+import updateContentComponentRanks from './mutations/updateContentComponentRank';
 import updateCourse from './mutations/updateCourse';
 import updateCourseSection from './mutations/updateCourseSection';
 import updateCourseSectionItemRanks from './mutations/updateCourseSectionItemRank';
@@ -35,6 +36,7 @@ const Mutation = new GraphQLObjectType({
     deleteLesson,
     removeProfilePicture,
     updateAccountInfo,
+    updateContentComponentRanks,
     updateCourse,
     updateCourseSection,
     updateCourseSectionRanks,
