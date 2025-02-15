@@ -6,10 +6,10 @@ import { ErrorType } from '../../../utils/ErrorType';
 import { sanitizeText } from '../../../utils/sanitizeText';
 import { authenticated } from '../../utils/auth';
 import { getSelectedLanguageId } from '../../utils/getSelectedLanguageId';
+import { hasTeacherRole } from '../../utils/hasTeacherRole';
 import { isValidSlug } from '../../utils/isValidSlug';
 import CourseInfoInput from '../inputs/CourseInfo';
 import { CreateOrUpdateCourseResult } from '../types/CreateOrUpdateCourseResult';
-import { AccountRoleEnum } from '../types/enum/AccountRole';
 
 const createCourse: GraphQLFieldConfig<null, ContextType> = {
   type: CreateOrUpdateCourseResult,
@@ -85,9 +85,9 @@ const createCourse: GraphQLFieldConfig<null, ContextType> = {
       }
 
       try {
-        const accountRole = await loaders.AccountRole.loadById(user.roleId);
+        const isTeacher = await hasTeacherRole(loaders, user.roleId);
 
-        if (accountRole.code !== AccountRoleEnum.Teacher) {
+        if (!isTeacher) {
           return {
             success: false,
             errors: [new Error(ErrorType.PERMISSION_DENIED)],

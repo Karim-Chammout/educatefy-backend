@@ -3,8 +3,8 @@ import { GraphQLFieldConfig, GraphQLID, GraphQLNonNull } from 'graphql';
 import { ContextType } from '../../../types/types';
 import { ErrorType } from '../../../utils/ErrorType';
 import { authenticated } from '../../utils/auth';
+import { hasTeacherRole } from '../../utils/hasTeacherRole';
 import MutationResult from '../types/MutationResult';
-import { AccountRoleEnum } from '../types/enum/AccountRole';
 
 const deleteCourseSection: GraphQLFieldConfig<null, ContextType> = {
   type: MutationResult,
@@ -24,9 +24,9 @@ const deleteCourseSection: GraphQLFieldConfig<null, ContextType> = {
     }
 
     try {
-      const accountRole = await loaders.AccountRole.loadById(user.roleId);
+      const isTeacher = await hasTeacherRole(loaders, user.roleId);
 
-      if (accountRole.code !== AccountRoleEnum.Teacher) {
+      if (!isTeacher) {
         return {
           success: false,
           errors: [new Error(ErrorType.FORBIDDEN)],

@@ -4,9 +4,9 @@ import { LessonInfoInput as LessonInfoInputType } from '../../../types/schema-ty
 import { ContextType } from '../../../types/types';
 import { ErrorType } from '../../../utils/ErrorType';
 import { authenticated } from '../../utils/auth';
+import { hasTeacherRole } from '../../utils/hasTeacherRole';
 import LessonInfoInput from '../inputs/LessonInfo';
 import { CreateOrUpdateLessonResult } from '../types/CreateOrUpdateLessonResult';
-import { AccountRoleEnum } from '../types/enum/AccountRole';
 
 const createLesson: GraphQLFieldConfig<null, ContextType> = {
   type: CreateOrUpdateLessonResult,
@@ -30,9 +30,9 @@ const createLesson: GraphQLFieldConfig<null, ContextType> = {
       }
 
       try {
-        const accountRole = await loaders.AccountRole.loadById(user.roleId);
+        const isTeacher = await hasTeacherRole(loaders, user.roleId);
 
-        if (accountRole.code !== AccountRoleEnum.Teacher) {
+        if (!isTeacher) {
           return {
             success: false,
             errors: [new Error(ErrorType.PERMISSION_DENIED)],

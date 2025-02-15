@@ -10,10 +10,10 @@ import {
 import { ContextType } from '../../types/types';
 import { ErrorType } from '../../utils/ErrorType';
 import { authenticated } from '../utils/auth';
+import { hasTeacherRole } from '../utils/hasTeacherRole';
 import { Account } from './types/Account';
 import { Country } from './types/Country';
 import { Course } from './types/Course';
-import { AccountRoleEnum } from './types/enum/AccountRole';
 import { Language } from './types/Language';
 import { OpenidClient } from './types/OpenidClient';
 import { Subject } from './types/Subject';
@@ -123,9 +123,9 @@ const Query = new GraphQLObjectType<any, ContextType>({
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Course))),
       description: 'List of courses created by the teacher',
       resolve: authenticated(async (_, __, { loaders, user }) => {
-        const accountRole = await loaders.AccountRole.loadById(user.roleId);
+        const isTeacher = await hasTeacherRole(loaders, user.roleId);
 
-        if (accountRole.code !== AccountRoleEnum.Teacher) {
+        if (!isTeacher) {
           throw new GraphQLError(ErrorType.FORBIDDEN);
         }
 
@@ -150,9 +150,9 @@ const Query = new GraphQLObjectType<any, ContextType>({
       resolve: authenticated(async (_, { id }: { id: string }, { loaders, user }) => {
         const courseId = parseInt(id, 10);
 
-        const accountRole = await loaders.AccountRole.loadById(user.roleId);
+        const isTeacher = await hasTeacherRole(loaders, user.roleId);
 
-        if (accountRole.code !== AccountRoleEnum.Teacher) {
+        if (!isTeacher) {
           throw new GraphQLError(ErrorType.FORBIDDEN);
         }
 
