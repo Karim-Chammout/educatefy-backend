@@ -52,6 +52,13 @@ export const createContentComponent: GraphQLFieldConfig<null, ContextType> = {
         };
       }
 
+      if (!textContent && !videoContent) {
+        return {
+          success: false,
+          errors: [new Error(ErrorType.MISSING_INPUT)],
+        };
+      }
+
       try {
         const isTeacher = await hasTeacherRole(loaders, user.roleId);
 
