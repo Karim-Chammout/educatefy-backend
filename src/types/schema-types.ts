@@ -401,6 +401,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   /** Change the profile picture of a user. */
   changeProfilePicture?: Maybe<ChangeProfilePictureResult>;
+  /** Creates a content component. */
   createContentComponent?: Maybe<MutationResult>;
   /** Creates a course. */
   createCourse?: Maybe<CreateOrUpdateCourseResult>;
@@ -422,6 +423,8 @@ export type Mutation = {
   removeProfilePicture?: Maybe<ChangeProfilePictureResult>;
   /** Updates a user account information. */
   updateAccountInfo?: Maybe<MutationResult>;
+  /** Updates a content component. */
+  updateContentComponent?: Maybe<MutationResult>;
   /** Updates the ranks of multiple content components. */
   updateContentComponentRanks?: Maybe<MutationResult>;
   /** Updates a course. */
@@ -496,6 +499,13 @@ export type MutationDeleteLessonArgs = {
 
 export type MutationUpdateAccountInfoArgs = {
   accountInfo: AccountInfoInput;
+};
+
+
+export type MutationUpdateContentComponentArgs = {
+  baseComponentInfo: UpdateContentComponentBaseInput;
+  textContent?: InputMaybe<TextContentInput>;
+  videoContent?: InputMaybe<VideoContentInput>;
 };
 
 
@@ -676,6 +686,19 @@ export type TextContent = {
 export type TextContentInput = {
   /** The text content. */
   content: Scalars['String']['input'];
+};
+
+export type UpdateContentComponentBaseInput = {
+  /** The denomination of the component. */
+  denomination?: InputMaybe<Scalars['String']['input']>;
+  /** The content component ID. */
+  id: Scalars['ID']['input'];
+  /** A flag indicating whether the component is published. */
+  isPublished?: InputMaybe<Scalars['Boolean']['input']>;
+  /** A flag indicating whether the component is required to continue. */
+  isRequired?: InputMaybe<Scalars['Boolean']['input']>;
+  /** The type of the component. */
+  type: ComponentType;
 };
 
 /** Input for updating a content component rank */
