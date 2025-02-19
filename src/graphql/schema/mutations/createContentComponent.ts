@@ -17,6 +17,7 @@ import MutationResult from '../types/MutationResult';
 
 export const createContentComponent: GraphQLFieldConfig<null, ContextType> = {
   type: MutationResult,
+  description: 'Creates a content component.',
   args: {
     baseComponentInfo: {
       type: new GraphQLNonNull(ContentComponentBaseInput),
