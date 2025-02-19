@@ -380,6 +380,8 @@ type Mutation {
     """The details of the profile picture"""
     profilePictureDetails: ProfilePictureDetailsInput!
   ): ChangeProfilePictureResult
+
+  """Creates a content component."""
   createContentComponent(
     """The base component data"""
     baseComponentInfo: ContentComponentBaseInput!
@@ -449,6 +451,18 @@ type Mutation {
   updateAccountInfo(
     """The account information"""
     accountInfo: AccountInfoInput!
+  ): MutationResult
+
+  """Updates a content component."""
+  updateContentComponent(
+    """The base component data to update."""
+    baseComponentInfo: UpdateContentComponentBaseInput!
+
+    """The text content for the component."""
+    textContent: TextContentInput
+
+    """The video content for the component."""
+    videoContent: VideoContentInput
   ): MutationResult
 
   """Updates the ranks of multiple content components."""
@@ -728,6 +742,23 @@ input AccountInfoInput {
 
   """The short description about the teacher."""
   teacherDescription: String
+}
+
+input UpdateContentComponentBaseInput {
+  """The content component ID."""
+  id: ID!
+
+  """The type of the component."""
+  type: ComponentType!
+
+  """The denomination of the component."""
+  denomination: String
+
+  """A flag indicating whether the component is required to continue."""
+  isRequired: Boolean
+
+  """A flag indicating whether the component is published."""
+  isPublished: Boolean
 }
 
 """Input for updating a content component rank"""
