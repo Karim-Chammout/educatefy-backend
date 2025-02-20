@@ -39,7 +39,10 @@ const updateProfile: GraphQLFieldConfig<null, ContextType> = {
         teacherDescription,
       } = profileDetails;
 
-      const selectedLanguageId = await getSelectedLanguageId(loaders, selectedLanguage as string);
+      let selectedLanguageId = null;
+      if (selectedLanguage) {
+        selectedLanguageId = await getSelectedLanguageId(loaders, selectedLanguage);
+      }
 
       const dataToUpdate = {
         ...(firstName && { first_name: firstName.trim() }),
