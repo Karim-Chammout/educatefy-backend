@@ -13,10 +13,10 @@ import { hasTeacherRole } from '../../utils/hasTeacherRole';
 import ContentComponentBaseInput from '../inputs/ContentComponentBase';
 import TextContentInput from '../inputs/TextContent';
 import VideoContentInput from '../inputs/VideoContent';
-import MutationResult from '../types/MutationResult';
+import { CreateOrUpdateContentComponent } from '../types/CreateOrUpdateContentComponent';
 
 export const createContentComponent: GraphQLFieldConfig<null, ContextType> = {
-  type: MutationResult,
+  type: CreateOrUpdateContentComponent,
   description: 'Creates a content component.',
   args: {
     baseComponentInfo: {
@@ -50,6 +50,7 @@ export const createContentComponent: GraphQLFieldConfig<null, ContextType> = {
         return {
           success: false,
           errors: [new Error(ErrorType.INVALID_INPUT)],
+          component: null,
         };
       }
 
@@ -57,6 +58,7 @@ export const createContentComponent: GraphQLFieldConfig<null, ContextType> = {
         return {
           success: false,
           errors: [new Error(ErrorType.MISSING_INPUT)],
+          component: null,
         };
       }
 
@@ -67,10 +69,11 @@ export const createContentComponent: GraphQLFieldConfig<null, ContextType> = {
           return {
             success: false,
             errors: [new Error(ErrorType.PERMISSION_DENIED)],
+            component: null,
           };
         }
 
-        await db.transaction(async (transaction) => {
+        const createdComponent = await db.transaction(async (transaction) => {
           // Insert base component
           const [component] = await transaction('content_component')
             .insert({
@@ -90,6 +93,7 @@ export const createContentComponent: GraphQLFieldConfig<null, ContextType> = {
                 return {
                   success: false,
                   errors: [new Error(ErrorType.INVALID_INPUT)],
+                  component: null,
                 };
               }
 
@@ -104,6 +108,7 @@ export const createContentComponent: GraphQLFieldConfig<null, ContextType> = {
                 return {
                   success: false,
                   errors: [new Error(ErrorType.INVALID_INPUT)],
+                  component: null,
                 };
               }
 
@@ -120,12 +125,14 @@ export const createContentComponent: GraphQLFieldConfig<null, ContextType> = {
         return {
           success: true,
           errors: [],
+          component: createdComponent,
         };
       } catch (error) {
         console.log('Failed to create content component: ', error);
         return {
           success: false,
           errors: [new Error(ErrorType.INTERNAL_SERVER_ERROR)],
+          component: null,
         };
       }
     },

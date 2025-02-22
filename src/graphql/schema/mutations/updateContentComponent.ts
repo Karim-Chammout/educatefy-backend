@@ -13,10 +13,10 @@ import { hasTeacherRole } from '../../utils/hasTeacherRole';
 import TextContentInput from '../inputs/TextContent';
 import UpdateContentComponentBaseInput from '../inputs/UpdateContentComponentBase';
 import VideoContentInput from '../inputs/VideoContent';
-import MutationResult from '../types/MutationResult';
+import { CreateOrUpdateContentComponent } from '../types/CreateOrUpdateContentComponent';
 
 const updateContentComponent: GraphQLFieldConfig<null, ContextType> = {
-  type: MutationResult,
+  type: CreateOrUpdateContentComponent,
   description: 'Updates a content component.',
   args: {
     baseComponentInfo: {
@@ -50,6 +50,7 @@ const updateContentComponent: GraphQLFieldConfig<null, ContextType> = {
         return {
           success: false,
           errors: [new Error(ErrorType.INVALID_INPUT)],
+          component: null,
         };
       }
 
@@ -62,6 +63,7 @@ const updateContentComponent: GraphQLFieldConfig<null, ContextType> = {
           return {
             success: false,
             errors: [new Error(ErrorType.NOT_FOUND)],
+            component: null,
           };
         }
 
@@ -69,6 +71,7 @@ const updateContentComponent: GraphQLFieldConfig<null, ContextType> = {
           return {
             success: false,
             errors: [new Error(ErrorType.INVALID_INPUT)],
+            component: null,
           };
         }
 
@@ -78,6 +81,7 @@ const updateContentComponent: GraphQLFieldConfig<null, ContextType> = {
           return {
             success: false,
             errors: [new Error(ErrorType.PERMISSION_DENIED)],
+            component: null,
           };
         }
 
@@ -104,6 +108,7 @@ const updateContentComponent: GraphQLFieldConfig<null, ContextType> = {
                 return {
                   success: false,
                   errors: [new Error(ErrorType.INVALID_INPUT)],
+                  component: null,
                 };
               }
 
@@ -120,6 +125,7 @@ const updateContentComponent: GraphQLFieldConfig<null, ContextType> = {
                 return {
                   success: false,
                   errors: [new Error(ErrorType.INVALID_INPUT)],
+                  component: null,
                 };
               }
 
@@ -136,12 +142,14 @@ const updateContentComponent: GraphQLFieldConfig<null, ContextType> = {
         return {
           success: true,
           errors: [],
+          component: contentComponent,
         };
       } catch (error) {
         console.log('Failed to update content component: ', error);
         return {
           success: false,
           errors: [new Error(ErrorType.INTERNAL_SERVER_ERROR)],
+          component: null,
         };
       }
     },
