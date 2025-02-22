@@ -308,6 +308,17 @@ export type CourseStatusInput = {
   status: CourseStatus;
 };
 
+/** The result of the creating or updating a content component. */
+export type CreateOrUpdateContentComponent = {
+  __typename?: 'CreateOrUpdateContentComponent';
+  /** The created or updated content component. */
+  component?: Maybe<ContentComponent>;
+  /** A list of errors that occurred executing this mutation. */
+  errors: Array<Error>;
+  /** Indicates if the mutation was successful. */
+  success: Scalars['Boolean']['output'];
+};
+
 /** The result of the creating or updating a course. */
 export type CreateOrUpdateCourseResult = {
   __typename?: 'CreateOrUpdateCourseResult';
@@ -402,7 +413,7 @@ export type Mutation = {
   /** Change the profile picture of a user. */
   changeProfilePicture?: Maybe<ChangeProfilePictureResult>;
   /** Creates a content component. */
-  createContentComponent?: Maybe<MutationResult>;
+  createContentComponent?: Maybe<CreateOrUpdateContentComponent>;
   /** Creates a course. */
   createCourse?: Maybe<CreateOrUpdateCourseResult>;
   /** Creates a course section. */
@@ -424,7 +435,7 @@ export type Mutation = {
   /** Updates a user account information. */
   updateAccountInfo?: Maybe<MutationResult>;
   /** Updates a content component. */
-  updateContentComponent?: Maybe<MutationResult>;
+  updateContentComponent?: Maybe<CreateOrUpdateContentComponent>;
   /** Updates the ranks of multiple content components. */
   updateContentComponentRanks?: Maybe<MutationResult>;
   /** Updates a course. */
