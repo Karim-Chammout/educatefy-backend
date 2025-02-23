@@ -17,11 +17,6 @@ export enum CourseLevelEnumType {
   Advanced = "advanced",
 }
 
-export enum CourseSectionContentTypeEnumType {
-  Lesson = "lesson",
-  ContentComponent = "content_component",
-}
-
 export enum CourseSectionItemContentTypeEnumType {
   Lesson = "lesson",
 }
@@ -196,6 +191,7 @@ export type CourseSection = {
   rank: number;
   created_at: Date;
   updated_at: Date;
+  deleted_at: Date | null;
 };
 
 export type CourseSectionItem = {
@@ -206,6 +202,7 @@ export type CourseSectionItem = {
   rank: number;
   created_at: Date;
   updated_at: Date;
+  deleted_at: Date | null;
 };
 
 export type Enrollment = {
