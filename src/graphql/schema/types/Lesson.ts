@@ -13,6 +13,7 @@ import {
   Lesson as LessonType,
 } from '../../../types/db-generated-types';
 import { ContextType } from '../../../types/types';
+import { hasTeacherRole } from '../../utils/hasTeacherRole';
 import { ContentComponent } from './union/ContentComponent';
 
 export const Lesson = new GraphQLObjectType<LessonType, ContextType>({
@@ -42,7 +43,7 @@ export const Lesson = new GraphQLObjectType<LessonType, ContextType>({
     components: {
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(ContentComponent))),
       description: 'The content components of this lesson.',
-      resolve: async (parent, _, { loaders }) => {
+      resolve: async (parent, _, { loaders, user }) => {
         const contentComponents = await loaders.ContentComponent.loadByParentIdAndParentType(
           parent.id,
           'lesson',
@@ -77,16 +78,17 @@ export const Lesson = new GraphQLObjectType<LessonType, ContextType>({
           ),
         );
 
-        const components = loadedComponents
-          .filter((component) => component !== null && component.is_published)
-          .sort((a, b) => {
-            if (a === null || b === null) {
-              return 0;
-            }
-            return a.rank - b.rank;
-          });
+        const isTeacher = user.authenticated && (await hasTeacherRole(loaders, user.roleId));
 
-        return components;
+        const components = loadedComponents.filter((component) => component !== null);
+
+        const filteredComponents = isTeacher
+          ? components
+          : components.filter((component) => component.is_published);
+
+        const sortedComponents = filteredComponents.sort((a, b) => a.rank - b.rank);
+
+        return sortedComponents;
       },
     },
   },
