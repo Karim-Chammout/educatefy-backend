@@ -3,6 +3,7 @@ import { GraphQLFieldConfig, GraphQLID, GraphQLNonNull } from 'graphql';
 import { ComponentType } from '../../../types/schema-types';
 import { ContextType } from '../../../types/types';
 import { ErrorType } from '../../../utils/ErrorType';
+import { deleteFile } from '../../../utils/fileStorageHandler';
 import { authenticated } from '../../utils/auth';
 import { hasTeacherRole } from '../../utils/hasTeacherRole';
 import { ComponentType as ComponentEnumType } from '../types/enum/ContentComponent';
@@ -57,7 +58,19 @@ export const deleteContentComponent: GraphQLFieldConfig<null, ContextType> = {
               break;
 
             case 'video':
-              await transaction('video_content').where('component_id', componentId).del();
+              const [deletedVideoContent] = await transaction('video_content')
+                .where('component_id', componentId)
+                .del()
+                .returning('url');
+
+              try {
+                await deleteFile(deletedVideoContent.url);
+              } catch (error) {
+                console.log(
+                  `Failed to delete video file. - key: ${deletedVideoContent.url} - Error: `,
+                  error,
+                );
+              }
               break;
           }
 
