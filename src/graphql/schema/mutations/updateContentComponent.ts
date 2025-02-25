@@ -89,7 +89,7 @@ const updateContentComponent: GraphQLFieldConfig<null, ContextType> = {
           const { id, type, denomination, isPublished, isRequired } = baseComponentInfo;
           const valuesToUpdate = {
             ...(denomination && { denomination }),
-            ...(isPublished !== undefined && { is_required: isPublished }),
+            ...(isPublished !== undefined && { is_published: isPublished }),
             ...(isRequired !== undefined && { is_required: isRequired }),
           };
 
