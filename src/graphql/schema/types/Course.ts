@@ -1,6 +1,8 @@
 import {
   GraphQLBoolean,
+  GraphQLFloat,
   GraphQLID,
+  GraphQLInt,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
@@ -10,14 +12,15 @@ import {
 import { Course as CourseType, EnrollmentStatusType } from '../../../types/db-generated-types';
 import { ContextType } from '../../../types/types';
 import { getImageURL } from '../../../utils/getImageURL';
+import { hasTeacherRole } from '../../utils/hasTeacherRole';
 import GraphQLDate from '../Scalars/Date';
 import { CourseObjective } from './CourseObjective';
 import { CourseRequirement } from './CourseRequirement';
+import { CourseReview } from './CourseReview';
 import { CourseSection } from './CourseSection';
 import CourseLevel from './enum/CourseLevel';
 import CourseStatus from './enum/CourseStatus';
 import { Subject } from './Subject';
-import { hasTeacherRole } from '../../utils/hasTeacherRole';
 
 export const Course: GraphQLObjectType = new GraphQLObjectType<CourseType, ContextType>({
   name: 'Course',
@@ -165,6 +168,71 @@ export const Course: GraphQLObjectType = new GraphQLObjectType<CourseType, Conte
         }
 
         return sections.filter((section) => section.is_published).sort((a, b) => a.rank - b.rank);
+      },
+    },
+    rating: {
+      type: new GraphQLNonNull(GraphQLFloat),
+      description: 'Average star rating for this course',
+      resolve: async (parent, _, { db }) => {
+        const ratings = await db('course_rating')
+          .where('course_id', parent.id)
+          .avg('rating as average')
+          .first();
+
+        if (!ratings || ratings.length === 0) {
+          return 0;
+        }
+
+        return parseFloat(ratings.average);
+      },
+    },
+    ratingsCount: {
+      type: new GraphQLNonNull(GraphQLInt),
+      description: 'Total number of ratings for this course',
+      resolve: async (parent, _, { db }) => {
+        const ratings = await db('course_rating')
+          .where('course_id', parent.id)
+          .count('id as count')
+          .first();
+
+        if (!ratings || ratings.count === 0) {
+          return 0;
+        }
+
+        return parseInt(String(ratings.count));
+      },
+    },
+    reviews: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(CourseReview))),
+      description: 'The reviews of this course.',
+      resolve: async (parent, _, { loaders }) => {
+        const reviews = await loaders.CourseRating.loadByCourseId(parent.id);
+
+        if (!reviews || reviews.length === 0) {
+          return [];
+        }
+
+        return reviews;
+      },
+    },
+    viewerReview: {
+      type: CourseReview,
+      description: 'Review by the current viewer for this course',
+      resolve: async (parent, _, { loaders, user }) => {
+        if (!user.authenticated) {
+          return null;
+        }
+
+        const accountReview = await loaders.CourseRating.loadByAccountIdAndCourseId(
+          user.id,
+          parent.id,
+        );
+
+        if (!accountReview) {
+          return null;
+        }
+
+        return accountReview;
       },
     },
   }),
