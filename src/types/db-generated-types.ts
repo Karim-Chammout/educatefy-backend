@@ -43,6 +43,7 @@ export enum Table {
   Course = "course",
   CourseSubject = "course__subject",
   CourseObjective = "course_objective",
+  CourseRating = "course_rating",
   CourseRequirement = "course_requirement",
   CourseSection = "course_section",
   CourseSectionItem = "course_section_item",
@@ -69,6 +70,7 @@ export type Tables = {
   "course": Course,
   "course__subject": CourseSubject,
   "course_objective": CourseObjective,
+  "course_rating": CourseRating,
   "course_requirement": CourseRequirement,
   "course_section": CourseSection,
   "course_section_item": CourseSectionItem,
@@ -175,6 +177,16 @@ export type CourseObjective = {
   id: number;
   course_id: number;
   objective: string;
+};
+
+export type CourseRating = {
+  id: number;
+  account_id: number;
+  course_id: number;
+  rating: number | null;
+  review: string | null;
+  created_at: Date;
+  updated_at: Date;
 };
 
 export type CourseRequirement = {
