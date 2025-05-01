@@ -7,6 +7,7 @@ import { ContentComponentReader } from './loaders/ContentComponent';
 import { CountryReader } from './loaders/Country';
 import { CourseReader } from './loaders/Course';
 import { CourseObjectiveReader } from './loaders/CourseObjective';
+import { CourseRatingReader } from './loaders/CourseRating';
 import { CourseRequirementReader } from './loaders/CourseRequirement';
 import { CourseSectionReader } from './loaders/CourseSection';
 import { CourseSectionItemReader } from './loaders/CourseSectionItem';
@@ -29,6 +30,7 @@ export type ReadersType = {
   Country: CountryReader;
   Course: CourseReader;
   CourseObjective: CourseObjectiveReader;
+  CourseRating: CourseRatingReader;
   CourseRequirement: CourseRequirementReader;
   CourseSection: CourseSectionReader;
   CourseSectionItem: CourseSectionItemReader;
@@ -53,6 +55,7 @@ export function createLoaders(db: Knex): ReadersType {
     Country: new CountryReader(db),
     Course: new CourseReader(db),
     CourseObjective: new CourseObjectiveReader(db),
+    CourseRating: new CourseRatingReader(db),
     CourseRequirement: new CourseRequirementReader(db),
     CourseSection: new CourseSectionReader(db),
     CourseSectionItem: new CourseSectionItemReader(db),
