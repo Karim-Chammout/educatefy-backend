@@ -167,8 +167,14 @@ export type Course = {
   level: CourseLevel;
   /** The objectives of this course. */
   objectives: Array<CourseObjective>;
+  /** Average star rating for this course */
+  rating: Scalars['Float']['output'];
+  /** Total number of ratings for this course */
+  ratingsCount: Scalars['Int']['output'];
   /** The requirements of this course. */
   requirements: Array<CourseRequirement>;
+  /** The reviews of this course. */
+  reviews: Array<CourseReview>;
   /** The sections of this course. */
   sections: Array<CourseSection>;
   /** A unique slug of this course. */
@@ -183,6 +189,8 @@ export type Course = {
   subtitle: Scalars['String']['output'];
   /** The date of when this course was last updated. */
   updated_at: Scalars['Date']['output'];
+  /** Review by the current viewer for this course */
+  viewerReview?: Maybe<CourseReview>;
 };
 
 /** Input for createing a course record. */
@@ -258,6 +266,22 @@ export type CourseRequirementInput = {
   id: Scalars['ID']['input'];
   /** The requirement of this course. */
   requirement: Scalars['String']['input'];
+};
+
+/** The review details of a course */
+export type CourseReview = {
+  __typename?: 'CourseReview';
+  /** The date when the review was created */
+  createdAt: Scalars['Date']['output'];
+  /** Id of this course review */
+  id: Scalars['ID']['output'];
+  /** Whether the review can be edited by the user */
+  isEditable: Scalars['Boolean']['output'];
+  /** 1-5 star rating value given by the reviewer */
+  rating: Scalars['Float']['output'];
+  /** The review text given by the reviewer */
+  review: Scalars['String']['output'];
+  reviewer: PublicAccount;
 };
 
 /** The course section info */
@@ -430,6 +454,8 @@ export type Mutation = {
   deleteCourseSectionItem?: Maybe<MutationResult>;
   /** Deletes a lesson. */
   deleteLesson?: Maybe<MutationResult>;
+  /** Rate a course. */
+  rateCourse?: Maybe<MutationResult>;
   /** Remove the profile picture of a user. */
   removeProfilePicture?: Maybe<ChangeProfilePictureResult>;
   /** Updates a user account information. */
@@ -505,6 +531,11 @@ export type MutationDeleteCourseSectionItemArgs = {
 
 export type MutationDeleteLessonArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type MutationRateCourseArgs = {
+  ratingInfo: RateCourse;
 };
 
 
@@ -623,6 +654,23 @@ export type ProfilePictureDetailsInput = {
   uuid: Scalars['String']['input'];
 };
 
+/** The properties of a public account */
+export type PublicAccount = {
+  __typename?: 'PublicAccount';
+  /** The avatar url of this account */
+  avatar_url?: Maybe<Scalars['String']['output']>;
+  /** The first name of the account */
+  first_name?: Maybe<Scalars['String']['output']>;
+  /** A unique id of this account */
+  id: Scalars['ID']['output'];
+  /** The last name of the account */
+  last_name?: Maybe<Scalars['String']['output']>;
+  /** The name of the account */
+  name?: Maybe<Scalars['String']['output']>;
+  /** The nickname of the account */
+  nickname?: Maybe<Scalars['String']['output']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   /** List of countries */
@@ -660,6 +708,16 @@ export type QueryEditableCourseArgs = {
 
 export type QuerySubjectArgs = {
   id: Scalars['ID']['input'];
+};
+
+/** Input for rating a course. */
+export type RateCourse = {
+  /** The ID of the course. */
+  courseId: Scalars['ID']['input'];
+  /** star rating value between 1 and 5 */
+  rating?: InputMaybe<Scalars['Float']['input']>;
+  /** The review text given by the reviewer */
+  review?: InputMaybe<Scalars['String']['input']>;
 };
 
 /** The subject info */
