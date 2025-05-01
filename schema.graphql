@@ -197,6 +197,18 @@ type Course {
 
   """The sections of this course."""
   sections: [CourseSection!]!
+
+  """Average star rating for this course"""
+  rating: Float!
+
+  """Total number of ratings for this course"""
+  ratingsCount: Int!
+
+  """The reviews of this course."""
+  reviews: [CourseReview!]!
+
+  """Review by the current viewer for this course"""
+  viewerReview: CourseReview
 }
 
 """The difficulty level of a course."""
@@ -344,6 +356,46 @@ type VideoContent {
   rank: Int!
 }
 
+"""The review details of a course"""
+type CourseReview {
+  """Id of this course review"""
+  id: ID!
+
+  """1-5 star rating value given by the reviewer"""
+  rating: Float!
+
+  """The review text given by the reviewer"""
+  review: String!
+  reviewer: PublicAccount!
+
+  """Whether the review can be edited by the user"""
+  isEditable: Boolean!
+
+  """The date when the review was created"""
+  created_at: Date!
+}
+
+"""The properties of a public account"""
+type PublicAccount {
+  """A unique id of this account"""
+  id: ID!
+
+  """The name of the account"""
+  name: String
+
+  """The nickname of the account"""
+  nickname: String
+
+  """The first name of the account"""
+  first_name: String
+
+  """The last name of the account"""
+  last_name: String
+
+  """The avatar url of this account"""
+  avatar_url: String
+}
+
 """The open id client providers to use for auth"""
 type OpenidClient {
   """A unique id of this OIDC"""
@@ -442,6 +494,12 @@ type Mutation {
   deleteLesson(
     """The ID of the lesson to delete."""
     id: ID!
+  ): MutationResult
+
+  """Rate a course."""
+  rateCourse(
+    """The course rating information."""
+    ratingInfo: RateCourse!
   ): MutationResult
 
   """Remove the profile picture of a user."""
@@ -718,6 +776,18 @@ type MutationResult {
 
   """A list of errors that occurred executing this mutation."""
   errors: [Error!]!
+}
+
+"""Input for rating a course."""
+input RateCourse {
+  """The ID of the course."""
+  courseId: ID!
+
+  """star rating value between 1 and 5"""
+  rating: Float
+
+  """The review text given by the reviewer"""
+  review: String
 }
 
 """Input for updating an account information"""
