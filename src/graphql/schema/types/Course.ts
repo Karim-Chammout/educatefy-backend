@@ -179,7 +179,7 @@ export const Course: GraphQLObjectType = new GraphQLObjectType<CourseType, Conte
           .avg('rating as average')
           .first();
 
-        if (!ratings || ratings.length === 0) {
+        if (!ratings || ratings.average === null) {
           return 0;
         }
 
