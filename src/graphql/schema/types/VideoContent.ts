@@ -1,8 +1,10 @@
 import { GraphQLID, GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql';
 
+import { VideoContent as VideoContentType } from '../../../types/db-generated-types';
+import { ContextType } from '../../../types/types';
 import { defaultContentComponentFields } from './ContentComponent';
 
-export const VideoContent = new GraphQLObjectType({
+export const VideoContent = new GraphQLObjectType<VideoContentType, ContextType>({
   name: 'VideoContent',
   description: 'A video content component.',
   fields: {
