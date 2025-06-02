@@ -13,6 +13,7 @@ import {
   CourseSection as CourseSectionType,
 } from '../../../types/db-generated-types';
 import { ContextType } from '../../../types/types';
+import { hasTeacherRole } from '../../utils/hasTeacherRole';
 import { CourseSectionItem } from './union/CourseSectionItem';
 
 export const CourseSection = new GraphQLObjectType<CourseSectionType, ContextType>({
@@ -38,7 +39,7 @@ export const CourseSection = new GraphQLObjectType<CourseSectionType, ContextTyp
     items: {
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(CourseSectionItem))),
       description: 'The course section items',
-      resolve: async (parent, _, { loaders }) => {
+      resolve: async (parent, _, { loaders, user }) => {
         const courseSectionItems = await loaders.CourseSectionItem.loadByCourseSectionId(parent.id);
 
         const sectionItems = await Promise.all(
@@ -53,7 +54,7 @@ export const CourseSection = new GraphQLObjectType<CourseSectionType, ContextTyp
               case CourseSectionItemContentTypeEnumType.Lesson:
                 const lesson = await loaders.Lesson.loadById(content_id);
 
-                if (!lesson || !lesson.is_published) {
+                if (!lesson) {
                   return null;
                 }
 
@@ -68,7 +69,16 @@ export const CourseSection = new GraphQLObjectType<CourseSectionType, ContextTyp
           return [];
         }
 
-        const items = sectionItems.filter((item) => item !== null).sort((a, b) => a.rank - b.rank);
+        const isTeacher = user.authenticated && (await hasTeacherRole(loaders, user.roleId));
+
+        // Filter out unpublished items for students
+        const filteredSectionItems = isTeacher
+          ? sectionItems
+          : sectionItems.filter((item) => item !== null && item.is_published);
+
+        const items = filteredSectionItems
+          .filter((item) => item !== null)
+          .sort((a, b) => a.rank - b.rank);
 
         return items;
       },
