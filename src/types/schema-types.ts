@@ -272,7 +272,7 @@ export type CourseRequirementInput = {
 export type CourseReview = {
   __typename?: 'CourseReview';
   /** The date when the review was created */
-  createdAt: Scalars['Date']['output'];
+  created_at: Scalars['Date']['output'];
   /** Id of this course review */
   id: Scalars['ID']['output'];
   /** Whether the review can be edited by the user */
