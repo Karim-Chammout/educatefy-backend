@@ -159,6 +159,8 @@ export type Course = {
   id: Scalars['ID']['output'];
   /** The image of this course */
   image?: Maybe<Scalars['String']['output']>;
+  /** The name of the instructor for this course */
+  instructor: Teacher;
   /** A flag to indicate whether this course is published or not */
   is_published: Scalars['Boolean']['output'];
   /** The language of this course */
@@ -167,6 +169,8 @@ export type Course = {
   level: CourseLevel;
   /** The objectives of this course. */
   objectives: Array<CourseObjective>;
+  /** The number of participants enrolled in this course (or completed it) */
+  participationCount: Scalars['Int']['output'];
   /** Average star rating for this course */
   rating: Scalars['Float']['output'];
   /** Total number of ratings for this course */
@@ -729,6 +733,27 @@ export type Subject = {
   denomination: Scalars['String']['output'];
   /** A unique id of this subject. */
   id: Scalars['ID']['output'];
+};
+
+/** The properties of a teacher account */
+export type Teacher = {
+  __typename?: 'Teacher';
+  /** The avatar url of this teacher */
+  avatar_url?: Maybe<Scalars['String']['output']>;
+  /** A short biography of the teacher */
+  bio?: Maybe<Scalars['String']['output']>;
+  /** A detailed description of the teacher */
+  description?: Maybe<Scalars['String']['output']>;
+  /** The first name of the teacher */
+  first_name?: Maybe<Scalars['String']['output']>;
+  /** A unique id of this account */
+  id: Scalars['ID']['output'];
+  /** The last name of the teacher */
+  last_name?: Maybe<Scalars['String']['output']>;
+  /** The name of the teacher */
+  name?: Maybe<Scalars['String']['output']>;
+  /** The nickname of the teacher */
+  nickname?: Maybe<Scalars['String']['output']>;
 };
 
 /** A text content component. */
