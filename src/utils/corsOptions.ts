@@ -1,7 +1,9 @@
 import { CorsOptions } from 'cors';
 
-// To be added later
-const allowedDomains = [''];
+/*
+ * https://educatefy-backend.onrender.com - Render.com preview domain
+ */
+const allowedDomains = ['https://educatefy-backend.onrender.com'];
 
 export const corsOptions: CorsOptions = {
   origin: (origin, callback) => {
