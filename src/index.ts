@@ -13,22 +13,6 @@ import { corsOptions } from './utils/corsOptions';
 
 const app = express();
 
-// Run the migrations manually
-(() => {
-  console.log('Running migrations...');
-  const { spawn } = require('child_process');
-  const migrate = spawn('npm', ['run', 'migrate'], { stdio: 'inherit' });
-
-  migrate.on('close', (code: any) => {
-    if (code === 0) {
-      console.log('Migrations completed successfully');
-    } else {
-      console.error('Migration failed');
-      process.exit(1);
-    }
-  });
-})();
-
 app.use(
   helmet({
     contentSecurityPolicy: false,
