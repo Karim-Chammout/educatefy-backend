@@ -209,6 +209,12 @@ type Course {
 
   """Review by the current viewer for this course"""
   viewerReview: CourseReview
+
+  """The name of the instructor for this course"""
+  instructor: Teacher!
+
+  """The number of participants enrolled in this course (or completed it)"""
+  participationCount: Int!
 }
 
 """The difficulty level of a course."""
@@ -394,6 +400,33 @@ type PublicAccount {
 
   """The avatar url of this account"""
   avatar_url: String
+}
+
+"""The properties of a teacher account"""
+type Teacher {
+  """A unique id of this account"""
+  id: ID!
+
+  """The name of the teacher"""
+  name: String
+
+  """The nickname of the teacher"""
+  nickname: String
+
+  """The first name of the teacher"""
+  first_name: String
+
+  """The last name of the teacher"""
+  last_name: String
+
+  """The avatar url of this teacher"""
+  avatar_url: String
+
+  """A short biography of the teacher"""
+  bio: String
+
+  """A detailed description of the teacher"""
+  description: String
 }
 
 """The open id client providers to use for auth"""
