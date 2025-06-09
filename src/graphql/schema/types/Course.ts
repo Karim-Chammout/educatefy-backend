@@ -21,6 +21,7 @@ import { CourseSection } from './CourseSection';
 import CourseLevel from './enum/CourseLevel';
 import CourseStatus from './enum/CourseStatus';
 import { Subject } from './Subject';
+import { Teacher } from './Teacher';
 
 export const Course: GraphQLObjectType = new GraphQLObjectType<CourseType, ContextType>({
   name: 'Course',
@@ -233,6 +234,15 @@ export const Course: GraphQLObjectType = new GraphQLObjectType<CourseType, Conte
         }
 
         return accountReview;
+      },
+    },
+    instructor: {
+      type: new GraphQLNonNull(Teacher),
+      description: 'The name of the instructor for this course',
+      resolve: async (parent, _, { loaders }) => {
+        const instructor = await loaders.Account.loadById(parent.teacher_id);
+
+        return instructor;
       },
     },
   }),
