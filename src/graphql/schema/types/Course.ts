@@ -245,5 +245,28 @@ export const Course: GraphQLObjectType = new GraphQLObjectType<CourseType, Conte
         return instructor;
       },
     },
+    participationCount: {
+      type: new GraphQLNonNull(GraphQLInt),
+      description: 'The number of participants enrolled in this course (or completed it)',
+      resolve: async (parent, _, { loaders }) => {
+        const courseParticipation = await loaders.Enrollment.loadByCourseId(parent.id);
+
+        if (!courseParticipation || courseParticipation.length === 0) {
+          return 0;
+        }
+
+        const enrolledCount = courseParticipation.filter(
+          (enrollment) =>
+            enrollment.status === EnrollmentStatusType.Enrolled ||
+            enrollment.status === EnrollmentStatusType.Completed,
+        );
+
+        if (!enrolledCount || enrolledCount.length === 0) {
+          return 0;
+        }
+
+        return enrolledCount.length;
+      },
+    },
   }),
 });
