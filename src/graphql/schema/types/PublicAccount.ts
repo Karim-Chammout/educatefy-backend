@@ -31,13 +31,7 @@ export const PublicAccount = new GraphQLObjectType<AccountType, ContextType>({
     avatar_url: {
       type: GraphQLString,
       description: 'The avatar url of this account',
-      resolve: async (parent, _, { user }) => {
-        if (!user.authenticated) return null;
-
-        if (parent.avatar_url) return getImageURL(parent.avatar_url);
-
-        return null;
-      },
+      resolve: async (parent) => (parent.avatar_url ? getImageURL(parent.avatar_url) : null),
     },
   }),
 });
