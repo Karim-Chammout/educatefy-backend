@@ -6,6 +6,7 @@ dotenv.config({ path: '../../.env' });
 const knexConfig: Knex.Config = {
   client: 'pg',
   connection: {
+    connectionString: process.env.DATABASE_URL,
     host: process.env.DATABASE_HOST,
     database: process.env.DATABASE_NAME,
     user: process.env.DATABASE_USER,
