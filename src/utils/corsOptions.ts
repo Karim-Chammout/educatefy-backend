@@ -2,8 +2,12 @@ import { CorsOptions } from 'cors';
 
 /*
  * https://educatefy-backend.onrender.com - Render.com preview domain
+ * https://educatefy-frontend.vercel.app - Vercel preview domain
  */
-const allowedDomains = ['https://educatefy-backend.onrender.com'];
+const allowedDomains = [
+  'https://educatefy-backend.onrender.com',
+  'https://educatefy-frontend.vercel.app',
+];
 
 export const corsOptions: CorsOptions = {
   origin: (origin, callback) => {
