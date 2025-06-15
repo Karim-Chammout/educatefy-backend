@@ -427,6 +427,9 @@ type Teacher {
 
   """A detailed description of the teacher"""
   description: String
+
+  """Indicates if the current user is following this teacher"""
+  isFollowed: Boolean!
 }
 
 """The open id client providers to use for auth"""
@@ -528,6 +531,12 @@ type Mutation {
     """The ID of the lesson to delete."""
     id: ID!
   ): MutationResult
+
+  """Follow or unfollow a teacher. Toggles the follow status."""
+  followTeacher(
+    """The teacher follow information"""
+    followTeacherInfo: FollowTeacherInput!
+  ): FollowTeacherResult
 
   """Rate a course."""
   rateCourse(
@@ -809,6 +818,24 @@ type MutationResult {
 
   """A list of errors that occurred executing this mutation."""
   errors: [Error!]!
+}
+
+"""Result of following/unfollowing a teacher"""
+type FollowTeacherResult {
+  """Indicates if the mutation was successful."""
+  success: Boolean!
+
+  """A list of errors that occurred executing this mutation."""
+  errors: [Error!]!
+
+  """Whether the student is now following the teacher"""
+  isFollowing: Boolean
+}
+
+"""Input for following/unfollowing a teacher"""
+input FollowTeacherInput {
+  """The ID of the teacher to follow/unfollow"""
+  teacherId: String!
 }
 
 """Input for rating a course."""
