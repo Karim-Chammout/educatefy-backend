@@ -387,6 +387,23 @@ export type Error = {
   message: Scalars['String']['output'];
 };
 
+/** Input for following/unfollowing a teacher */
+export type FollowTeacherInput = {
+  /** The ID of the teacher to follow/unfollow */
+  teacherId: Scalars['String']['input'];
+};
+
+/** Result of following/unfollowing a teacher */
+export type FollowTeacherResult = {
+  __typename?: 'FollowTeacherResult';
+  /** A list of errors that occurred executing this mutation. */
+  errors: Array<Error>;
+  /** Whether the student is now following the teacher */
+  isFollowing?: Maybe<Scalars['Boolean']['output']>;
+  /** Indicates if the mutation was successful. */
+  success: Scalars['Boolean']['output'];
+};
+
 /** Gender of the account. */
 export enum Gender {
   Female = 'female',
@@ -458,6 +475,8 @@ export type Mutation = {
   deleteCourseSectionItem?: Maybe<MutationResult>;
   /** Deletes a lesson. */
   deleteLesson?: Maybe<MutationResult>;
+  /** Follow or unfollow a teacher. Toggles the follow status. */
+  followTeacher?: Maybe<FollowTeacherResult>;
   /** Rate a course. */
   rateCourse?: Maybe<MutationResult>;
   /** Remove the profile picture of a user. */
@@ -535,6 +554,11 @@ export type MutationDeleteCourseSectionItemArgs = {
 
 export type MutationDeleteLessonArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type MutationFollowTeacherArgs = {
+  followTeacherInfo: FollowTeacherInput;
 };
 
 
@@ -748,6 +772,8 @@ export type Teacher = {
   first_name?: Maybe<Scalars['String']['output']>;
   /** A unique id of this account */
   id: Scalars['ID']['output'];
+  /** Indicates if the current user is following this teacher */
+  isFollowed: Scalars['Boolean']['output'];
   /** The last name of the teacher */
   last_name?: Maybe<Scalars['String']['output']>;
   /** The name of the teacher */
