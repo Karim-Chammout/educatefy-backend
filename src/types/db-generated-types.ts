@@ -56,6 +56,7 @@ export enum Table {
   MigrationsLock = "migrations_lock",
   OpenidClient = "openid_client",
   RefreshToken = "refresh_token",
+  StudentTeacherFollow = "student_teacher_follow",
   Subject = "subject",
   TextContent = "text_content",
   VideoContent = "video_content",
@@ -83,6 +84,7 @@ export type Tables = {
   "migrations_lock": MigrationsLock,
   "openid_client": OpenidClient,
   "refresh_token": RefreshToken,
+  "student_teacher_follow": StudentTeacherFollow,
   "subject": Subject,
   "text_content": TextContent,
   "video_content": VideoContent,
@@ -297,6 +299,15 @@ export type RefreshToken = {
   browser: string;
   expires_at: Date;
   last_used_at: Date;
+  created_at: Date;
+  updated_at: Date;
+};
+
+export type StudentTeacherFollow = {
+  id: number;
+  student_id: number;
+  teacher_id: number;
+  is_following: boolean;
   created_at: Date;
   updated_at: Date;
 };
