@@ -1,4 +1,10 @@
-import { GraphQLID, GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql';
+import {
+  GraphQLBoolean,
+  GraphQLID,
+  GraphQLNonNull,
+  GraphQLObjectType,
+  GraphQLString,
+} from 'graphql';
 
 import { Account as AccountType } from '../../../types/db-generated-types';
 import { ContextType } from '../../../types/types';
@@ -40,6 +46,22 @@ export const Teacher = new GraphQLObjectType<AccountType, ContextType>({
     description: {
       type: GraphQLString,
       description: 'A detailed description of the teacher',
+    },
+    isFollowed: {
+      type: new GraphQLNonNull(GraphQLBoolean),
+      description: 'Indicates if the current user is following this teacher',
+      resolve: async (parent, _, { loaders, user }) => {
+        if (!user.authenticated) return false;
+
+        const follow = await loaders.StudentTeacherFollow.loadByStudentIdAndTeacherId(
+          user.id,
+          parent.id,
+        );
+
+        if (!follow) return false;
+
+        return follow.is_following;
+      },
     },
   }),
 });
