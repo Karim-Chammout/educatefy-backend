@@ -430,6 +430,11 @@ type Teacher {
 
   """Indicates if the current user is following this teacher"""
   isFollowed: Boolean!
+
+  """
+  Checks if the current user can follow this teacher (blocks self-follow).
+  """
+  isAllowedToFollow: Boolean!
 }
 
 """The open id client providers to use for auth"""
