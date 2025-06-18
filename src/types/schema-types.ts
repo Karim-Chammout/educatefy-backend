@@ -772,6 +772,8 @@ export type Teacher = {
   first_name?: Maybe<Scalars['String']['output']>;
   /** A unique id of this account */
   id: Scalars['ID']['output'];
+  /** Checks if the current user can follow this teacher (blocks self-follow). */
+  isAllowedToFollow: Scalars['Boolean']['output'];
   /** Indicates if the current user is following this teacher */
   isFollowed: Scalars['Boolean']['output'];
   /** The last name of the teacher */
