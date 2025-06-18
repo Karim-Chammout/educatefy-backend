@@ -63,5 +63,15 @@ export const Teacher = new GraphQLObjectType<AccountType, ContextType>({
         return follow.is_following;
       },
     },
+    isAllowedToFollow: {
+      type: new GraphQLNonNull(GraphQLBoolean),
+      description: 'Checks if the current user can follow this teacher (blocks self-follow).',
+      resolve: async (parent, _, { user }) => {
+        if (!user.authenticated) return false;
+
+        // Prevent teachers from self-follow
+        return user.id !== parent.id;
+      },
+    },
   }),
 });
