@@ -1,6 +1,7 @@
 import {
   GraphQLBoolean,
   GraphQLID,
+  GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLString,
@@ -9,6 +10,7 @@ import {
 import { Account as AccountType } from '../../../types/db-generated-types';
 import { ContextType } from '../../../types/types';
 import { getImageURL } from '../../../utils/getImageURL';
+import { Course } from './Course';
 
 export const Teacher = new GraphQLObjectType<AccountType, ContextType>({
   name: 'Teacher',
@@ -71,6 +73,19 @@ export const Teacher = new GraphQLObjectType<AccountType, ContextType>({
 
         // Prevent teachers from self-follow
         return user.id !== parent.id;
+      },
+    },
+    courses: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Course))),
+      description: 'List of courses created by the teacher',
+      resolve: async (parent, _, { loaders }) => {
+        const courses = await loaders.Course.loadByTeacherId(parent.id);
+
+        if (!courses) {
+          return [];
+        }
+
+        return courses;
       },
     },
   }),
