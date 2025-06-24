@@ -707,6 +707,8 @@ export type Query = {
   course?: Maybe<Course>;
   /** Retrieve a course to be edited by the teacher. */
   editableCourse?: Maybe<Course>;
+  /** Retrieve the instructor (teacher) account by its id */
+  instructor?: Maybe<Teacher>;
   /** List of languages */
   languages: Array<Language>;
   /** The current user */
@@ -730,6 +732,11 @@ export type QueryCourseArgs = {
 
 
 export type QueryEditableCourseArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryInstructorArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -766,6 +773,8 @@ export type Teacher = {
   avatar_url?: Maybe<Scalars['String']['output']>;
   /** A short biography of the teacher */
   bio?: Maybe<Scalars['String']['output']>;
+  /** List of courses created by the teacher */
+  courses: Array<Course>;
   /** A detailed description of the teacher */
   description?: Maybe<Scalars['String']['output']>;
   /** The first name of the teacher */
