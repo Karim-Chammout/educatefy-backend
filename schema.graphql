@@ -37,6 +37,12 @@ type Query {
 
   """List of subjects that have courses associated with them"""
   subjectsListWithLinkedCourses: [Subject!]!
+
+  """Retrieve the instructor (teacher) account by its id"""
+  instructor(
+    """The id of the instructor account."""
+    id: ID!
+  ): Teacher
 }
 
 """The properties of the account"""
@@ -435,6 +441,9 @@ type Teacher {
   Checks if the current user can follow this teacher (blocks self-follow).
   """
   isAllowedToFollow: Boolean!
+
+  """List of courses created by the teacher"""
+  courses: [Course!]!
 }
 
 """The open id client providers to use for auth"""
