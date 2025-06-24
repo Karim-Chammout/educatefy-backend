@@ -17,6 +17,7 @@ import { Course } from './types/Course';
 import { Language } from './types/Language';
 import { OpenidClient } from './types/OpenidClient';
 import { Subject } from './types/Subject';
+import { Teacher } from './types/Teacher';
 
 const Query = new GraphQLObjectType<any, ContextType>({
   name: 'Query',
@@ -176,6 +177,32 @@ const Query = new GraphQLObjectType<any, ContextType>({
         }
 
         return subjects;
+      },
+    },
+    instructor: {
+      type: Teacher,
+      description: 'Retrieve the instructor (teacher) account by its id',
+      args: {
+        id: {
+          type: new GraphQLNonNull(GraphQLID),
+          description: 'The id of the instructor account.',
+        },
+      },
+      resolve: async (_, { id }: { id: string }, { loaders }) => {
+        const accountId = parseInt(id, 10);
+        const account = await loaders.Account.loadById(accountId);
+
+        if (!account) {
+          return null;
+        }
+
+        const isTeacher = await hasTeacherRole(loaders, account.role_id);
+
+        if (!isTeacher) {
+          return null;
+        }
+
+        return account;
       },
     },
   },
