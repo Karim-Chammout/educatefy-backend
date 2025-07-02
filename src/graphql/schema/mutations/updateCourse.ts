@@ -117,7 +117,7 @@ const updateCourse: GraphQLFieldConfig<null, ContextType> = {
           ...(subtitle && { subtitle }),
           ...(level && { level }),
           ...(is_published !== undefined && { is_published }),
-          ...(image && { image }),
+          ...(image !== undefined && { image }),
           ...(languageId && { language_id: languageId }),
           ...(external_resource_link && { external_resource_link }),
           ...(external_meeting_link && { external_meeting_link }),
