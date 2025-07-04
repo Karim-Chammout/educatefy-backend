@@ -39,6 +39,7 @@ export enum Table {
   AccountSubject = "account__subject",
   AccountRole = "account_role",
   ContentComponent = "content_component",
+  ContentComponentProgress = "content_component_progress",
   Country = "country",
   Course = "course",
   CourseSubject = "course__subject",
@@ -67,6 +68,7 @@ export type Tables = {
   "account__subject": AccountSubject,
   "account_role": AccountRole,
   "content_component": ContentComponent,
+  "content_component_progress": ContentComponentProgress,
   "country": Country,
   "course": Course,
   "course__subject": CourseSubject,
@@ -136,6 +138,17 @@ export type ContentComponent = {
   is_published: boolean;
   is_required: boolean;
   rank: number;
+  created_at: Date;
+  updated_at: Date;
+};
+
+export type ContentComponentProgress = {
+  id: number;
+  account_id: number;
+  content_component_id: number;
+  enrollment_id: number;
+  is_completed: boolean;
+  completed_at: Date | null;
   created_at: Date;
   updated_at: Date;
 };
