@@ -123,6 +123,30 @@ export type ContentComponentBaseInput = {
   type: ComponentType;
 };
 
+/** Progress tracking for content components */
+export type ContentComponentProgress = {
+  __typename?: 'ContentComponentProgress';
+  /** When the component was completed */
+  completed_at?: Maybe<Scalars['Date']['output']>;
+  /** The content component ID */
+  content_component_id: Scalars['Int']['output'];
+  /** The unique identifier of the progress record */
+  id: Scalars['ID']['output'];
+  /** Flag to indicate if the content component is completed */
+  is_completed: Scalars['Boolean']['output'];
+};
+
+/** Result of updating content component progress */
+export type ContentComponentProgressResult = {
+  __typename?: 'ContentComponentProgressResult';
+  /** The updated content component progress. */
+  contentComponentProgress?: Maybe<ContentComponentProgress>;
+  /** A list of errors that occurred executing this mutation. */
+  errors: Array<Error>;
+  /** Indicates if the mutation was successful. */
+  success: Scalars['Boolean']['output'];
+};
+
 /** The country info */
 export type Country = {
   __typename?: 'Country';
@@ -485,6 +509,8 @@ export type Mutation = {
   updateAccountInfo?: Maybe<MutationResult>;
   /** Updates a content component. */
   updateContentComponent?: Maybe<CreateOrUpdateContentComponent>;
+  /** Updates the progress of a content component. */
+  updateContentComponentProgress?: Maybe<ContentComponentProgressResult>;
   /** Updates the ranks of multiple content components. */
   updateContentComponentRanks?: Maybe<MutationResult>;
   /** Updates a course. */
@@ -576,6 +602,11 @@ export type MutationUpdateContentComponentArgs = {
   baseComponentInfo: UpdateContentComponentBaseInput;
   textContent?: InputMaybe<TextContentInput>;
   videoContent?: InputMaybe<VideoContentInput>;
+};
+
+
+export type MutationUpdateContentComponentProgressArgs = {
+  progressInput: UpdateContentComponentProgressInput;
 };
 
 
@@ -808,6 +839,8 @@ export type TextContent = {
   is_published: Scalars['Boolean']['output'];
   /** A flag indicating whether the component is required to continue. */
   is_required: Scalars['Boolean']['output'];
+  /** The progress of this component for the current user */
+  progress?: Maybe<ContentComponentProgress>;
   /** The rank of the component */
   rank: Scalars['Int']['output'];
   /** The type of the component. */
@@ -830,6 +863,14 @@ export type UpdateContentComponentBaseInput = {
   isRequired?: InputMaybe<Scalars['Boolean']['input']>;
   /** The type of the component. */
   type: ComponentType;
+};
+
+/** Input for updating content component progress */
+export type UpdateContentComponentProgressInput = {
+  /** The content component ID */
+  contentComponentId: Scalars['String']['input'];
+  /** Flag to indicate if the content component is completed */
+  isCompleted: Scalars['Boolean']['input'];
 };
 
 /** Input for updating a content component rank */
@@ -949,6 +990,8 @@ export type VideoContent = {
   is_published: Scalars['Boolean']['output'];
   /** A flag indicating whether the component is required to continue. */
   is_required: Scalars['Boolean']['output'];
+  /** The progress of this component for the current user */
+  progress?: Maybe<ContentComponentProgress>;
   /** The rank of the component */
   rank: Scalars['Int']['output'];
   /** The type of the component. */
