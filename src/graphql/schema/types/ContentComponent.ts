@@ -8,10 +8,11 @@ import {
 
 import { ContentComponent as ContentComponentType } from '../../../types/db-generated-types';
 import { ContextType } from '../../../types/types';
+import { ContentComponentProgress } from './ContentComponentProgress';
 import { ComponentType } from './enum/ContentComponent';
 
 export const defaultContentComponentFields: GraphQLFieldConfigMap<
-  ContentComponentType,
+  ContentComponentType & { component_id: number },
   ContextType
 > = {
   denomination: {
@@ -33,5 +34,26 @@ export const defaultContentComponentFields: GraphQLFieldConfigMap<
   rank: {
     type: new GraphQLNonNull(GraphQLInt),
     description: 'The rank of the component',
+  },
+  progress: {
+    type: ContentComponentProgress,
+    description: 'The progress of this component for the current user',
+    resolve: async (parent, _, { loaders, user }) => {
+      if (!user.authenticated) {
+        return null;
+      }
+
+      const contentComponentProgress =
+        await loaders.ContentComponentProgress.loadByAccountIdAndComponentId(
+          user.id,
+          parent.component_id,
+        );
+
+      if (!contentComponentProgress) {
+        return null;
+      }
+
+      return contentComponentProgress;
+    },
   },
 };
