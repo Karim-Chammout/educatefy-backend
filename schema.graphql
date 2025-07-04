@@ -333,12 +333,30 @@ type TextContent {
 
   """The rank of the component"""
   rank: Int!
+
+  """The progress of this component for the current user"""
+  progress: ContentComponentProgress
 }
 
 """The type of the component."""
 enum ComponentType {
   text
   video
+}
+
+"""Progress tracking for content components"""
+type ContentComponentProgress {
+  """The unique identifier of the progress record"""
+  id: ID!
+
+  """The content component ID"""
+  content_component_id: Int!
+
+  """Flag to indicate if the content component is completed"""
+  is_completed: Boolean!
+
+  """When the component was completed"""
+  completed_at: Date
 }
 
 """A video content component."""
@@ -366,6 +384,9 @@ type VideoContent {
 
   """The rank of the component"""
   rank: Int!
+
+  """The progress of this component for the current user"""
+  progress: ContentComponentProgress
 }
 
 """The review details of a course"""
@@ -578,6 +599,12 @@ type Mutation {
     """The video content for the component."""
     videoContent: VideoContentInput
   ): CreateOrUpdateContentComponent
+
+  """Updates the progress of a content component."""
+  updateContentComponentProgress(
+    """The progress update input"""
+    progressInput: UpdateContentComponentProgressInput!
+  ): ContentComponentProgressResult
 
   """Updates the ranks of multiple content components."""
   updateContentComponentRanks(
@@ -915,6 +942,27 @@ input UpdateContentComponentBaseInput {
 
   """A flag indicating whether the component is published."""
   isPublished: Boolean
+}
+
+"""Result of updating content component progress"""
+type ContentComponentProgressResult {
+  """Indicates if the mutation was successful."""
+  success: Boolean!
+
+  """A list of errors that occurred executing this mutation."""
+  errors: [Error!]!
+
+  """The updated content component progress."""
+  contentComponentProgress: ContentComponentProgress
+}
+
+"""Input for updating content component progress"""
+input UpdateContentComponentProgressInput {
+  """The content component ID"""
+  contentComponentId: String!
+
+  """Flag to indicate if the content component is completed"""
+  isCompleted: Boolean!
 }
 
 """Input for updating a content component rank"""
