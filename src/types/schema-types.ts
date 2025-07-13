@@ -175,8 +175,6 @@ export type Course = {
   description: Scalars['String']['output'];
   /** The end date of the course */
   end_date?: Maybe<Scalars['Date']['output']>;
-  /** A link to an external meeting. */
-  external_meeting_link?: Maybe<Scalars['String']['output']>;
   /** A link to an external resource. */
   external_resource_link?: Maybe<Scalars['String']['output']>;
   /** A unique id of this course. */
@@ -229,8 +227,6 @@ export type CourseInfoInput = {
   description: Scalars['String']['input'];
   /** The end date of the course. */
   end_date?: InputMaybe<Scalars['Date']['input']>;
-  /** A link to an external meeting. */
-  external_meeting_link?: InputMaybe<Scalars['String']['input']>;
   /** A link to an external resource. */
   external_resource_link?: InputMaybe<Scalars['String']['input']>;
   /** The image of this course. */
@@ -889,8 +885,6 @@ export type UpdateCourseInfoInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   /** The end date of the course */
   end_date?: InputMaybe<Scalars['Date']['input']>;
-  /** A link to an external meeting. */
-  external_meeting_link?: InputMaybe<Scalars['String']['input']>;
   /** A link to an external resource. */
   external_resource_link?: InputMaybe<Scalars['String']['input']>;
   /** The ID of this course */
