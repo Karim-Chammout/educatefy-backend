@@ -40,7 +40,6 @@ const updateCourse: GraphQLFieldConfig<null, ContextType> = {
         subtitle,
         image,
         external_resource_link,
-        external_meeting_link,
         start_date,
         end_date,
         subjectIds,
@@ -120,7 +119,6 @@ const updateCourse: GraphQLFieldConfig<null, ContextType> = {
           ...(image !== undefined && { image }),
           ...(languageId && { language_id: languageId }),
           ...(external_resource_link && { external_resource_link }),
-          ...(external_meeting_link && { external_meeting_link }),
           ...(end_date && { end_date }),
           ...(start_date && { start_date }),
         };
