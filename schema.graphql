@@ -165,9 +165,6 @@ type Course {
   """A link to an external resource."""
   external_resource_link: String
 
-  """A link to an external meeting."""
-  external_meeting_link: String
-
   """A flag to indicate whether this course is published or not"""
   is_published: Boolean!
 
@@ -776,9 +773,6 @@ input CourseInfoInput {
   """A link to an external resource."""
   external_resource_link: String
 
-  """A link to an external meeting."""
-  external_meeting_link: String
-
   """A flag to indicate whether this course is published or not."""
   is_published: Boolean!
 
@@ -1002,9 +996,6 @@ input UpdateCourseInfoInput {
 
   """A link to an external resource."""
   external_resource_link: String
-
-  """A link to an external meeting."""
-  external_meeting_link: String
 
   """A flag to indicate whether this course is published or not"""
   is_published: Boolean
