@@ -80,10 +80,6 @@ const UpdateCourseInfoInput = new GraphQLInputObjectType({
       type: GraphQLString,
       description: 'A link to an external resource.',
     },
-    external_meeting_link: {
-      type: GraphQLString,
-      description: 'A link to an external meeting.',
-    },
     is_published: {
       type: GraphQLBoolean,
       description: 'A flag to indicate whether this course is published or not',
