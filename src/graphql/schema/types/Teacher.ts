@@ -10,6 +10,7 @@ import {
 import { Account as AccountType } from '../../../types/db-generated-types';
 import { ContextType } from '../../../types/types';
 import { getImageURL } from '../../../utils/getImageURL';
+import { filterPublishedCoursesList } from '../../utils/courseUtils';
 import { Course } from './Course';
 
 export const Teacher = new GraphQLObjectType<AccountType, ContextType>({
@@ -85,7 +86,7 @@ export const Teacher = new GraphQLObjectType<AccountType, ContextType>({
           return [];
         }
 
-        return courses;
+        return filterPublishedCoursesList(courses);
       },
     },
   }),
