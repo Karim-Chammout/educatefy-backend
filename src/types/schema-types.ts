@@ -302,9 +302,10 @@ export type CourseReview = {
   /** Whether the review can be edited by the user */
   isEditable: Scalars['Boolean']['output'];
   /** 1-5 star rating value given by the reviewer */
-  rating: Scalars['Float']['output'];
+  rating?: Maybe<Scalars['Float']['output']>;
   /** The review text given by the reviewer */
-  review: Scalars['String']['output'];
+  review?: Maybe<Scalars['String']['output']>;
+  /** The reviewer who wrote the review */
   reviewer: PublicAccount;
 };
 
@@ -498,7 +499,7 @@ export type Mutation = {
   /** Follow or unfollow a teacher. Toggles the follow status. */
   followTeacher?: Maybe<FollowTeacherResult>;
   /** Rate a course. */
-  rateCourse?: Maybe<MutationResult>;
+  rateCourse?: Maybe<RateCourseResult>;
   /** Remove the profile picture of a user. */
   removeProfilePicture?: Maybe<ChangeProfilePictureResult>;
   /** Updates a user account information. */
@@ -780,6 +781,17 @@ export type RateCourse = {
   rating?: InputMaybe<Scalars['Float']['input']>;
   /** The review text given by the reviewer */
   review?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** The result of the rateCourse mutation. */
+export type RateCourseResult = {
+  __typename?: 'RateCourseResult';
+  /** The updated course information. */
+  course?: Maybe<Course>;
+  /** A list of errors that occurred executing this mutation. */
+  errors: Array<Error>;
+  /** Indicates if the mutation was successful. */
+  success: Scalars['Boolean']['output'];
 };
 
 /** The subject info */
