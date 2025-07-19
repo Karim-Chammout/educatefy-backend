@@ -21,15 +21,16 @@ export const CourseReview = new GraphQLObjectType<CourseReviewType, ContextType>
       description: 'Id of this course review',
     },
     rating: {
-      type: new GraphQLNonNull(GraphQLFloat),
+      type: GraphQLFloat,
       description: '1-5 star rating value given by the reviewer',
     },
     review: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: GraphQLString,
       description: 'The review text given by the reviewer',
     },
     reviewer: {
       type: new GraphQLNonNull(PublicAccount),
+      description: 'The reviewer who wrote the review',
       resolve: (parent, _, { loaders }) => loaders.Account.loadById(parent.account_id),
     },
     isEditable: {
