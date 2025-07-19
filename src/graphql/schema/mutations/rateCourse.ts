@@ -6,10 +6,10 @@ import { ErrorType } from '../../../utils/ErrorType';
 import { sanitizeText } from '../../../utils/sanitizeText';
 import { authenticated } from '../../utils/auth';
 import RateCourse from '../inputs/RateCourse';
-import MutationResult from '../types/MutationResult';
+import { RateCourseResult } from '../types/RateCourseResult';
 
 const rateCourse: GraphQLFieldConfig<null, ContextType> = {
-  type: MutationResult,
+  type: RateCourseResult,
   description: 'Rate a course.',
   args: {
     ratingInfo: {
@@ -25,6 +25,7 @@ const rateCourse: GraphQLFieldConfig<null, ContextType> = {
         return {
           success: false,
           errors: [new Error(ErrorType.INVALID_INPUT)],
+          course: null,
         };
       }
 
@@ -32,6 +33,7 @@ const rateCourse: GraphQLFieldConfig<null, ContextType> = {
         return {
           success: false,
           errors: [new Error(ErrorType.INVALID_INPUT)],
+          course: null,
         };
       }
 
@@ -42,6 +44,7 @@ const rateCourse: GraphQLFieldConfig<null, ContextType> = {
           return {
             success: false,
             errors: [new Error(ErrorType.NOT_FOUND)],
+            course: null,
           };
         }
 
@@ -77,15 +80,19 @@ const rateCourse: GraphQLFieldConfig<null, ContextType> = {
           courseId: course.id,
         });
 
+        loaders.Course.loaders.byIdLoader.clear(course.id);
+
         return {
           success: true,
           errors: [],
+          course,
         };
       } catch (error) {
         console.log('Failed to rate course: ', error);
         return {
           success: false,
           errors: [new Error(ErrorType.INTERNAL_SERVER_ERROR)],
+          course: null,
         };
       }
     },
