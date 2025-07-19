@@ -392,10 +392,12 @@ type CourseReview {
   id: ID!
 
   """1-5 star rating value given by the reviewer"""
-  rating: Float!
+  rating: Float
 
   """The review text given by the reviewer"""
-  review: String!
+  review: String
+
+  """The reviewer who wrote the review"""
   reviewer: PublicAccount!
 
   """Whether the review can be edited by the user"""
@@ -574,7 +576,7 @@ type Mutation {
   rateCourse(
     """The course rating information."""
     ratingInfo: RateCourse!
-  ): MutationResult
+  ): RateCourseResult
 
   """Remove the profile picture of a user."""
   removeProfilePicture: ChangeProfilePictureResult
@@ -871,6 +873,18 @@ type FollowTeacherResult {
 input FollowTeacherInput {
   """The ID of the teacher to follow/unfollow"""
   teacherId: String!
+}
+
+"""The result of the rateCourse mutation."""
+type RateCourseResult {
+  """Indicates if the mutation was successful."""
+  success: Boolean!
+
+  """A list of errors that occurred executing this mutation."""
+  errors: [Error!]!
+
+  """The updated course information."""
+  course: Course
 }
 
 """Input for rating a course."""
