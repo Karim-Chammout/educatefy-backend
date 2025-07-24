@@ -401,6 +401,14 @@ export type CreateOrUpdateLessonResult = {
   success: Scalars['Boolean']['output'];
 };
 
+/** Input for deleting a course rating */
+export type DeleteCourseRatingInput = {
+  /** The ID of the course. */
+  courseId: Scalars['ID']['input'];
+  /** The ID of the course rating to delete. */
+  courseRateId: Scalars['ID']['input'];
+};
+
 /** An object type that wraps an error */
 export type Error = {
   __typename?: 'Error';
@@ -490,6 +498,8 @@ export type Mutation = {
   deleteContentComponent?: Maybe<MutationResult>;
   /** Deletes a course. */
   deleteCourse?: Maybe<MutationResult>;
+  /** Delete a course rating. */
+  deleteCourseRating?: Maybe<MutationResult>;
   /** Deletes a course section. */
   deleteCourseSection?: Maybe<MutationResult>;
   /** Deletes a course section item. */
@@ -562,6 +572,11 @@ export type MutationDeleteContentComponentArgs = {
 
 export type MutationDeleteCourseArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type MutationDeleteCourseRatingArgs = {
+  ratingInfo: DeleteCourseRatingInput;
 };
 
 
