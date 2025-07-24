@@ -548,6 +548,12 @@ type Mutation {
     id: ID!
   ): MutationResult
 
+  """Delete a course rating."""
+  deleteCourseRating(
+    """The course rating to be deleted."""
+    ratingInfo: DeleteCourseRatingInput!
+  ): MutationResult
+
   """Deletes a course section."""
   deleteCourseSection(
     """The ID of the course section to delete."""
@@ -855,6 +861,15 @@ type MutationResult {
 
   """A list of errors that occurred executing this mutation."""
   errors: [Error!]!
+}
+
+"""Input for deleting a course rating"""
+input DeleteCourseRatingInput {
+  """The ID of the course."""
+  courseId: ID!
+
+  """The ID of the course rating to delete."""
+  courseRateId: ID!
 }
 
 """Result of following/unfollowing a teacher"""
