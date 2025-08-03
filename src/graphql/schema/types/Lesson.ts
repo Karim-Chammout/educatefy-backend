@@ -8,11 +8,9 @@ import {
   GraphQLString,
 } from 'graphql';
 
-import {
-  ContentComponentTypeEnumType,
-  Lesson as LessonType,
-} from '../../../types/db-generated-types';
+import { Lesson as LessonType } from '../../../types/db-generated-types';
 import { ContextType } from '../../../types/types';
+import { loadComponents } from '../../utils/contentComponentLoader';
 import { hasTeacherRole } from '../../utils/hasTeacherRole';
 import { ContentComponent } from './union/ContentComponent';
 
@@ -53,30 +51,7 @@ export const Lesson = new GraphQLObjectType<LessonType, ContextType>({
           return [];
         }
 
-        const loadedComponents = await Promise.all(
-          contentComponents.map(
-            async ({ id, type, denomination, is_published, is_required, rank }) => {
-              const componentValuesToInject = {
-                denomination,
-                type,
-                is_published,
-                is_required,
-                rank,
-              };
-
-              switch (type) {
-                case ContentComponentTypeEnumType.Text:
-                  const textContent = await loaders.TextContent.loadByComponentId(id);
-                  return textContent ? { ...textContent, ...componentValuesToInject } : null;
-                case ContentComponentTypeEnumType.Video:
-                  const videoContent = await loaders.VideoContent.loadByComponentId(id);
-                  return videoContent ? { ...videoContent, ...componentValuesToInject } : null;
-                default:
-                  return null;
-              }
-            },
-          ),
-        );
+        const loadedComponents = await loadComponents(loaders, contentComponents);
 
         const isTeacher = user.authenticated && (await hasTeacherRole(loaders, user.roleId));
 

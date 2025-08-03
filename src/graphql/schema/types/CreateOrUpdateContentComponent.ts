@@ -1,10 +1,8 @@
 import { GraphQLObjectType } from 'graphql';
 
-import {
-  ContentComponent as ContentComponentType,
-  ContentComponentTypeEnumType,
-} from '../../../types/db-generated-types';
+import { ContentComponent as ContentComponentType } from '../../../types/db-generated-types';
 import { authenticated } from '../../utils/auth';
+import { loadComponent } from '../../utils/contentComponentLoader';
 import { defaultMutationFields } from './MutationResult';
 import { ContentComponent } from './union/ContentComponent';
 
@@ -32,31 +30,9 @@ export const CreateOrUpdateContentComponent = new GraphQLObjectType({
         if (parent.success) {
           const contentComponent = await loaders.ContentComponent.loadById(parent.component.id);
 
-          const { id, type, denomination, is_published, is_required, rank } = contentComponent;
-          const componentValuesToInject = {
-            denomination,
-            type,
-            is_published,
-            is_required,
-            rank,
-          };
+          const component = await loadComponent(loaders, contentComponent);
 
-          let component = null;
-
-          switch (type) {
-            case ContentComponentTypeEnumType.Text:
-              const textContent = await loaders.TextContent.loadByComponentId(id);
-              component = textContent ? { ...textContent, ...componentValuesToInject } : null;
-              break;
-            case ContentComponentTypeEnumType.Video:
-              const videoContent = await loaders.VideoContent.loadByComponentId(id);
-              component = videoContent ? { ...videoContent, ...componentValuesToInject } : null;
-              break;
-            default:
-              component = null;
-          }
-
-          return component || null;
+          return component;
         }
 
         return null;
