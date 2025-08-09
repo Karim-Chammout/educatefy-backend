@@ -303,7 +303,7 @@ type Lesson {
 }
 
 """A content component which can be of various types."""
-union ContentComponent = TextContent | VideoContent
+union ContentComponent = TextContent | VideoContent | YouTubeContent
 
 """A text content component."""
 type TextContent {
@@ -339,6 +339,7 @@ type TextContent {
 enum ComponentType {
   text
   video
+  youtube
 }
 
 """Progress tracking for content components"""
@@ -363,6 +364,39 @@ type VideoContent {
 
   """The URL of the video."""
   url: String!
+
+  """The id of the component this video content belongs to."""
+  component_id: ID!
+
+  """The denomination of the component."""
+  denomination: String!
+
+  """The type of the component."""
+  type: ComponentType!
+
+  """A flag indicating whether the component is required to continue."""
+  is_required: Boolean!
+
+  """A flag indicating whether the component is published"""
+  is_published: Boolean!
+
+  """The rank of the component"""
+  rank: Int!
+
+  """The progress of this component for the current user"""
+  progress: ContentComponentProgress
+}
+
+"""A YouTube content component."""
+type YouTubeContent {
+  """A unique id of this video content component."""
+  id: ID!
+
+  """The YouTube video id."""
+  youtube_video_id: String!
+
+  """The description of the YouTube."""
+  description: String
 
   """The id of the component this video content belongs to."""
   component_id: ID!
@@ -513,6 +547,9 @@ type Mutation {
 
     """The video content for the component."""
     videoContent: VideoContentInput
+
+    """The YouTube content for the component."""
+    youtubeContent: YouTubeContentInput
   ): CreateOrUpdateContentComponent
 
   """Creates a course."""
@@ -603,6 +640,9 @@ type Mutation {
 
     """The video content for the component."""
     videoContent: VideoContentInput
+
+    """The YouTube content for the component."""
+    youtubeContent: YouTubeContentInput
   ): CreateOrUpdateContentComponent
 
   """Updates the progress of a content component."""
@@ -741,6 +781,14 @@ input TextContentInput {
 input VideoContentInput {
   """The URL of the video."""
   url: String!
+}
+
+input YouTubeContentInput {
+  """The video ID of the YouTube video."""
+  videoId: String!
+
+  """The description of the YouTube."""
+  description: String
 }
 
 """The result of the creating or updating a course."""
