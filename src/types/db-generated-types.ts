@@ -9,6 +9,7 @@ export enum ContentComponentParentTableEnumType {
 export enum ContentComponentTypeEnumType {
   Text = "text",
   Video = "video",
+  Youtube = "youtube",
 }
 
 export enum CourseLevelEnumType {
@@ -61,6 +62,7 @@ export enum Table {
   Subject = "subject",
   TextContent = "text_content",
   VideoContent = "video_content",
+  YoutubeContent = "youtube_content",
 }
 
 export type Tables = {
@@ -90,6 +92,7 @@ export type Tables = {
   "subject": Subject,
   "text_content": TextContent,
   "video_content": VideoContent,
+  "youtube_content": YoutubeContent,
 };
 
 export type Account = {
@@ -341,6 +344,15 @@ export type TextContent = {
 export type VideoContent = {
   id: number;
   url: string;
+  component_id: number;
+  created_at: Date;
+  updated_at: Date;
+};
+
+export type YoutubeContent = {
+  id: number;
+  youtube_video_id: string;
+  description: string | null;
   component_id: number;
   created_at: Date;
   updated_at: Date;
