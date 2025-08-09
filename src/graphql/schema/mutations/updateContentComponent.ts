@@ -4,6 +4,7 @@ import {
   TextContentInput as TextContentInputType,
   UpdateContentComponentBaseInput as UpdateContentComponentBaseInputType,
   VideoContentInput as VideoContentInputType,
+  YouTubeContentInput as YouTubeContentInputType,
 } from '../../../types/schema-types';
 import { ContextType } from '../../../types/types';
 import { ErrorType } from '../../../utils/ErrorType';
@@ -13,6 +14,7 @@ import { hasTeacherRole } from '../../utils/hasTeacherRole';
 import TextContentInput from '../inputs/TextContent';
 import UpdateContentComponentBaseInput from '../inputs/UpdateContentComponentBase';
 import VideoContentInput from '../inputs/VideoContent';
+import YouTubeContentInput from '../inputs/YouTubeContent';
 import { CreateOrUpdateContentComponent } from '../types/CreateOrUpdateContentComponent';
 
 const updateContentComponent: GraphQLFieldConfig<null, ContextType> = {
@@ -31,6 +33,10 @@ const updateContentComponent: GraphQLFieldConfig<null, ContextType> = {
       type: VideoContentInput,
       description: 'The video content for the component.',
     },
+    youtubeContent: {
+      type: YouTubeContentInput,
+      description: 'The YouTube content for the component.',
+    },
   },
   resolve: authenticated(
     async (
@@ -39,10 +45,12 @@ const updateContentComponent: GraphQLFieldConfig<null, ContextType> = {
         baseComponentInfo,
         textContent,
         videoContent,
+        youtubeContent,
       }: {
         baseComponentInfo: UpdateContentComponentBaseInputType;
         textContent: TextContentInputType;
         videoContent: VideoContentInputType;
+        youtubeContent: YouTubeContentInputType;
       },
       { db, loaders, user },
     ) => {
@@ -133,6 +141,24 @@ const updateContentComponent: GraphQLFieldConfig<null, ContextType> = {
                 url: videoContent.url,
                 updated_at: db.fn.now(),
               });
+              break;
+
+            case 'youtube':
+              if (!youtubeContent) {
+                return {
+                  success: false,
+                  errors: [new Error(ErrorType.INVALID_INPUT)],
+                  component: null,
+                };
+              }
+
+              await transaction('youtube_content')
+                .where('component_id', id)
+                .update({
+                  youtube_video_id: youtubeContent.videoId,
+                  description: youtubeContent.description || null,
+                  updated_at: db.fn.now(),
+                });
               break;
           }
 
