@@ -102,11 +102,12 @@ export enum ComponentParentType {
 /** The type of the component. */
 export enum ComponentType {
   Text = 'text',
-  Video = 'video'
+  Video = 'video',
+  Youtube = 'youtube'
 }
 
 /** A content component which can be of various types. */
-export type ContentComponent = TextContent | VideoContent;
+export type ContentComponent = TextContent | VideoContent | YouTubeContent;
 
 export type ContentComponentBaseInput = {
   /** The denomination of the component. */
@@ -546,6 +547,7 @@ export type MutationCreateContentComponentArgs = {
   baseComponentInfo: ContentComponentBaseInput;
   textContent?: InputMaybe<TextContentInput>;
   videoContent?: InputMaybe<VideoContentInput>;
+  youtubeContent?: InputMaybe<YouTubeContentInput>;
 };
 
 
@@ -614,6 +616,7 @@ export type MutationUpdateContentComponentArgs = {
   baseComponentInfo: UpdateContentComponentBaseInput;
   textContent?: InputMaybe<TextContentInput>;
   videoContent?: InputMaybe<VideoContentInput>;
+  youtubeContent?: InputMaybe<YouTubeContentInput>;
 };
 
 
@@ -1024,4 +1027,36 @@ export type VideoContent = {
 export type VideoContentInput = {
   /** The URL of the video. */
   url: Scalars['String']['input'];
+};
+
+/** A YouTube content component. */
+export type YouTubeContent = {
+  __typename?: 'YouTubeContent';
+  /** The id of the component this video content belongs to. */
+  component_id: Scalars['ID']['output'];
+  /** The denomination of the component. */
+  denomination: Scalars['String']['output'];
+  /** The description of the YouTube. */
+  description?: Maybe<Scalars['String']['output']>;
+  /** A unique id of this video content component. */
+  id: Scalars['ID']['output'];
+  /** A flag indicating whether the component is published */
+  is_published: Scalars['Boolean']['output'];
+  /** A flag indicating whether the component is required to continue. */
+  is_required: Scalars['Boolean']['output'];
+  /** The progress of this component for the current user */
+  progress?: Maybe<ContentComponentProgress>;
+  /** The rank of the component */
+  rank: Scalars['Int']['output'];
+  /** The type of the component. */
+  type: ComponentType;
+  /** The YouTube video id. */
+  youtube_video_id: Scalars['String']['output'];
+};
+
+export type YouTubeContentInput = {
+  /** The description of the YouTube. */
+  description?: InputMaybe<Scalars['String']['input']>;
+  /** The video ID of the YouTube video. */
+  videoId: Scalars['String']['input'];
 };
