@@ -6,6 +6,8 @@ const componentLoaders = {
     loaders.TextContent.loadByComponentId(id),
   [ContentComponentTypeEnumType.Video]: (loaders: ContextType['loaders'], id: number) =>
     loaders.VideoContent.loadByComponentId(id),
+  [ContentComponentTypeEnumType.Youtube]: (loaders: ContextType['loaders'], id: number) =>
+    loaders.YoutubeContent.loadByComponentId(id),
 };
 
 export const loadComponent = async (
