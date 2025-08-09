@@ -23,6 +23,7 @@ import { StudentTeacherFollowReader } from './loaders/StudentTeacherFollow';
 import { SubjectReader } from './loaders/Subject';
 import { TextContentReader } from './loaders/TextContent';
 import { VideoContentReader } from './loaders/VideoContent';
+import { YoutubeContentReader } from './loaders/YoutubeContent';
 
 export type ReadersType = {
   Account: AccountReader;
@@ -48,6 +49,7 @@ export type ReadersType = {
   Subject: SubjectReader;
   TextContent: TextContentReader;
   VideoContent: VideoContentReader;
+  YoutubeContent: YoutubeContentReader;
 };
 
 export function createLoaders(db: Knex): ReadersType {
@@ -75,5 +77,6 @@ export function createLoaders(db: Knex): ReadersType {
     Subject: new SubjectReader(db),
     TextContent: new TextContentReader(db),
     VideoContent: new VideoContentReader(db),
+    YoutubeContent: new YoutubeContentReader(db),
   };
 }
