@@ -10,6 +10,9 @@ export const ComponentType = new GraphQLEnumType({
     video: {
       value: 'video',
     },
+    youtube: {
+      value: 'youtube',
+    },
   },
 });
 
