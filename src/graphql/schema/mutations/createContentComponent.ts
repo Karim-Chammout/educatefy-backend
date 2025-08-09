@@ -4,6 +4,7 @@ import {
   ContentComponentBaseInput as ContentComponentBaseInputType,
   TextContentInput as TextContentInputType,
   VideoContentInput as VideoContentInputType,
+  YouTubeContentInput as YouTubeContentInputType,
 } from '../../../types/schema-types';
 import { ContextType } from '../../../types/types';
 import { ErrorType } from '../../../utils/ErrorType';
@@ -13,6 +14,7 @@ import { hasTeacherRole } from '../../utils/hasTeacherRole';
 import ContentComponentBaseInput from '../inputs/ContentComponentBase';
 import TextContentInput from '../inputs/TextContent';
 import VideoContentInput from '../inputs/VideoContent';
+import YouTubeContentInput from '../inputs/YouTubeContent';
 import { CreateOrUpdateContentComponent } from '../types/CreateOrUpdateContentComponent';
 
 export const createContentComponent: GraphQLFieldConfig<null, ContextType> = {
@@ -31,6 +33,10 @@ export const createContentComponent: GraphQLFieldConfig<null, ContextType> = {
       type: VideoContentInput,
       description: 'The video content for the component.',
     },
+    youtubeContent: {
+      type: YouTubeContentInput,
+      description: 'The YouTube content for the component.',
+    },
   },
   resolve: authenticated(
     async (
@@ -39,10 +45,12 @@ export const createContentComponent: GraphQLFieldConfig<null, ContextType> = {
         baseComponentInfo,
         textContent,
         videoContent,
+        youtubeContent,
       }: {
         baseComponentInfo: ContentComponentBaseInputType;
         textContent: TextContentInputType;
         videoContent: VideoContentInputType;
+        youtubeContent: YouTubeContentInputType;
       },
       { db, loaders, user },
     ) => {
@@ -54,7 +62,7 @@ export const createContentComponent: GraphQLFieldConfig<null, ContextType> = {
         };
       }
 
-      if (!textContent && !videoContent) {
+      if (!textContent && !videoContent && !youtubeContent) {
         return {
           success: false,
           errors: [new Error(ErrorType.MISSING_INPUT)],
@@ -115,6 +123,22 @@ export const createContentComponent: GraphQLFieldConfig<null, ContextType> = {
               await transaction('video_content').insert({
                 component_id: component.id,
                 url: videoContent.url,
+              });
+              break;
+
+            case 'youtube':
+              if (!youtubeContent) {
+                return {
+                  success: false,
+                  errors: [new Error(ErrorType.INVALID_INPUT)],
+                  component: null,
+                };
+              }
+
+              await transaction('youtube_content').insert({
+                component_id: component.id,
+                youtube_video_id: youtubeContent.videoId,
+                description: youtubeContent.description || null,
               });
               break;
           }
