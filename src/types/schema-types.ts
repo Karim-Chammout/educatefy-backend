@@ -47,6 +47,8 @@ export type Account = {
   nickname?: Maybe<Scalars['String']['output']>;
   /** The preferred language for the account */
   preferredLanguage: Scalars['String']['output'];
+  /** Statistics for the current user. */
+  statistics?: Maybe<Statistics>;
   /** Represents the subjects a teacher is specialized in for teaching. */
   subjects: Array<Subject>;
 };
@@ -747,12 +749,16 @@ export type PublicAccount = {
 
 export type Query = {
   __typename?: 'Query';
+  /** List of courses the user has completed. */
+  completedCourses: Array<Course>;
   /** List of countries */
   countries: Array<Country>;
   /** Retrieve a course by its slug */
   course?: Maybe<Course>;
   /** Retrieve a course to be edited by the teacher. */
   editableCourse?: Maybe<Course>;
+  /** List of courses the user is enrolled in */
+  enrolledCourses: Array<Course>;
   /** Retrieve the instructor (teacher) account by its id */
   instructor?: Maybe<Teacher>;
   /** List of languages */
@@ -810,6 +816,15 @@ export type RateCourseResult = {
   errors: Array<Error>;
   /** Indicates if the mutation was successful. */
   success: Scalars['Boolean']['output'];
+};
+
+/** Statistics info for the current user. */
+export type Statistics = {
+  __typename?: 'Statistics';
+  /** The number of completed courses by the user */
+  completedCoursesCount: Scalars['Int']['output'];
+  /** The number of enrolled courses by the user */
+  enrolledCoursesCount: Scalars['Int']['output'];
 };
 
 /** The subject info */
