@@ -1,12 +1,15 @@
 import { GraphQLID, GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql';
 
 import { Account as AccountType, Country as CountryType } from '../../../types/db-generated-types';
+import { CourseStatus } from '../../../types/schema-types';
 import { ContextType } from '../../../types/types';
 import { getImageURL } from '../../../utils/getImageURL';
+import { authenticated } from '../../utils/auth';
 import GraphQLDate from '../Scalars/Date';
 import { Country } from './Country';
 import AccountRole from './enum/AccountRole';
 import Gender from './enum/Gender';
+import { Statistics } from './Statistics';
 import { Subject } from './Subject';
 
 export const Account = new GraphQLObjectType<AccountType, ContextType>({
@@ -134,6 +137,36 @@ export const Account = new GraphQLObjectType<AccountType, ContextType>({
     description: {
       type: GraphQLString,
       description: 'A detailed overview about this teacher.',
+    },
+    statistics: {
+      type: Statistics,
+      description: 'Statistics for the current user.',
+      resolve: authenticated(async (_, __, { loaders, user }) => {
+        const courseEnrollments = await loaders.Enrollment.loadByAccountId(user.id);
+
+        if (!courseEnrollments || courseEnrollments.length === 0) {
+          return null;
+        }
+
+        const coursesCount = courseEnrollments.reduce(
+          (acc, enrollment) => {
+            const status = enrollment.status as unknown as CourseStatus;
+
+            if (status === CourseStatus.Enrolled) {
+              acc.enrolledCoursesCount++;
+            }
+
+            if (status === CourseStatus.Completed) {
+              acc.completedCoursesCount++;
+            }
+
+            return acc;
+          },
+          { enrolledCoursesCount: 0, completedCoursesCount: 0 },
+        );
+
+        return coursesCount;
+      }),
     },
   }),
 });
