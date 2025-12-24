@@ -7,6 +7,7 @@ import {
   GraphQLString,
 } from 'graphql';
 
+import { CourseStatus } from '../../types/schema-types';
 import { ContextType } from '../../types/types';
 import { ErrorType } from '../../utils/ErrorType';
 import { authenticated } from '../utils/auth';
@@ -203,6 +204,60 @@ const Query = new GraphQLObjectType<any, ContextType>({
         }
 
         return account;
+      },
+    },
+    enrolledCourses: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Course))),
+      description: 'List of courses the user is enrolled in',
+      resolve: async (_, __, { loaders, user }) => {
+        if (!user.authenticated) {
+          return [];
+        }
+
+        const enrollments = await loaders.Enrollment.loadByAccountId(user.id);
+
+        if (!enrollments || enrollments.length === 0) {
+          return [];
+        }
+
+        const courseIds = enrollments
+          .filter((item) => (item.status as unknown as CourseStatus) === CourseStatus.Enrolled)
+          .map((enrollment) => enrollment.course_id);
+
+        const courses = await loaders.Course.loadManyByIds(courseIds);
+
+        if (!courses) {
+          return [];
+        }
+
+        return courses;
+      },
+    },
+    completedCourses: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Course))),
+      description: 'List of courses the user has completed.',
+      resolve: async (_, __, { loaders, user }) => {
+        if (!user.authenticated) {
+          return [];
+        }
+
+        const enrollments = await loaders.Enrollment.loadByAccountId(user.id);
+
+        if (!enrollments || enrollments.length === 0) {
+          return [];
+        }
+
+        const courseIds = enrollments
+          .filter((item) => (item.status as unknown as CourseStatus) === CourseStatus.Completed)
+          .map((enrollment) => enrollment.course_id);
+
+        const courses = await loaders.Course.loadManyByIds(courseIds);
+
+        if (!courses) {
+          return [];
+        }
+
+        return courses;
       },
     },
   },
