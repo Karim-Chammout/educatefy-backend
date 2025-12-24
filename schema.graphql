@@ -43,6 +43,12 @@ type Query {
     """The id of the instructor account."""
     id: ID!
   ): Teacher
+
+  """List of courses the user is enrolled in"""
+  enrolledCourses: [Course!]!
+
+  """List of courses the user has completed."""
+  completedCourses: [Course!]!
 }
 
 """The properties of the account"""
@@ -91,6 +97,9 @@ type Account {
 
   """A detailed overview about this teacher."""
   description: String
+
+  """Statistics for the current user."""
+  statistics: Statistics
 }
 
 """Gender of the account."""
@@ -498,6 +507,15 @@ type Teacher {
 
   """List of courses created by the teacher"""
   courses: [Course!]!
+}
+
+"""Statistics info for the current user."""
+type Statistics {
+  """The number of enrolled courses by the user"""
+  enrolledCoursesCount: Int!
+
+  """The number of completed courses by the user"""
+  completedCoursesCount: Int!
 }
 
 """The open id client providers to use for auth"""
