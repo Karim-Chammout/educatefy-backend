@@ -8,6 +8,8 @@ export class EnrollmentReader {
 
   private byCourseIdLoader: DataLoader<number, ReadonlyArray<EnrollmentType>>;
 
+  private byAccountIdLoader: DataLoader<number, ReadonlyArray<EnrollmentType>>;
+
   private byAccountIdAndCourseIdLoader: DataLoader<
     { accountId: number; courseId: number },
     EnrollmentType
@@ -42,6 +44,21 @@ export class EnrollmentReader {
         .select()
         .then((results) =>
           courseIds.map((courseId) => results.filter((x) => x.course_id === courseId)),
+        );
+
+      return rows;
+    });
+
+    this.byAccountIdLoader = new DataLoader(async (accountIds) => {
+      if (accountIds.length === 0) {
+        return [];
+      }
+      const rows = await db
+        .table('enrollment')
+        .whereIn('account_id', accountIds)
+        .select()
+        .then((results) =>
+          accountIds.map((accountId) => results.filter((x) => x.account_id === accountId)),
         );
 
       return rows;
@@ -93,6 +110,7 @@ export class EnrollmentReader {
   get loaders() {
     return {
       byIdLoader: this.byIdLoader,
+      byAccountIdLoader: this.byAccountIdLoader,
       byCourseIdLoader: this.byCourseIdLoader,
       byAccountIdAndCourseIdLoader: this.byAccountIdAndCourseIdLoader,
     };
@@ -106,6 +124,10 @@ export class EnrollmentReader {
   /** Load entities with the matching primary key */
   loadManyByIds(ids: number[]): Promise<ReadonlyArray<EnrollmentType | Error>> {
     return this.byIdLoader.loadMany(ids);
+  }
+
+  loadByAccountId(accountIds: number): Promise<ReadonlyArray<EnrollmentType>> {
+    return this.byAccountIdLoader.load(accountIds);
   }
 
   loadByCourseId(courseIds: number): Promise<ReadonlyArray<EnrollmentType>> {
