@@ -35,6 +35,12 @@ export enum GenderType {
   Unknown = "unknown",
 }
 
+export enum ProgramLevelEnumType {
+  Beginner = "beginner",
+  Intermediate = "intermediate",
+  Advanced = "advanced",
+}
+
 export enum Table {
   Account = "account",
   AccountSubject = "account__subject",
@@ -57,6 +63,7 @@ export enum Table {
   Migrations = "migrations",
   MigrationsLock = "migrations_lock",
   OpenidClient = "openid_client",
+  Program = "program",
   RefreshToken = "refresh_token",
   StudentTeacherFollow = "student_teacher_follow",
   Subject = "subject",
@@ -87,6 +94,7 @@ export type Tables = {
   "migrations": Migrations,
   "migrations_lock": MigrationsLock,
   "openid_client": OpenidClient,
+  "program": Program,
   "refresh_token": RefreshToken,
   "student_teacher_follow": StudentTeacherFollow,
   "subject": Subject,
@@ -303,6 +311,21 @@ export type OpenidClient = {
   button_text: string | null;
   button_icon: string | null;
   button_background_color: string | null;
+  created_at: Date;
+  updated_at: Date;
+};
+
+export type Program = {
+  id: number;
+  denomination: string;
+  slug: string;
+  subtitle: string;
+  description: string;
+  level: ProgramLevelEnumType;
+  image: string | null;
+  is_published: boolean;
+  teacher_id: number;
+  deleted_at: Date | null;
   created_at: Date;
   updated_at: Date;
 };
