@@ -20,6 +20,7 @@ import { LanguageReader } from './loaders/Language';
 import { LessonReader } from './loaders/Lesson';
 import { OpenidClientReader } from './loaders/OpenidClient';
 import { ProgramReader } from './loaders/Program';
+import { ProgramSubjectReader } from './loaders/ProgramSubject';
 import { StudentTeacherFollowReader } from './loaders/StudentTeacherFollow';
 import { SubjectReader } from './loaders/Subject';
 import { TextContentReader } from './loaders/TextContent';
@@ -47,6 +48,7 @@ export type ReadersType = {
   Lesson: LessonReader;
   OpenidClient: OpenidClientReader;
   Program: ProgramReader;
+  ProgramSubject: ProgramSubjectReader;
   StudentTeacherFollow: StudentTeacherFollowReader;
   Subject: SubjectReader;
   TextContent: TextContentReader;
@@ -76,6 +78,7 @@ export function createLoaders(db: Knex): ReadersType {
     Lesson: new LessonReader(db),
     OpenidClient: new OpenidClientReader(db),
     Program: new ProgramReader(db),
+    ProgramSubject: new ProgramSubjectReader(db),
     StudentTeacherFollow: new StudentTeacherFollowReader(db),
     Subject: new SubjectReader(db),
     TextContent: new TextContentReader(db),
