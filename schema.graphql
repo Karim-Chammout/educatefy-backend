@@ -35,8 +35,8 @@ type Query {
     id: ID!
   ): Course
 
-  """List of subjects that have courses associated with them"""
-  subjectsListWithLinkedCourses: [Subject!]!
+  """List of subjects that have content associated with them"""
+  subjectsWithLinkedContent: [Subject!]!
 
   """Retrieve a program by its slug"""
   program(
@@ -158,6 +158,9 @@ type Subject {
 
   """The courses linked to this subject."""
   courses: [Course!]!
+
+  """The programs linked to this subject."""
+  programs: [Program!]!
 }
 
 """The course info."""
