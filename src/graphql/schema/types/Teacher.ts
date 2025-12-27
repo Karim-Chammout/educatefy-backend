@@ -10,7 +10,7 @@ import {
 import { Account as AccountType } from '../../../types/db-generated-types';
 import { ContextType } from '../../../types/types';
 import { getImageURL } from '../../../utils/getImageURL';
-import { filterPublishedContent } from '../../utils/courseUtils';
+import { filterPublishedContent } from '../../utils/filterPublishedContent';
 import { Course } from './Course';
 import { Program } from './Program';
 
