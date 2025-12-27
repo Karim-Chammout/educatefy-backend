@@ -4,6 +4,7 @@ import { Subject as SubjectType } from '../../../types/db-generated-types';
 import { ContextType } from '../../../types/types';
 import { filterPublishedContent } from '../../utils/filterPublishedContent';
 import { Course } from './Course';
+import { Program } from './Program';
 
 export const Subject = new GraphQLObjectType<SubjectType, ContextType>({
   name: 'Subject',
@@ -28,6 +29,19 @@ export const Subject = new GraphQLObjectType<SubjectType, ContextType>({
         }
 
         return filterPublishedContent(courses);
+      },
+    },
+    programs: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Program))),
+      description: 'The programs linked to this subject.',
+      resolve: async (parent, _, { loaders }) => {
+        const programs = await loaders.Program.loadBySubjectId(parent.id);
+
+        if (!programs || programs.length === 0) {
+          return [];
+        }
+
+        return filterPublishedContent(programs);
       },
     },
   },
