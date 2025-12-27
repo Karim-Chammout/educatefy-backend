@@ -843,8 +843,8 @@ export type Query = {
   subject?: Maybe<Subject>;
   /** List of subjects */
   subjects: Array<Subject>;
-  /** List of subjects that have courses associated with them */
-  subjectsListWithLinkedCourses: Array<Subject>;
+  /** List of subjects that have content associated with them */
+  subjectsWithLinkedContent: Array<Subject>;
   /** List of courses created by the teacher */
   teacherCourses: Array<Course>;
   /** List of programs created by the teacher */
@@ -915,6 +915,8 @@ export type Subject = {
   denomination: Scalars['String']['output'];
   /** A unique id of this subject. */
   id: Scalars['ID']['output'];
+  /** The programs linked to this subject. */
+  programs: Array<Program>;
 };
 
 /** The properties of a teacher account */
