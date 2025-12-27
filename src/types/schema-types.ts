@@ -222,7 +222,7 @@ export type Course = {
   viewerReview?: Maybe<CourseReview>;
 };
 
-/** Input for createing a course record. */
+/** Input for creating a course record. */
 export type CourseInfoInput = {
   /** The denomination of this course. */
   denomination: Scalars['String']['input'];
@@ -327,7 +327,7 @@ export type CourseSection = {
   rank: Scalars['Int']['output'];
 };
 
-/** Input for createing a course section record. */
+/** Input for creating a course section record. */
 export type CourseSectionInfoInput = {
   /** The ID of the course. */
   courseId: Scalars['ID']['input'];
@@ -404,6 +404,17 @@ export type CreateOrUpdateLessonResult = {
   success: Scalars['Boolean']['output'];
 };
 
+/** The result of the creating or updating a program. */
+export type CreateOrUpdateProgramResult = {
+  __typename?: 'CreateOrUpdateProgramResult';
+  /** A list of errors that occurred executing this mutation. */
+  errors: Array<Error>;
+  /** The created or updated program information. */
+  program?: Maybe<Program>;
+  /** Indicates if the mutation was successful. */
+  success: Scalars['Boolean']['output'];
+};
+
 /** Input for deleting a course rating */
 export type DeleteCourseRatingInput = {
   /** The ID of the course. */
@@ -471,7 +482,7 @@ export type Lesson = {
   itemId: Scalars['ID']['output'];
 };
 
-/** Input for createing a lesson record. */
+/** Input for creating a lesson record. */
 export type LessonInfoInput = {
   /** The ID of the course. */
   courseId: Scalars['ID']['input'];
@@ -497,6 +508,8 @@ export type Mutation = {
   createCourseSection?: Maybe<CreateOrUpdateCourseSectionResult>;
   /** Creates a lesson. */
   createLesson?: Maybe<CreateOrUpdateLessonResult>;
+  /** Creates a program. */
+  createProgram?: Maybe<CreateOrUpdateProgramResult>;
   /** Deletes a content component. */
   deleteContentComponent?: Maybe<MutationResult>;
   /** Deletes a course. */
@@ -565,6 +578,11 @@ export type MutationCreateCourseSectionArgs = {
 
 export type MutationCreateLessonArgs = {
   lessonInfo: LessonInfoInput;
+};
+
+
+export type MutationCreateProgramArgs = {
+  programInfo: ProgramInfoInput;
 };
 
 
@@ -730,6 +748,58 @@ export type ProfilePictureDetailsInput = {
   uuid: Scalars['String']['input'];
 };
 
+/** The program info. */
+export type Program = {
+  __typename?: 'Program';
+  /** The date of when this program was created. */
+  created_at: Scalars['Date']['output'];
+  /** The denomination of this program. */
+  denomination: Scalars['String']['output'];
+  /** The description of this program. */
+  description: Scalars['String']['output'];
+  /** A link to an external resource. */
+  external_resource_link?: Maybe<Scalars['String']['output']>;
+  /** A unique id of this program. */
+  id: Scalars['ID']['output'];
+  /** The image of this program */
+  image?: Maybe<Scalars['String']['output']>;
+  /** A flag to indicate whether this program is published or not */
+  is_published: Scalars['Boolean']['output'];
+  /** The difficulty level of this program. */
+  level: ProgramLevel;
+  /** A unique slug of this program. */
+  slug: Scalars['String']['output'];
+  /** The subtitle of this program. */
+  subtitle: Scalars['String']['output'];
+  /** The date of when this program was last updated. */
+  updated_at: Scalars['Date']['output'];
+};
+
+/** Input for creating a program record. */
+export type ProgramInfoInput = {
+  /** The denomination of this program. */
+  denomination: Scalars['String']['input'];
+  /** The description of this program. */
+  description: Scalars['String']['input'];
+  /** The image of this program. */
+  image?: InputMaybe<Scalars['String']['input']>;
+  /** A flag to indicate whether this program is published or not. */
+  is_published: Scalars['Boolean']['input'];
+  /** The difficulty level of this program. */
+  level: ProgramLevel;
+  /** The slug of this program. */
+  slug: Scalars['String']['input'];
+  /** The subtitle of this program. */
+  subtitle: Scalars['String']['input'];
+};
+
+/** The difficulty level of a program. */
+export enum ProgramLevel {
+  Advanced = 'advanced',
+  Beginner = 'beginner',
+  Intermediate = 'intermediate'
+}
+
 /** The properties of a public account */
 export type PublicAccount = {
   __typename?: 'PublicAccount';
@@ -767,6 +837,8 @@ export type Query = {
   me: Account;
   /** List of OpenId clients */
   openIdClients: Array<OpenidClient>;
+  /** Retrieve a program by its slug */
+  program?: Maybe<Program>;
   /** Retrieve a subject by its id */
   subject?: Maybe<Subject>;
   /** List of subjects */
@@ -775,6 +847,8 @@ export type Query = {
   subjectsListWithLinkedCourses: Array<Subject>;
   /** List of courses created by the teacher */
   teacherCourses: Array<Course>;
+  /** List of programs created by the teacher */
+  teacherPrograms: Array<Program>;
 };
 
 
@@ -790,6 +864,11 @@ export type QueryEditableCourseArgs = {
 
 export type QueryInstructorArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type QueryProgramArgs = {
+  slug: Scalars['String']['input'];
 };
 
 
@@ -863,6 +942,8 @@ export type Teacher = {
   name?: Maybe<Scalars['String']['output']>;
   /** The nickname of the teacher */
   nickname?: Maybe<Scalars['String']['output']>;
+  /** List of programs created by the teacher */
+  programs: Array<Program>;
 };
 
 /** A text content component. */
