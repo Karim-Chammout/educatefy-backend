@@ -64,6 +64,7 @@ export enum Table {
   MigrationsLock = "migrations_lock",
   OpenidClient = "openid_client",
   Program = "program",
+  ProgramSubject = "program__subject",
   RefreshToken = "refresh_token",
   StudentTeacherFollow = "student_teacher_follow",
   Subject = "subject",
@@ -95,6 +96,7 @@ export type Tables = {
   "migrations_lock": MigrationsLock,
   "openid_client": OpenidClient,
   "program": Program,
+  "program__subject": ProgramSubject,
   "refresh_token": RefreshToken,
   "student_teacher_follow": StudentTeacherFollow,
   "subject": Subject,
@@ -328,6 +330,12 @@ export type Program = {
   deleted_at: Date | null;
   created_at: Date;
   updated_at: Date;
+};
+
+export type ProgramSubject = {
+  id: number;
+  program_id: number;
+  subject_id: number;
 };
 
 export type RefreshToken = {
