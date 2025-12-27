@@ -168,11 +168,11 @@ const Query = new GraphQLObjectType<any, ContextType>({
         return course;
       }),
     },
-    subjectsListWithLinkedCourses: {
+    subjectsWithLinkedContent: {
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Subject))),
-      description: 'List of subjects that have courses associated with them',
+      description: 'List of subjects that have content associated with them',
       resolve: async (_, __, { loaders }) => {
-        const subjects = await loaders.Subject.loadSubjectsWithLinkedCourses();
+        const subjects = await loaders.Subject.loadSubjectsWithLinkedContent();
 
         if (!subjects || subjects.length === 0) {
           return [];
