@@ -2,7 +2,7 @@ import { GraphQLID, GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLStrin
 
 import { Subject as SubjectType } from '../../../types/db-generated-types';
 import { ContextType } from '../../../types/types';
-import { filterPublishedCoursesList } from '../../utils/courseUtils';
+import { filterPublishedContent } from '../../utils/courseUtils';
 import { Course } from './Course';
 
 export const Subject = new GraphQLObjectType<SubjectType, ContextType>({
@@ -27,7 +27,7 @@ export const Subject = new GraphQLObjectType<SubjectType, ContextType>({
           return [];
         }
 
-        return filterPublishedCoursesList(courses);
+        return filterPublishedContent(courses);
       },
     },
   },
