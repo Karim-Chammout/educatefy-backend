@@ -8,7 +8,7 @@ export class SubjectReader {
 
   private byCourseIdLoader: DataLoader<number, ReadonlyArray<SubjectType>>;
 
-  private byLinkedCoursesLoader: DataLoader<number, ReadonlyArray<SubjectType>>;
+  private byLinkedContentLoader: DataLoader<number, ReadonlyArray<SubjectType>>;
 
   /**
    * Load all entities from the database.
@@ -46,26 +46,26 @@ export class SubjectReader {
       return rows;
     });
 
-    this.byLinkedCoursesLoader = new DataLoader(
-      async (keys) => {
-        const rows = await db
-          .table('subject')
-          .distinct('subject.*')
-          .join('course__subject', 'subject.id', 'course__subject.subject_id')
-          .select('subject.*');
+    this.byLinkedContentLoader = new DataLoader(async (keys) => {
+      const rows = await db
+        .table('subject')
+        .distinct('subject.*')
+        .leftJoin('course__subject', 'subject.id', 'course__subject.subject_id')
+        .leftJoin('program__subject', 'subject.id', 'program__subject.subject_id')
+        .where((builder) =>
+          builder
+            .whereNotNull('course__subject.subject_id')
+            .orWhereNotNull('program__subject.subject_id'),
+        )
+        .select('subject.*');
 
-        // Prime the byIdLoader with the results
-        for (const row of rows) {
-          this.byIdLoader.prime(row.id, row);
-        }
+      // Prime the byIdLoader with the results
+      for (const row of rows) {
+        this.byIdLoader.prime(row.id, row);
+      }
 
-        return keys.map(() => rows);
-      },
-      {
-        // Since this loader doesn't use keys, we want to cache the result
-        cache: true,
-      },
-    );
+      return keys.map(() => rows);
+    });
 
     this.loadAll = async () => {
       const result = await db.table('subject').select();
@@ -84,7 +84,7 @@ export class SubjectReader {
     return {
       byIdLoader: this.byIdLoader,
       byCourseIdLoader: this.byCourseIdLoader,
-      byLinkedCoursesLoader: this.byLinkedCoursesLoader,
+      byLinkedContentLoader: this.byLinkedContentLoader,
     };
   }
 
@@ -103,8 +103,8 @@ export class SubjectReader {
   }
 
   /** Load all subjects that have associated courses */
-  loadSubjectsWithLinkedCourses(): Promise<ReadonlyArray<SubjectType>> {
+  loadSubjectsWithLinkedContent(): Promise<ReadonlyArray<SubjectType>> {
     // Use a dummy key (1) since we cannot pass undefined or null
-    return this.byLinkedCoursesLoader.load(1);
+    return this.byLinkedContentLoader.load(1);
   }
 }

@@ -10,6 +10,8 @@ export class ProgramReader {
 
   private byTeacherIdLoader: DataLoader<number, ReadonlyArray<ProgramType>>;
 
+  private bySubjectIdLoader: DataLoader<number, ReadonlyArray<ProgramType>>;
+
   /**
    * Load all entities from the database.
    */
@@ -60,6 +62,24 @@ export class ProgramReader {
       return rows;
     });
 
+    this.bySubjectIdLoader = new DataLoader(async (subjectIds) => {
+      if (subjectIds.length === 0) {
+        return [];
+      }
+
+      const rows = await db
+        .table('program')
+        .join('program__subject', 'program.id', 'program__subject.program_id')
+        .whereIn('program__subject.subject_id', subjectIds)
+        .whereNull('program.deleted_at')
+        .select('program.*', 'program__subject.subject_id')
+        .then((results) =>
+          subjectIds.map((subjectId) => results.filter((x) => x.subject_id === subjectId)),
+        );
+
+      return rows;
+    });
+
     this.loadAll = async () => {
       const result = await db.table('program').select();
 
@@ -78,6 +98,7 @@ export class ProgramReader {
       byIdLoader: this.byIdLoader,
       bySlugLoader: this.bySlugLoader,
       byTeacherIdLoader: this.byTeacherIdLoader,
+      bySubjectIdLoader: this.bySubjectIdLoader,
     };
   }
 
@@ -97,5 +118,9 @@ export class ProgramReader {
 
   loadByTeacherId(teacherId: number): Promise<ReadonlyArray<ProgramType>> {
     return this.byTeacherIdLoader.load(teacherId);
+  }
+
+  loadBySubjectId(subjectId: number): Promise<ReadonlyArray<ProgramType>> {
+    return this.bySubjectIdLoader.load(subjectId);
   }
 }
