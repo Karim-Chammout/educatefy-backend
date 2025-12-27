@@ -8,7 +8,7 @@ import {
 
 const CourseSectionInfoInput = new GraphQLInputObjectType({
   name: 'CourseSectionInfoInput',
-  description: 'Input for createing a course section record.',
+  description: 'Input for creating a course section record.',
   fields: {
     courseId: {
       type: new GraphQLNonNull(GraphQLID),

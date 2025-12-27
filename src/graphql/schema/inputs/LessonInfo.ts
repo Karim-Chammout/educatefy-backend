@@ -9,7 +9,7 @@ import {
 
 const LessonInfoInput = new GraphQLInputObjectType({
   name: 'LessonInfoInput',
-  description: 'Input for createing a lesson record.',
+  description: 'Input for creating a lesson record.',
   fields: {
     courseId: {
       type: new GraphQLNonNull(GraphQLID),

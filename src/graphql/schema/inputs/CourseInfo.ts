@@ -12,7 +12,7 @@ import CourseLevel from '../types/enum/CourseLevel';
 
 const CourseInfoInput = new GraphQLInputObjectType({
   name: 'CourseInfoInput',
-  description: 'Input for createing a course record.',
+  description: 'Input for creating a course record.',
   fields: {
     denomination: {
       type: new GraphQLNonNull(GraphQLString),
