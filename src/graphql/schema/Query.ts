@@ -19,6 +19,7 @@ import { Language } from './types/Language';
 import { OpenidClient } from './types/OpenidClient';
 import { Subject } from './types/Subject';
 import { Teacher } from './types/Teacher';
+import { Program } from './types/Program';
 
 const Query = new GraphQLObjectType<any, ContextType>({
   name: 'Query',
@@ -179,6 +180,44 @@ const Query = new GraphQLObjectType<any, ContextType>({
 
         return subjects;
       },
+    },
+    program: {
+      type: Program,
+      description: 'Retrieve a program by its slug',
+      args: {
+        slug: {
+          type: new GraphQLNonNull(GraphQLString),
+          description: 'The slug of the program.',
+        },
+      },
+      resolve: async (_, { slug }: { slug: string }, { loaders }) => {
+        const program = await loaders.Program.loadBySlug(slug);
+
+        if (!program || !program.is_published) {
+          return null;
+        }
+
+        return program;
+      },
+    },
+    teacherPrograms: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Program))),
+      description: 'List of programs created by the teacher',
+      resolve: authenticated(async (_, __, { loaders, user }) => {
+        const isTeacher = await hasTeacherRole(loaders, user.roleId);
+
+        if (!isTeacher) {
+          throw new GraphQLError(ErrorType.FORBIDDEN);
+        }
+
+        const programs = await loaders.Program.loadByTeacherId(user.id);
+
+        if (!programs) {
+          return [];
+        }
+
+        return programs;
+      }),
     },
     instructor: {
       type: Teacher,
