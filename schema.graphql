@@ -38,6 +38,15 @@ type Query {
   """List of subjects that have courses associated with them"""
   subjectsListWithLinkedCourses: [Subject!]!
 
+  """Retrieve a program by its slug"""
+  program(
+    """The slug of the program."""
+    slug: String!
+  ): Program
+
+  """List of programs created by the teacher"""
+  teacherPrograms: [Program!]!
+
   """Retrieve the instructor (teacher) account by its id"""
   instructor(
     """The id of the instructor account."""
@@ -507,6 +516,52 @@ type Teacher {
 
   """List of courses created by the teacher"""
   courses: [Course!]!
+
+  """List of programs created by the teacher"""
+  programs: [Program!]!
+}
+
+"""The program info."""
+type Program {
+  """A unique id of this program."""
+  id: ID!
+
+  """The denomination of this program."""
+  denomination: String!
+
+  """A unique slug of this program."""
+  slug: String!
+
+  """The subtitle of this program."""
+  subtitle: String!
+
+  """The description of this program."""
+  description: String!
+
+  """The difficulty level of this program."""
+  level: ProgramLevel!
+
+  """A link to an external resource."""
+  external_resource_link: String
+
+  """A flag to indicate whether this program is published or not"""
+  is_published: Boolean!
+
+  """The image of this program"""
+  image: String
+
+  """The date of when this program was created."""
+  created_at: Date!
+
+  """The date of when this program was last updated."""
+  updated_at: Date!
+}
+
+"""The difficulty level of a program."""
+enum ProgramLevel {
+  beginner
+  intermediate
+  advanced
 }
 
 """Statistics info for the current user."""
@@ -587,6 +642,12 @@ type Mutation {
     """The lesson information"""
     lessonInfo: LessonInfoInput!
   ): CreateOrUpdateLessonResult
+
+  """Creates a program."""
+  createProgram(
+    """The program information"""
+    programInfo: ProgramInfoInput!
+  ): CreateOrUpdateProgramResult
 
   """Deletes a content component."""
   deleteContentComponent(
@@ -821,7 +882,7 @@ type CreateOrUpdateCourseResult {
   course: Course
 }
 
-"""Input for createing a course record."""
+"""Input for creating a course record."""
 input CourseInfoInput {
   """The denomination of this course."""
   denomination: String!
@@ -878,7 +939,7 @@ type CreateOrUpdateCourseSectionResult {
   courseSection: CourseSection
 }
 
-"""Input for createing a course section record."""
+"""Input for creating a course section record."""
 input CourseSectionInfoInput {
   """The ID of the course."""
   courseId: ID!
@@ -902,7 +963,7 @@ type CreateOrUpdateLessonResult {
   lesson: Lesson
 }
 
-"""Input for createing a lesson record."""
+"""Input for creating a lesson record."""
 input LessonInfoInput {
   """The ID of the course."""
   courseId: ID!
@@ -918,6 +979,42 @@ input LessonInfoInput {
 
   """The duration of the lesson in minutes."""
   duration: Int!
+}
+
+"""The result of the creating or updating a program."""
+type CreateOrUpdateProgramResult {
+  """Indicates if the mutation was successful."""
+  success: Boolean!
+
+  """A list of errors that occurred executing this mutation."""
+  errors: [Error!]!
+
+  """The created or updated program information."""
+  program: Program
+}
+
+"""Input for creating a program record."""
+input ProgramInfoInput {
+  """The denomination of this program."""
+  denomination: String!
+
+  """The slug of this program."""
+  slug: String!
+
+  """The subtitle of this program."""
+  subtitle: String!
+
+  """The description of this program."""
+  description: String!
+
+  """The difficulty level of this program."""
+  level: ProgramLevel!
+
+  """The image of this program."""
+  image: String
+
+  """A flag to indicate whether this program is published or not."""
+  is_published: Boolean!
 }
 
 """The result of a mutation."""
