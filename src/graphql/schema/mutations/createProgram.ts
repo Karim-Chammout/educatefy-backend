@@ -24,7 +24,18 @@ const createProgram: GraphQLFieldConfig<null, ContextType> = {
   },
   resolve: authenticated(
     async (_, { programInfo }: { programInfo: ProgramInfoInputType }, { db, loaders, user }) => {
-      const { denomination, description, slug, level, is_published, subtitle, image } = programInfo;
+      const {
+        denomination,
+        description,
+        slug,
+        level,
+        is_published,
+        subtitle,
+        image,
+        subjectIds,
+        objectives,
+        requirements,
+      } = programInfo;
 
       if (
         !denomination ||
@@ -86,6 +97,43 @@ const createProgram: GraphQLFieldConfig<null, ContextType> = {
           const [program] = await transaction('program')
             .insert(filteredProgramInfo)
             .returning('id');
+
+          if (subjectIds && subjectIds.length > 0) {
+            // Verify that all subject IDs exist
+            const subjects = await transaction('subject').whereIn('id', subjectIds);
+            if (subjects.length !== subjectIds.length) {
+              return {
+                success: false,
+                errors: [new Error(ErrorType.INVALID_SUBJECTS)],
+                program: null,
+              };
+            }
+
+            for (const subjectId of subjectIds) {
+              await transaction('program__subject').insert({
+                program_id: program.id,
+                subject_id: subjectId,
+              });
+            }
+          }
+
+          if (objectives && objectives.length > 0) {
+            for (const objective of objectives) {
+              await transaction('program_objective').insert({
+                program_id: program.id,
+                objective: objective,
+              });
+            }
+          }
+
+          if (requirements && requirements.length > 0) {
+            for (const requirement of requirements) {
+              await transaction('program_requirement').insert({
+                program_id: program.id,
+                requirement: requirement,
+              });
+            }
+          }
 
           return program;
         });
