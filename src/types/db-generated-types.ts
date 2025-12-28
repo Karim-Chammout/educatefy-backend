@@ -65,6 +65,8 @@ export enum Table {
   OpenidClient = "openid_client",
   Program = "program",
   ProgramSubject = "program__subject",
+  ProgramObjective = "program_objective",
+  ProgramRequirement = "program_requirement",
   RefreshToken = "refresh_token",
   StudentTeacherFollow = "student_teacher_follow",
   Subject = "subject",
@@ -97,6 +99,8 @@ export type Tables = {
   "openid_client": OpenidClient,
   "program": Program,
   "program__subject": ProgramSubject,
+  "program_objective": ProgramObjective,
+  "program_requirement": ProgramRequirement,
   "refresh_token": RefreshToken,
   "student_teacher_follow": StudentTeacherFollow,
   "subject": Subject,
@@ -336,6 +340,18 @@ export type ProgramSubject = {
   id: number;
   program_id: number;
   subject_id: number;
+};
+
+export type ProgramObjective = {
+  id: number;
+  program_id: number;
+  objective: string;
+};
+
+export type ProgramRequirement = {
+  id: number;
+  program_id: number;
+  requirement: string;
 };
 
 export type RefreshToken = {
