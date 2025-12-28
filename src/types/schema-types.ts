@@ -767,8 +767,14 @@ export type Program = {
   is_published: Scalars['Boolean']['output'];
   /** The difficulty level of this program. */
   level: ProgramLevel;
+  /** The objectives of this program. */
+  objectives: Array<ProgramObjective>;
+  /** The requirements of this program. */
+  requirements: Array<ProgramRequirement>;
   /** A unique slug of this program. */
   slug: Scalars['String']['output'];
+  /** The subjects linked to this program. */
+  subjects: Array<Subject>;
   /** The subtitle of this program. */
   subtitle: Scalars['String']['output'];
   /** The date of when this program was last updated. */
@@ -787,8 +793,14 @@ export type ProgramInfoInput = {
   is_published: Scalars['Boolean']['input'];
   /** The difficulty level of this program. */
   level: ProgramLevel;
+  /** List of objectives for the program */
+  objectives?: InputMaybe<Array<Scalars['String']['input']>>;
+  /** List of requirements for the program */
+  requirements?: InputMaybe<Array<Scalars['String']['input']>>;
   /** The slug of this program. */
   slug: Scalars['String']['input'];
+  /** List of subject IDs to associate with the program */
+  subjectIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   /** The subtitle of this program. */
   subtitle: Scalars['String']['input'];
 };
@@ -799,6 +811,24 @@ export enum ProgramLevel {
   Beginner = 'beginner',
   Intermediate = 'intermediate'
 }
+
+/** The program objective info */
+export type ProgramObjective = {
+  __typename?: 'ProgramObjective';
+  /** A unique id of this program objective. */
+  id: Scalars['ID']['output'];
+  /** The objective of this program. */
+  objective: Scalars['String']['output'];
+};
+
+/** The program requirement info */
+export type ProgramRequirement = {
+  __typename?: 'ProgramRequirement';
+  /** A unique id of this program requirement. */
+  id: Scalars['ID']['output'];
+  /** The requirement of this program. */
+  requirement: Scalars['String']['output'];
+};
 
 /** The properties of a public account */
 export type PublicAccount = {
