@@ -1,6 +1,7 @@
 import {
   GraphQLBoolean,
   GraphQLID,
+  GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLString,
@@ -11,6 +12,9 @@ import { ContextType } from '../../../types/types';
 import { getImageURL } from '../../../utils/getImageURL';
 import GraphQLDate from '../Scalars/Date';
 import ProgramLevel from './enum/ProgramLevel';
+import { ProgramObjective } from './ProgramObjective';
+import { ProgramRequirement } from './ProgramRequirement';
+import { Subject } from './Subject';
 
 export const Program: GraphQLObjectType = new GraphQLObjectType<ProgramType, ContextType>({
   name: 'Program',
@@ -62,6 +66,45 @@ export const Program: GraphQLObjectType = new GraphQLObjectType<ProgramType, Con
     updated_at: {
       type: new GraphQLNonNull(GraphQLDate),
       description: 'The date of when this program was last updated.',
+    },
+    subjects: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Subject))),
+      description: 'The subjects linked to this program.',
+      resolve: async (parent, _, { loaders }) => {
+        const subjects = await loaders.Subject.loadByProgramId(parent.id);
+
+        if (!subjects || subjects.length === 0) {
+          return [];
+        }
+
+        return subjects;
+      },
+    },
+    objectives: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(ProgramObjective))),
+      description: 'The objectives of this program.',
+      resolve: async (parent, _, { loaders }) => {
+        const programObjectives = await loaders.ProgramObjective.loadByProgramId(parent.id);
+
+        if (!programObjectives || programObjectives.length === 0) {
+          return [];
+        }
+
+        return programObjectives;
+      },
+    },
+    requirements: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(ProgramRequirement))),
+      description: 'The requirements of this program.',
+      resolve: async (parent, _, { loaders }) => {
+        const programRequirements = await loaders.ProgramRequirement.loadByProgramId(parent.id);
+
+        if (!programRequirements || programRequirements.length === 0) {
+          return [];
+        }
+
+        return programRequirements;
+      },
     },
   }),
 });
