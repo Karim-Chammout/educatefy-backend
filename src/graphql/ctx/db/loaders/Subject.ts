@@ -8,6 +8,8 @@ export class SubjectReader {
 
   private byCourseIdLoader: DataLoader<number, ReadonlyArray<SubjectType>>;
 
+  private byProgramIdLoader: DataLoader<number, ReadonlyArray<SubjectType>>;
+
   private byLinkedContentLoader: DataLoader<number, ReadonlyArray<SubjectType>>;
 
   /**
@@ -41,6 +43,23 @@ export class SubjectReader {
         .select('subject.*', 'course__subject.course_id')
         .then((results) =>
           courseIds.map((courseId) => results.filter((x) => x.course_id === courseId)),
+        );
+
+      return rows;
+    });
+
+    this.byProgramIdLoader = new DataLoader(async (programIds) => {
+      if (programIds.length === 0) {
+        return [];
+      }
+
+      const rows = await db
+        .table('subject')
+        .join('program__subject', 'subject.id', 'program__subject.subject_id')
+        .whereIn('program__subject.program_id', programIds)
+        .select('subject.*', 'program__subject.program_id')
+        .then((results) =>
+          programIds.map((programId) => results.filter((x) => x.program_id === programId)),
         );
 
       return rows;
@@ -84,6 +103,7 @@ export class SubjectReader {
     return {
       byIdLoader: this.byIdLoader,
       byCourseIdLoader: this.byCourseIdLoader,
+      byProgramIdLoader: this.byProgramIdLoader,
       byLinkedContentLoader: this.byLinkedContentLoader,
     };
   }
@@ -100,6 +120,10 @@ export class SubjectReader {
 
   loadByCourseId(courseIds: number): Promise<ReadonlyArray<SubjectType>> {
     return this.byCourseIdLoader.load(courseIds);
+  }
+
+  loadByProgramId(programIds: number): Promise<ReadonlyArray<SubjectType>> {
+    return this.byProgramIdLoader.load(programIds);
   }
 
   /** Load all subjects that have associated courses */
