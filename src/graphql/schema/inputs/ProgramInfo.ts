@@ -1,4 +1,11 @@
-import { GraphQLBoolean, GraphQLInputObjectType, GraphQLNonNull, GraphQLString } from 'graphql';
+import {
+  GraphQLBoolean,
+  GraphQLID,
+  GraphQLInputObjectType,
+  GraphQLList,
+  GraphQLNonNull,
+  GraphQLString,
+} from 'graphql';
 
 import ProgramLevel from '../types/enum/ProgramLevel';
 
@@ -33,6 +40,18 @@ const ProgramInfoInput = new GraphQLInputObjectType({
     is_published: {
       type: new GraphQLNonNull(GraphQLBoolean),
       description: 'A flag to indicate whether this program is published or not.',
+    },
+    subjectIds: {
+      type: new GraphQLList(new GraphQLNonNull(GraphQLID)),
+      description: 'List of subject IDs to associate with the program',
+    },
+    objectives: {
+      type: new GraphQLList(new GraphQLNonNull(GraphQLString)),
+      description: 'List of objectives for the program',
+    },
+    requirements: {
+      type: new GraphQLList(new GraphQLNonNull(GraphQLString)),
+      description: 'List of requirements for the program',
     },
   },
 });
