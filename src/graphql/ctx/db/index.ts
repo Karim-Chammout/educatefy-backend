@@ -1,6 +1,7 @@
 import { Knex } from 'knex';
 
 import { AccountReader } from './loaders/Account';
+import { AccountProgramReader } from './loaders/AccountProgram';
 import { AccountRoleReader } from './loaders/AccountRole';
 import { AccountSubjectReader } from './loaders/AccountSubject';
 import { ContentComponentReader } from './loaders/ContentComponent';
@@ -8,6 +9,7 @@ import { ContentComponentProgressReader } from './loaders/ContentComponentProgre
 import { CountryReader } from './loaders/Country';
 import { CourseReader } from './loaders/Course';
 import { CourseObjectiveReader } from './loaders/CourseObjective';
+import { CourseProgramReader } from './loaders/CourseProgram';
 import { CourseRatingReader } from './loaders/CourseRating';
 import { CourseRequirementReader } from './loaders/CourseRequirement';
 import { CourseSectionReader } from './loaders/CourseSection';
@@ -21,6 +23,7 @@ import { LessonReader } from './loaders/Lesson';
 import { OpenidClientReader } from './loaders/OpenidClient';
 import { ProgramReader } from './loaders/Program';
 import { ProgramObjectiveReader } from './loaders/ProgramObjective';
+import { ProgramProgressReader } from './loaders/ProgramProgress';
 import { ProgramRequirementReader } from './loaders/ProgramRequirement';
 import { ProgramSubjectReader } from './loaders/ProgramSubject';
 import { StudentTeacherFollowReader } from './loaders/StudentTeacherFollow';
@@ -31,6 +34,7 @@ import { YoutubeContentReader } from './loaders/YoutubeContent';
 
 export type ReadersType = {
   Account: AccountReader;
+  AccountProgram: AccountProgramReader;
   AccountRole: AccountRoleReader;
   AccountSubject: AccountSubjectReader;
   ContentComponent: ContentComponentReader;
@@ -38,6 +42,7 @@ export type ReadersType = {
   Country: CountryReader;
   Course: CourseReader;
   CourseObjective: CourseObjectiveReader;
+  CourseProgram: CourseProgramReader;
   CourseRating: CourseRatingReader;
   CourseRequirement: CourseRequirementReader;
   CourseSection: CourseSectionReader;
@@ -51,6 +56,7 @@ export type ReadersType = {
   OpenidClient: OpenidClientReader;
   Program: ProgramReader;
   ProgramObjective: ProgramObjectiveReader;
+  ProgramProgress: ProgramProgressReader;
   ProgramRequirement: ProgramRequirementReader;
   ProgramSubject: ProgramSubjectReader;
   StudentTeacherFollow: StudentTeacherFollowReader;
@@ -63,6 +69,7 @@ export type ReadersType = {
 export function createLoaders(db: Knex): ReadersType {
   return {
     Account: new AccountReader(db),
+    AccountProgram: new AccountProgramReader(db),
     AccountRole: new AccountRoleReader(db),
     AccountSubject: new AccountSubjectReader(db),
     ContentComponent: new ContentComponentReader(db),
@@ -70,6 +77,7 @@ export function createLoaders(db: Knex): ReadersType {
     Country: new CountryReader(db),
     Course: new CourseReader(db),
     CourseObjective: new CourseObjectiveReader(db),
+    CourseProgram: new CourseProgramReader(db),
     CourseRating: new CourseRatingReader(db),
     CourseRequirement: new CourseRequirementReader(db),
     CourseSection: new CourseSectionReader(db),
@@ -83,6 +91,7 @@ export function createLoaders(db: Knex): ReadersType {
     OpenidClient: new OpenidClientReader(db),
     Program: new ProgramReader(db),
     ProgramObjective: new ProgramObjectiveReader(db),
+    ProgramProgress: new ProgramProgressReader(db),
     ProgramRequirement: new ProgramRequirementReader(db),
     ProgramSubject: new ProgramSubjectReader(db),
     StudentTeacherFollow: new StudentTeacherFollowReader(db),
