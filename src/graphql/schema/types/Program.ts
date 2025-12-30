@@ -1,6 +1,8 @@
 import {
   GraphQLBoolean,
+  GraphQLFloat,
   GraphQLID,
+  GraphQLInt,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
@@ -10,11 +12,15 @@ import {
 import { Program as ProgramType } from '../../../types/db-generated-types';
 import { ContextType } from '../../../types/types';
 import { getImageURL } from '../../../utils/getImageURL';
+import { filterError } from '../../utils/filterError';
+import { filterPublishedContent } from '../../utils/filterPublishedContent';
 import GraphQLDate from '../Scalars/Date';
+import { Course } from './Course';
 import ProgramLevel from './enum/ProgramLevel';
 import { ProgramObjective } from './ProgramObjective';
 import { ProgramRequirement } from './ProgramRequirement';
 import { Subject } from './Subject';
+import { Teacher } from './Teacher';
 
 export const Program: GraphQLObjectType = new GraphQLObjectType<ProgramType, ContextType>({
   name: 'Program',
@@ -104,6 +110,79 @@ export const Program: GraphQLObjectType = new GraphQLObjectType<ProgramType, Con
         }
 
         return programRequirements;
+      },
+    },
+    enrolledLearnersCount: {
+      type: new GraphQLNonNull(GraphQLInt),
+      description: 'Number of learners enrolled in this program.',
+      resolve: async (parent, _, { loaders }) => {
+        const programEnrollments = await loaders.AccountProgram.loadByProgramId(parent.id);
+
+        return programEnrollments.length;
+      },
+    },
+    rating: {
+      type: new GraphQLNonNull(GraphQLFloat),
+      description: 'Average rating across all courses in this program',
+      resolve: async (parent, _, { db }) => {
+        const result = await db('course__program')
+          .join('course_rating', 'course__program.course_id', 'course_rating.course_id')
+          .where('course__program.program_id', parent.id)
+          .avg('course_rating.rating as average')
+          .first();
+
+        if (!result || result.average === null) {
+          return 0;
+        }
+
+        return parseFloat(result.average);
+      },
+    },
+    ratingsCount: {
+      type: new GraphQLNonNull(GraphQLInt),
+      description: 'Total number of course ratings in this program',
+      resolve: async (parent, _, { db }) => {
+        const result = await db('course__program')
+          .join('course_rating', 'course__program.course_id', 'course_rating.course_id')
+          .where('course__program.program_id', parent.id)
+          .count('course_rating.id as count')
+          .first();
+
+        if (!result || result.count === 0) {
+          return 0;
+        }
+
+        return parseInt(String(result.count));
+      },
+    },
+    instructor: {
+      type: new GraphQLNonNull(Teacher),
+      description: 'The name of the instructor for this program',
+      resolve: async (parent, _, { loaders }) => {
+        const instructor = await loaders.Account.loadById(parent.teacher_id);
+
+        return instructor;
+      },
+    },
+    courses: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Course))),
+      description: 'The courses linked to this program.',
+      resolve: async (parent, _, { loaders }) => {
+        const courseProgramRelations = await loaders.CourseProgram.loadByProgramId(parent.id);
+
+        if (!courseProgramRelations || courseProgramRelations.length === 0) {
+          return [];
+        }
+
+        const courseIds = courseProgramRelations.map((relation) => relation.course_id);
+
+        const courses = await filterError(loaders.Course.loadManyByIds(courseIds));
+
+        if (!courses || courses.length === 0) {
+          return [];
+        }
+
+        return filterPublishedContent(courses);
       },
     },
   }),
