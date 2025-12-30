@@ -41,14 +41,23 @@ export enum ProgramLevelEnumType {
   Advanced = "advanced",
 }
 
+export enum ProgramProgressStatusType {
+  NotStarted = "not_started",
+  Unenrolled = "unenrolled",
+  InProgress = "in_progress",
+  Completed = "completed",
+}
+
 export enum Table {
   Account = "account",
+  AccountProgram = "account__program",
   AccountSubject = "account__subject",
   AccountRole = "account_role",
   ContentComponent = "content_component",
   ContentComponentProgress = "content_component_progress",
   Country = "country",
   Course = "course",
+  CourseProgram = "course__program",
   CourseSubject = "course__subject",
   CourseObjective = "course_objective",
   CourseRating = "course_rating",
@@ -66,6 +75,7 @@ export enum Table {
   Program = "program",
   ProgramSubject = "program__subject",
   ProgramObjective = "program_objective",
+  ProgramProgress = "program_progress",
   ProgramRequirement = "program_requirement",
   RefreshToken = "refresh_token",
   StudentTeacherFollow = "student_teacher_follow",
@@ -77,12 +87,14 @@ export enum Table {
 
 export type Tables = {
   "account": Account,
+  "account__program": AccountProgram,
   "account__subject": AccountSubject,
   "account_role": AccountRole,
   "content_component": ContentComponent,
   "content_component_progress": ContentComponentProgress,
   "country": Country,
   "course": Course,
+  "course__program": CourseProgram,
   "course__subject": CourseSubject,
   "course_objective": CourseObjective,
   "course_rating": CourseRating,
@@ -100,6 +112,7 @@ export type Tables = {
   "program": Program,
   "program__subject": ProgramSubject,
   "program_objective": ProgramObjective,
+  "program_progress": ProgramProgress,
   "program_requirement": ProgramRequirement,
   "refresh_token": RefreshToken,
   "student_teacher_follow": StudentTeacherFollow,
@@ -129,6 +142,15 @@ export type Account = {
   created_at: Date;
   updated_at: Date;
   preferred_language_id: number;
+};
+
+export type AccountProgram = {
+  id: number;
+  account_id: number;
+  program_id: number;
+  deleted_at: Date | null;
+  created_at: Date;
+  updated_at: Date;
 };
 
 export type AccountSubject = {
@@ -195,6 +217,15 @@ export type Course = {
   start_date: Date | null;
   end_date: Date | null;
   deleted_at: Date | null;
+  created_at: Date;
+  updated_at: Date;
+};
+
+export type CourseProgram = {
+  id: number;
+  program_id: number;
+  course_id: number;
+  rank: number;
   created_at: Date;
   updated_at: Date;
 };
@@ -346,6 +377,17 @@ export type ProgramObjective = {
   id: number;
   program_id: number;
   objective: string;
+};
+
+export type ProgramProgress = {
+  id: number;
+  account__program_id: number;
+  status: ProgramProgressStatusType;
+  started_at: Date;
+  completed_at: Date | null;
+  last_viewed_at: Date;
+  created_at: Date;
+  updated_at: Date;
 };
 
 export type ProgramRequirement = {
