@@ -751,24 +751,34 @@ export type ProfilePictureDetailsInput = {
 /** The program info. */
 export type Program = {
   __typename?: 'Program';
+  /** The courses linked to this program. */
+  courses: Array<Course>;
   /** The date of when this program was created. */
   created_at: Scalars['Date']['output'];
   /** The denomination of this program. */
   denomination: Scalars['String']['output'];
   /** The description of this program. */
   description: Scalars['String']['output'];
+  /** Number of learners enrolled in this program. */
+  enrolledLearnersCount: Scalars['Int']['output'];
   /** A link to an external resource. */
   external_resource_link?: Maybe<Scalars['String']['output']>;
   /** A unique id of this program. */
   id: Scalars['ID']['output'];
   /** The image of this program */
   image?: Maybe<Scalars['String']['output']>;
+  /** The name of the instructor for this program */
+  instructor: Teacher;
   /** A flag to indicate whether this program is published or not */
   is_published: Scalars['Boolean']['output'];
   /** The difficulty level of this program. */
   level: ProgramLevel;
   /** The objectives of this program. */
   objectives: Array<ProgramObjective>;
+  /** Average rating across all courses in this program */
+  rating: Scalars['Float']['output'];
+  /** Total number of course ratings in this program */
+  ratingsCount: Scalars['Int']['output'];
   /** The requirements of this program. */
   requirements: Array<ProgramRequirement>;
   /** A unique slug of this program. */
