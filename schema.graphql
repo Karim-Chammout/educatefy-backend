@@ -567,6 +567,21 @@ type Program {
 
   """The requirements of this program."""
   requirements: [ProgramRequirement!]!
+
+  """Number of learners enrolled in this program."""
+  enrolledLearnersCount: Int!
+
+  """Average rating across all courses in this program"""
+  rating: Float!
+
+  """Total number of course ratings in this program"""
+  ratingsCount: Int!
+
+  """The name of the instructor for this program"""
+  instructor: Teacher!
+
+  """The courses linked to this program."""
+  courses: [Course!]!
 }
 
 """The difficulty level of a program."""
