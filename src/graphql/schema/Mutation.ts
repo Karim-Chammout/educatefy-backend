@@ -12,6 +12,7 @@ import deleteCourseRating from './mutations/deleteCourseRating';
 import deleteCourseSection from './mutations/deleteCourseSection';
 import deleteCourseSectionItem from './mutations/deleteCourseSectionItem';
 import deleteLesson from './mutations/deleteLesson';
+import deleteProgram from './mutations/deleteProgram';
 import followTeacher from './mutations/followTeacher';
 import rateCourse from './mutations/rateCourse';
 import removeProfilePicture from './mutations/removeProfilePicture';
@@ -26,6 +27,7 @@ import updateCourseSectionRanks from './mutations/updateCourseSectionRank';
 import updateCourseStatus from './mutations/updateCourseStatus';
 import updateLesson from './mutations/updateLesson';
 import updateProfile from './mutations/updateProfile';
+import updateProgram from './mutations/updateProgram';
 
 const Mutation = new GraphQLObjectType({
   name: 'Mutation',
@@ -42,6 +44,7 @@ const Mutation = new GraphQLObjectType({
     deleteCourseSection,
     deleteCourseSectionItem,
     deleteLesson,
+    deleteProgram,
     followTeacher,
     rateCourse,
     removeProfilePicture,
@@ -56,6 +59,7 @@ const Mutation = new GraphQLObjectType({
     updateCourseStatus,
     updateLesson,
     updateProfile,
+    updateProgram,
   },
 });
 
