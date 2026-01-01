@@ -35,6 +35,12 @@ type Query {
     id: ID!
   ): Course
 
+  """Retrieve a program to be edited by the teacher."""
+  editableProgram(
+    """The id of the program."""
+    id: ID!
+  ): Program
+
   """List of subjects that have content associated with them"""
   subjectsWithLinkedContent: [Subject!]!
 
@@ -733,6 +739,12 @@ type Mutation {
     id: ID!
   ): MutationResult
 
+  """Deletes a program."""
+  deleteProgram(
+    """The ID of the program to delete."""
+    id: ID!
+  ): MutationResult
+
   """Follow or unfollow a teacher. Toggles the follow status."""
   followTeacher(
     """The teacher follow information"""
@@ -822,6 +834,12 @@ type Mutation {
     """The profile details to update"""
     profileDetails: ProfileDetailsInput!
   ): UpdateProfileResult
+
+  """Updates a program."""
+  updateProgram(
+    """The program information to be updated."""
+    updateProgramInfo: UpdateProgramInfoInput!
+  ): CreateOrUpdateProgramResult
 }
 
 """The result of the changeProfilePicture mutation."""
@@ -1392,4 +1410,58 @@ input ProfileDetailsInput {
 
   """The short description about the teacher."""
   teacherDescription: String
+}
+
+"""Input for updating a program record."""
+input UpdateProgramInfoInput {
+  """The ID of this program"""
+  id: ID!
+
+  """The denomination of this program"""
+  denomination: String
+
+  """The slug of this program"""
+  slug: String
+
+  """The subtitle of this program"""
+  subtitle: String
+
+  """The description of this program"""
+  description: String
+
+  """The difficulty level of this program"""
+  level: ProgramLevel
+
+  """The image of this program"""
+  image: String
+
+  """A flag to indicate whether this program is published or not"""
+  is_published: Boolean
+
+  """List of subject IDs to associate with the program"""
+  subjectIds: [ID!]
+
+  """List of objectives for the program"""
+  objectives: [ProgramObjectiveInput!]
+
+  """List of requirements for the program"""
+  requirements: [ProgramRequirementInput!]
+}
+
+"""Input for a program objective record."""
+input ProgramObjectiveInput {
+  """A unique id of this program objective."""
+  id: ID!
+
+  """The objective of this program."""
+  objective: String!
+}
+
+"""Input for a program requirement record."""
+input ProgramRequirementInput {
+  """A unique id of this program requirement."""
+  id: ID!
+
+  """The requirement of this program."""
+  requirement: String!
 }
