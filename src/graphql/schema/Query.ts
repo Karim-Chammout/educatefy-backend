@@ -17,9 +17,9 @@ import { Country } from './types/Country';
 import { Course } from './types/Course';
 import { Language } from './types/Language';
 import { OpenidClient } from './types/OpenidClient';
+import { Program } from './types/Program';
 import { Subject } from './types/Subject';
 import { Teacher } from './types/Teacher';
-import { Program } from './types/Program';
 
 const Query = new GraphQLObjectType<any, ContextType>({
   name: 'Query',
@@ -166,6 +166,33 @@ const Query = new GraphQLObjectType<any, ContextType>({
         }
 
         return course;
+      }),
+    },
+    editableProgram: {
+      type: Program,
+      description: 'Retrieve a program to be edited by the teacher.',
+      args: {
+        id: {
+          type: new GraphQLNonNull(GraphQLID),
+          description: 'The id of the program.',
+        },
+      },
+      resolve: authenticated(async (_, { id }: { id: string }, { loaders, user }) => {
+        const programId = parseInt(id, 10);
+
+        const isTeacher = await hasTeacherRole(loaders, user.roleId);
+
+        if (!isTeacher) {
+          throw new GraphQLError(ErrorType.FORBIDDEN);
+        }
+
+        const program = await loaders.Program.loadById(programId);
+
+        if (!program || program.teacher_id !== user.id) {
+          return null;
+        }
+
+        return program;
       }),
     },
     subjectsWithLinkedContent: {
