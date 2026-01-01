@@ -522,6 +522,8 @@ export type Mutation = {
   deleteCourseSectionItem?: Maybe<MutationResult>;
   /** Deletes a lesson. */
   deleteLesson?: Maybe<MutationResult>;
+  /** Deletes a program. */
+  deleteProgram?: Maybe<MutationResult>;
   /** Follow or unfollow a teacher. Toggles the follow status. */
   followTeacher?: Maybe<FollowTeacherResult>;
   /** Rate a course. */
@@ -550,6 +552,8 @@ export type Mutation = {
   updateLesson?: Maybe<CreateOrUpdateLessonResult>;
   /** Updates a user profile details. */
   updateProfile?: Maybe<UpdateProfileResult>;
+  /** Updates a program. */
+  updateProgram?: Maybe<CreateOrUpdateProgramResult>;
 };
 
 
@@ -613,6 +617,11 @@ export type MutationDeleteCourseSectionItemArgs = {
 
 
 export type MutationDeleteLessonArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationDeleteProgramArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -682,6 +691,11 @@ export type MutationUpdateLessonArgs = {
 
 export type MutationUpdateProfileArgs = {
   profileDetails: ProfileDetailsInput;
+};
+
+
+export type MutationUpdateProgramArgs = {
+  updateProgramInfo: UpdateProgramInfoInput;
 };
 
 /** The result of a mutation. */
@@ -831,6 +845,14 @@ export type ProgramObjective = {
   objective: Scalars['String']['output'];
 };
 
+/** Input for a program objective record. */
+export type ProgramObjectiveInput = {
+  /** A unique id of this program objective. */
+  id: Scalars['ID']['input'];
+  /** The objective of this program. */
+  objective: Scalars['String']['input'];
+};
+
 /** The program requirement info */
 export type ProgramRequirement = {
   __typename?: 'ProgramRequirement';
@@ -838,6 +860,14 @@ export type ProgramRequirement = {
   id: Scalars['ID']['output'];
   /** The requirement of this program. */
   requirement: Scalars['String']['output'];
+};
+
+/** Input for a program requirement record. */
+export type ProgramRequirementInput = {
+  /** A unique id of this program requirement. */
+  id: Scalars['ID']['input'];
+  /** The requirement of this program. */
+  requirement: Scalars['String']['input'];
 };
 
 /** The properties of a public account */
@@ -867,6 +897,8 @@ export type Query = {
   course?: Maybe<Course>;
   /** Retrieve a course to be edited by the teacher. */
   editableCourse?: Maybe<Course>;
+  /** Retrieve a program to be edited by the teacher. */
+  editableProgram?: Maybe<Program>;
   /** List of courses the user is enrolled in */
   enrolledCourses: Array<Course>;
   /** Retrieve the instructor (teacher) account by its id */
@@ -898,6 +930,11 @@ export type QueryCourseArgs = {
 
 
 export type QueryEditableCourseArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryEditableProgramArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -1137,6 +1174,32 @@ export type UpdateProfileResult = {
   success: Scalars['Boolean']['output'];
   /** The updated user information. */
   user?: Maybe<Account>;
+};
+
+/** Input for updating a program record. */
+export type UpdateProgramInfoInput = {
+  /** The denomination of this program */
+  denomination?: InputMaybe<Scalars['String']['input']>;
+  /** The description of this program */
+  description?: InputMaybe<Scalars['String']['input']>;
+  /** The ID of this program */
+  id: Scalars['ID']['input'];
+  /** The image of this program */
+  image?: InputMaybe<Scalars['String']['input']>;
+  /** A flag to indicate whether this program is published or not */
+  is_published?: InputMaybe<Scalars['Boolean']['input']>;
+  /** The difficulty level of this program */
+  level?: InputMaybe<ProgramLevel>;
+  /** List of objectives for the program */
+  objectives?: InputMaybe<Array<ProgramObjectiveInput>>;
+  /** List of requirements for the program */
+  requirements?: InputMaybe<Array<ProgramRequirementInput>>;
+  /** The slug of this program */
+  slug?: InputMaybe<Scalars['String']['input']>;
+  /** List of subject IDs to associate with the program */
+  subjectIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+  /** The subtitle of this program */
+  subtitle?: InputMaybe<Scalars['String']['input']>;
 };
 
 /** A video content component. */
