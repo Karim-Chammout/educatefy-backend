@@ -25,6 +25,7 @@ export class ProgramReader {
       const rows = await db
         .table('program')
         .whereIn('id', ids)
+        .whereNull('deleted_at')
         .select()
         .then((results) => ids.map((id) => results.find((x) => x.id === id)));
 
