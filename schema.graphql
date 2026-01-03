@@ -840,6 +840,15 @@ type Mutation {
     """The program information to be updated."""
     updateProgramInfo: UpdateProgramInfoInput!
   ): CreateOrUpdateProgramResult
+
+  """Updates the ranks of multiple courses within a program."""
+  updateProgramCourseRanks(
+    """The ID of the program to update course ranks for."""
+    programId: ID!
+
+    """The courses and their new ranks within the program"""
+    courseRanks: [UpdateProgramCourseRankInput!]!
+  ): MutationResult
 }
 
 """The result of the changeProfilePicture mutation."""
@@ -1446,6 +1455,9 @@ input UpdateProgramInfoInput {
 
   """List of requirements for the program"""
   requirements: [ProgramRequirementInput!]
+
+  """List of course IDs to link to the program"""
+  courseIds: [ID]
 }
 
 """Input for a program objective record."""
@@ -1464,4 +1476,13 @@ input ProgramRequirementInput {
 
   """The requirement of this program."""
   requirement: String!
+}
+
+"""Input for updating a program courses rank"""
+input UpdateProgramCourseRankInput {
+  """The ID of the course"""
+  id: String!
+
+  """The new rank of the course"""
+  rank: Int!
 }
