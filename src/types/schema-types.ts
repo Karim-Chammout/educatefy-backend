@@ -554,6 +554,8 @@ export type Mutation = {
   updateProfile?: Maybe<UpdateProfileResult>;
   /** Updates a program. */
   updateProgram?: Maybe<CreateOrUpdateProgramResult>;
+  /** Updates the ranks of multiple courses within a program. */
+  updateProgramCourseRanks?: Maybe<MutationResult>;
 };
 
 
@@ -696,6 +698,12 @@ export type MutationUpdateProfileArgs = {
 
 export type MutationUpdateProgramArgs = {
   updateProgramInfo: UpdateProgramInfoInput;
+};
+
+
+export type MutationUpdateProgramCourseRanksArgs = {
+  courseRanks: Array<UpdateProgramCourseRankInput>;
+  programId: Scalars['ID']['input'];
 };
 
 /** The result of a mutation. */
@@ -1176,8 +1184,18 @@ export type UpdateProfileResult = {
   user?: Maybe<Account>;
 };
 
+/** Input for updating a program courses rank */
+export type UpdateProgramCourseRankInput = {
+  /** The ID of the course */
+  id: Scalars['String']['input'];
+  /** The new rank of the course */
+  rank: Scalars['Int']['input'];
+};
+
 /** Input for updating a program record. */
 export type UpdateProgramInfoInput = {
+  /** List of course IDs to link to the program */
+  courseIds?: InputMaybe<Array<InputMaybe<Scalars['ID']['input']>>>;
   /** The denomination of this program */
   denomination?: InputMaybe<Scalars['String']['input']>;
   /** The description of this program */
