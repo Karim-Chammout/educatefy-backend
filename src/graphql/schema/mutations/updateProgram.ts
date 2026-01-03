@@ -1,6 +1,7 @@
 import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
 import { isEqual } from 'lodash';
 
+import { Course as CourseType } from '../../../types/db-generated-types';
 import {
   ProgramLevel,
   UpdateProgramInfoInput as UpdateProgramInfoInputType,
@@ -40,6 +41,7 @@ const updateProgram: GraphQLFieldConfig<null, ContextType> = {
         subjectIds,
         objectives,
         requirements,
+        courseIds,
       } = updateProgramInfo;
 
       if (!id || (level && !Object.values(ProgramLevel).includes(level))) {
@@ -177,6 +179,53 @@ const updateProgram: GraphQLFieldConfig<null, ContextType> = {
                   program_id: program.id,
                   requirement: requirementItem.requirement,
                 });
+              }
+            }
+          }
+
+          if (courseIds && courseIds !== null) {
+            if (courseIds.length === 0) {
+              await transaction('course__program').where('program_id', program.id).del();
+            } else {
+              // Verify that all course IDs exist and belong to the teacher
+              const parsedCourseIds = courseIds
+                .map((courseId) => parseInt(courseId as string, 10))
+                .filter((cID) => !isNaN(cID));
+
+              const courses = await transaction<CourseType>('course')
+                .whereIn('id', parsedCourseIds)
+                .where('teacher_id', user.id)
+                .whereNull('deleted_at')
+                .select();
+
+              if (!courses || courses.length === 0) {
+                return {
+                  success: false,
+                  errors: [new Error(ErrorType.INVALID_COURSE_LINKING)],
+                  program: null,
+                };
+              }
+
+              const validCourseIds = courses.map((course) => course.id);
+
+              const existingCourseLinks = await transaction('course__program')
+                .where('program_id', program.id)
+                .select('course_id');
+
+              const existingCourseIds = existingCourseLinks.map((item) =>
+                parseInt(item.course_id, 10),
+              );
+
+              // Check if course IDs have changed to avoid unnecessary updates
+              if (!isEqual(validCourseIds.sort(), existingCourseIds.sort())) {
+                await transaction('course__program').where('program_id', program.id).del();
+
+                for (const courseId of validCourseIds) {
+                  await transaction('course__program').insert({
+                    program_id: program.id,
+                    course_id: courseId,
+                  });
+                }
               }
             }
           }
