@@ -174,9 +174,12 @@ export const Program: GraphQLObjectType = new GraphQLObjectType<ProgramType, Con
           return [];
         }
 
-        const courseIds = courseProgramRelations.map((relation) => relation.course_id);
+        // Sort relations by rank
+        const sortedCourseIds = [...courseProgramRelations]
+          .sort((a, b) => a.rank - b.rank)
+          .map((relation) => relation.course_id);
 
-        const courses = await filterError(loaders.Course.loadManyByIds(courseIds));
+        const courses = await filterError(loaders.Course.loadManyByIds(sortedCourseIds));
 
         if (!courses || courses.length === 0) {
           return [];
