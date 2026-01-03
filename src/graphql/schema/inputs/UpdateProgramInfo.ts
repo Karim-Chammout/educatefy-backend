@@ -87,6 +87,10 @@ const UpdateProgramInfoInput = new GraphQLInputObjectType({
       type: new GraphQLList(new GraphQLNonNull(ProgramRequirementInput)),
       description: 'List of requirements for the program',
     },
+    courseIds: {
+      type: new GraphQLList(GraphQLID),
+      description: 'List of course IDs to link to the program',
+    },
   },
 });
 
