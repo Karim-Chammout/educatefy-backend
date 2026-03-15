@@ -10,6 +10,11 @@ export class AccountProgramReader {
 
   private byAccountIdLoader: DataLoader<number, ReadonlyArray<AccountProgramType>>;
 
+  private byAccountIdAndProgramIdLoader: DataLoader<
+    { accountId: number; programId: number },
+    AccountProgramType
+  >;
+
   /**
    * Load all entities from the database.
    */
@@ -60,6 +65,32 @@ export class AccountProgramReader {
       return rows;
     });
 
+    this.byAccountIdAndProgramIdLoader = new DataLoader(async (keys) => {
+      if (keys.length === 0) {
+        return [];
+      }
+
+      const rows = await db
+        .table('account__program')
+        .whereNull('deleted_at')
+        .where((builder) =>
+          keys.forEach((key) =>
+            builder.orWhere({
+              account_id: key.accountId,
+              program_id: key.programId,
+            }),
+          ),
+        )
+        .select()
+        .then((results) =>
+          keys.map((key) =>
+            results.find((x) => x.account_id === key.accountId && x.program_id === key.programId),
+          ),
+        );
+
+      return rows;
+    });
+
     this.loadAll = async () => {
       const result = await db.table('account__program').whereNull('deleted_at').select();
 
@@ -78,6 +109,7 @@ export class AccountProgramReader {
       byIdLoader: this.byIdLoader,
       byProgramIdLoader: this.byProgramIdLoader,
       byAccountIdLoader: this.byAccountIdLoader,
+      byAccountIdAndProgramIdLoader: this.byAccountIdAndProgramIdLoader,
     };
   }
 
@@ -97,5 +129,9 @@ export class AccountProgramReader {
 
   loadByAccountId(accountId: number): Promise<ReadonlyArray<AccountProgramType>> {
     return this.byAccountIdLoader.load(accountId);
+  }
+
+  loadByAccountIdAndProgramId(accountId: number, programId: number): Promise<AccountProgramType> {
+    return this.byAccountIdAndProgramIdLoader.load({ accountId, programId });
   }
 }
