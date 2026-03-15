@@ -9,7 +9,10 @@ import {
   GraphQLString,
 } from 'graphql';
 
-import { Program as ProgramType } from '../../../types/db-generated-types';
+import {
+  ProgramProgressStatusType,
+  Program as ProgramType,
+} from '../../../types/db-generated-types';
 import { ContextType } from '../../../types/types';
 import { getImageURL } from '../../../utils/getImageURL';
 import { filterError } from '../../utils/filterError';
@@ -17,6 +20,7 @@ import { filterPublishedContent } from '../../utils/filterPublishedContent';
 import GraphQLDate from '../Scalars/Date';
 import { Course } from './Course';
 import ProgramLevel from './enum/ProgramLevel';
+import ProgramStatus from './enum/ProgramStatus';
 import { ProgramObjective } from './ProgramObjective';
 import { ProgramRequirement } from './ProgramRequirement';
 import { Subject } from './Subject';
@@ -110,6 +114,49 @@ export const Program: GraphQLObjectType = new GraphQLObjectType<ProgramType, Con
         }
 
         return programRequirements;
+      },
+    },
+    status: {
+      type: new GraphQLNonNull(ProgramStatus),
+      description: 'The status of the program for the current user',
+      resolve: async (parent, _, { user, loaders }) => {
+        if (!user.authenticated) {
+          return ProgramProgressStatusType.NotStarted;
+        }
+
+        const programEnrollment = await loaders.AccountProgram.loadByAccountIdAndProgramId(
+          user.id,
+          parent.id,
+        );
+
+        if (!programEnrollment) {
+          return ProgramProgressStatusType.NotStarted;
+        }
+
+        const programProgress = await loaders.ProgramProgress.loadByAccountProgramId(
+          programEnrollment.id,
+        );
+
+        if (
+          (programEnrollment && !programProgress) ||
+          (programProgress && programProgress.status === ProgramProgressStatusType.InProgress)
+        ) {
+          return ProgramProgressStatusType.InProgress;
+        }
+
+        if (
+          programProgress.status === ProgramProgressStatusType.NotStarted ||
+          programProgress.status === ProgramProgressStatusType.Unenrolled
+        ) {
+          return ProgramProgressStatusType.NotStarted;
+        }
+
+        if (programProgress.status === ProgramProgressStatusType.Completed) {
+          return ProgramProgressStatusType.Completed;
+        }
+
+        // Default case
+        return ProgramProgressStatusType.NotStarted;
       },
     },
     enrolledLearnersCount: {
