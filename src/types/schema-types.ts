@@ -524,12 +524,18 @@ export type Mutation = {
   deleteLesson?: Maybe<MutationResult>;
   /** Deletes a program. */
   deleteProgram?: Maybe<MutationResult>;
+  /** Enrolls an account in a program. */
+  enrollInProgram?: Maybe<UpdateProgramStatusResult>;
   /** Follow or unfollow a teacher. Toggles the follow status. */
   followTeacher?: Maybe<FollowTeacherResult>;
   /** Rate a course. */
   rateCourse?: Maybe<RateCourseResult>;
   /** Remove the profile picture of a user. */
   removeProfilePicture?: Maybe<ChangeProfilePictureResult>;
+  /** Updates the last_viewed_at timestamp for a program progress. */
+  trackProgramProgress?: Maybe<MutationResult>;
+  /** Unenrolls an account from a program. */
+  unenrollFromProgram?: Maybe<UpdateProgramStatusResult>;
   /** Updates a user account information. */
   updateAccountInfo?: Maybe<MutationResult>;
   /** Updates a content component. */
@@ -628,6 +634,11 @@ export type MutationDeleteProgramArgs = {
 };
 
 
+export type MutationEnrollInProgramArgs = {
+  programId: Scalars['ID']['input'];
+};
+
+
 export type MutationFollowTeacherArgs = {
   followTeacherInfo: FollowTeacherInput;
 };
@@ -635,6 +646,17 @@ export type MutationFollowTeacherArgs = {
 
 export type MutationRateCourseArgs = {
   ratingInfo: RateCourse;
+};
+
+
+export type MutationTrackProgramProgressArgs = {
+  programId: Scalars['ID']['input'];
+  shouldMarkProgramAsCompleted: Scalars['Boolean']['input'];
+};
+
+
+export type MutationUnenrollFromProgramArgs = {
+  programId: Scalars['ID']['input'];
 };
 
 
@@ -805,6 +827,8 @@ export type Program = {
   requirements: Array<ProgramRequirement>;
   /** A unique slug of this program. */
   slug: Scalars['String']['output'];
+  /** The status of the program for the current user */
+  status: ProgramStatus;
   /** The subjects linked to this program. */
   subjects: Array<Subject>;
   /** The subtitle of this program. */
@@ -877,6 +901,18 @@ export type ProgramRequirementInput = {
   /** The requirement of this program. */
   requirement: Scalars['String']['input'];
 };
+
+/** The status of the program for the current user. */
+export enum ProgramStatus {
+  /** This program has been completed by the user. */
+  Completed = 'completed',
+  /** The user is currently in progress in this program. */
+  InProgress = 'in_progress',
+  /** This program is not started yet. */
+  NotStarted = 'not_started',
+  /** The user unenrolled from this program. */
+  Unenrolled = 'unenrolled'
+}
 
 /** The properties of a public account */
 export type PublicAccount = {
@@ -1218,6 +1254,17 @@ export type UpdateProgramInfoInput = {
   subjectIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   /** The subtitle of this program */
   subtitle?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** The result of the enrolling or unenrolling from a program. */
+export type UpdateProgramStatusResult = {
+  __typename?: 'UpdateProgramStatusResult';
+  /** A list of errors that occurred executing this mutation. */
+  errors: Array<Error>;
+  /** The updated course information. */
+  program?: Maybe<Program>;
+  /** Indicates if the mutation was successful. */
+  success: Scalars['Boolean']['output'];
 };
 
 /** A video content component. */
