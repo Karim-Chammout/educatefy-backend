@@ -13,9 +13,11 @@ import deleteCourseSection from './mutations/deleteCourseSection';
 import deleteCourseSectionItem from './mutations/deleteCourseSectionItem';
 import deleteLesson from './mutations/deleteLesson';
 import deleteProgram from './mutations/deleteProgram';
+import enrollInProgram from './mutations/enrollInProgram';
 import followTeacher from './mutations/followTeacher';
 import rateCourse from './mutations/rateCourse';
 import removeProfilePicture from './mutations/removeProfilePicture';
+import unenrollFromProgram from './mutations/unenrollFromProgram';
 import updateAccountInfo from './mutations/updateAccountInfo';
 import updateContentComponent from './mutations/updateContentComponent';
 import updateContentComponentProgress from './mutations/updateContentComponentProgress';
@@ -29,6 +31,7 @@ import updateLesson from './mutations/updateLesson';
 import updateProfile from './mutations/updateProfile';
 import updateProgram from './mutations/updateProgram';
 import updateProgramCourseRanks from './mutations/updateProgramCourseRanks';
+import trackProgramProgress from './mutations/trackProgramProgress';
 
 const Mutation = new GraphQLObjectType({
   name: 'Mutation',
@@ -46,9 +49,11 @@ const Mutation = new GraphQLObjectType({
     deleteCourseSectionItem,
     deleteLesson,
     deleteProgram,
+    enrollInProgram,
     followTeacher,
     rateCourse,
     removeProfilePicture,
+    unenrollFromProgram,
     updateAccountInfo,
     updateContentComponent,
     updateContentComponentProgress,
@@ -62,6 +67,7 @@ const Mutation = new GraphQLObjectType({
     updateProfile,
     updateProgram,
     updateProgramCourseRanks,
+    trackProgramProgress,
   },
 });
 
