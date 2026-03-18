@@ -1,36 +1,40 @@
+// ⚠️  This file is auto-generated. Do NOT edit it manually.
+// Re-run `npm run generate-loaders` to regenerate it.
+
 import { Knex } from 'knex';
 
-import { AccountReader } from './loaders/Account';
+import { AccountBase as AccountReader } from './loaders/Account.generated';
 import { AccountProgramReader } from './loaders/AccountProgram';
-import { AccountRoleReader } from './loaders/AccountRole';
-import { AccountSubjectReader } from './loaders/AccountSubject';
+import { AccountRoleBase as AccountRoleReader } from './loaders/AccountRole.generated';
+import { AccountSubjectBase as AccountSubjectReader } from './loaders/AccountSubject.generated';
 import { ContentComponentReader } from './loaders/ContentComponent';
 import { ContentComponentProgressReader } from './loaders/ContentComponentProgress';
-import { CountryReader } from './loaders/Country';
+import { CountryBase as CountryReader } from './loaders/Country.generated';
 import { CourseReader } from './loaders/Course';
-import { CourseObjectiveReader } from './loaders/CourseObjective';
-import { CourseProgramReader } from './loaders/CourseProgram';
+import { CourseObjectiveBase as CourseObjectiveReader } from './loaders/CourseObjective.generated';
+import { CourseProgramBase as CourseProgramReader } from './loaders/CourseProgram.generated';
 import { CourseRatingReader } from './loaders/CourseRating';
-import { CourseRequirementReader } from './loaders/CourseRequirement';
-import { CourseSectionReader } from './loaders/CourseSection';
-import { CourseSectionItemReader } from './loaders/CourseSectionItem';
-import { CourseSubjectReader } from './loaders/CourseSubject';
+import { CourseRequirementBase as CourseRequirementReader } from './loaders/CourseRequirement.generated';
+import { CourseSectionBase as CourseSectionReader } from './loaders/CourseSection.generated';
+import { CourseSectionItemBase as CourseSectionItemReader } from './loaders/CourseSectionItem.generated';
+import { CourseSubjectBase as CourseSubjectReader } from './loaders/CourseSubject.generated';
 import { EnrollmentReader } from './loaders/Enrollment';
-import { EnrollmentHistoryReader } from './loaders/EnrollmentHistory';
+import { EnrollmentHistoryBase as EnrollmentHistoryReader } from './loaders/EnrollmentHistory.generated';
 import { FileReader } from './loaders/File';
-import { LanguageReader } from './loaders/Language';
-import { LessonReader } from './loaders/Lesson';
-import { OpenidClientReader } from './loaders/OpenidClient';
+import { LanguageBase as LanguageReader } from './loaders/Language.generated';
+import { LessonBase as LessonReader } from './loaders/Lesson.generated';
+import { OpenidClientBase as OpenidClientReader } from './loaders/OpenidClient.generated';
 import { ProgramReader } from './loaders/Program';
-import { ProgramObjectiveReader } from './loaders/ProgramObjective';
-import { ProgramProgressReader } from './loaders/ProgramProgress';
-import { ProgramRequirementReader } from './loaders/ProgramRequirement';
-import { ProgramSubjectReader } from './loaders/ProgramSubject';
+import { ProgramObjectiveBase as ProgramObjectiveReader } from './loaders/ProgramObjective.generated';
+import { ProgramProgressBase as ProgramProgressReader } from './loaders/ProgramProgress.generated';
+import { ProgramRequirementBase as ProgramRequirementReader } from './loaders/ProgramRequirement.generated';
+import { ProgramSubjectBase as ProgramSubjectReader } from './loaders/ProgramSubject.generated';
+import { RefreshTokenBase as RefreshTokenReader } from './loaders/RefreshToken.generated';
 import { StudentTeacherFollowReader } from './loaders/StudentTeacherFollow';
 import { SubjectReader } from './loaders/Subject';
-import { TextContentReader } from './loaders/TextContent';
-import { VideoContentReader } from './loaders/VideoContent';
-import { YoutubeContentReader } from './loaders/YoutubeContent';
+import { TextContentBase as TextContentReader } from './loaders/TextContent.generated';
+import { VideoContentBase as VideoContentReader } from './loaders/VideoContent.generated';
+import { YoutubeContentBase as YoutubeContentReader } from './loaders/YoutubeContent.generated';
 
 export type ReadersType = {
   Account: AccountReader;
@@ -59,6 +63,7 @@ export type ReadersType = {
   ProgramProgress: ProgramProgressReader;
   ProgramRequirement: ProgramRequirementReader;
   ProgramSubject: ProgramSubjectReader;
+  RefreshToken: RefreshTokenReader;
   StudentTeacherFollow: StudentTeacherFollowReader;
   Subject: SubjectReader;
   TextContent: TextContentReader;
@@ -94,6 +99,7 @@ export function createLoaders(db: Knex): ReadersType {
     ProgramProgress: new ProgramProgressReader(db),
     ProgramRequirement: new ProgramRequirementReader(db),
     ProgramSubject: new ProgramSubjectReader(db),
+    RefreshToken: new RefreshTokenReader(db),
     StudentTeacherFollow: new StudentTeacherFollowReader(db),
     Subject: new SubjectReader(db),
     TextContent: new TextContentReader(db),

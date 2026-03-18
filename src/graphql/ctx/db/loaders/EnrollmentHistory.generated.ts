@@ -1,47 +1,39 @@
+// ⚠️  This file is auto-generated. Do NOT edit it manually.
+// To add custom loaders, create `EnrollmentHistory.ts` in this directory
+// and extend `EnrollmentHistoryBase`. The generator will never overwrite that file.
+// Re-run `npm run generate-loaders` to refresh this file.
+
 import DataLoader from 'dataloader';
 import { Knex } from 'knex';
 
 import { EnrollmentHistory as EnrollmentHistoryType } from '../../../../types/db-generated-types';
+import { mapTo, mapToMany } from './map';
 
-export class EnrollmentHistoryReader {
+export class EnrollmentHistoryBase {
   private byIdLoader: DataLoader<number, EnrollmentHistoryType>;
 
   private byEnrollmentIdLoader: DataLoader<number, ReadonlyArray<EnrollmentHistoryType>>;
 
-  /**
-   * Load all entities from the database.
-   */
   loadAll: () => Promise<ReadonlyArray<EnrollmentHistoryType>>;
 
-  constructor(db: Knex) {
+  constructor(protected db: Knex) {
     this.byIdLoader = new DataLoader(async (ids) => {
-      if (ids.length === 0) {
-        return [];
-      }
-      const rows = await db
-        .table('enrollment_history')
-        .whereIn('id', ids)
-        .select()
-        .then((results) => ids.map((id) => results.find((x) => x.id === id)));
+      if (ids.length === 0) return [];
 
-      return rows;
+      const rows = await db.table('enrollment_history').whereIn('id', ids).select();
+
+      return mapTo(ids, rows, (r) => r.id);
     });
 
     this.byEnrollmentIdLoader = new DataLoader(async (enrollmentIds) => {
-      if (enrollmentIds.length === 0) {
-        return [];
-      }
+      if (enrollmentIds.length === 0) return [];
+
       const rows = await db
         .table('enrollment_history')
         .whereIn('enrollment_id', enrollmentIds)
-        .select()
-        .then((results) =>
-          enrollmentIds.map((enrollmentId) =>
-            results.filter((x) => x.enrollment_id === enrollmentId),
-          ),
-        );
+        .select();
 
-      return rows;
+      return mapToMany(enrollmentIds, rows, (r) => r.enrollment_id);
     });
 
     this.loadAll = async () => {
@@ -50,12 +42,14 @@ export class EnrollmentHistoryReader {
       for (const row of result) {
         this.byIdLoader.prime(row.id, row);
       }
+
       return result;
     };
   }
 
   /**
-   * This property exposes the private loaders in order to prime or clear the cache of the loader.
+   * Exposes the underlying DataLoader instances so callers can prime or
+   * clear the cache directly when needed.
    */
   get loaders() {
     return {
@@ -64,17 +58,18 @@ export class EnrollmentHistoryReader {
     };
   }
 
-  /** Load entities with the matching primary key */
+  /** Load a single EnrollmentHistory by its primary key */
   loadById(id: number): Promise<EnrollmentHistoryType> {
     return this.byIdLoader.load(id);
   }
 
-  /** Load entities with the matching primary key */
+  /** Load many EnrollmentHistory records by primary key */
   loadManyByIds(ids: number[]): Promise<ReadonlyArray<EnrollmentHistoryType | Error>> {
     return this.byIdLoader.loadMany(ids);
   }
 
-  loadByEnrollmentId(enrollmentIds: number): Promise<ReadonlyArray<EnrollmentHistoryType>> {
-    return this.byEnrollmentIdLoader.load(enrollmentIds);
+  /** Load all EnrollmentHistory records with enrollment_id = `enrollmentId` */
+  loadByEnrollmentId(enrollmentId: number): Promise<ReadonlyArray<EnrollmentHistoryType>> {
+    return this.byEnrollmentIdLoader.load(enrollmentId);
   }
 }

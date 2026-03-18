@@ -1,46 +1,39 @@
+// ⚠️  This file is auto-generated. Do NOT edit it manually.
+// To add custom loaders, create `ProgramProgress.ts` in this directory
+// and extend `ProgramProgressBase`. The generator will never overwrite that file.
+// Re-run `npm run generate-loaders` to refresh this file.
+
 import DataLoader from 'dataloader';
 import { Knex } from 'knex';
 
 import { ProgramProgress as ProgramProgressType } from '../../../../types/db-generated-types';
+import { mapTo } from './map';
 
-export class ProgramProgressReader {
+export class ProgramProgressBase {
   private byIdLoader: DataLoader<number, ProgramProgressType>;
 
   private byAccountProgramIdLoader: DataLoader<number, ProgramProgressType>;
 
-  /**
-   * Load all entities from the database.
-   */
   loadAll: () => Promise<ReadonlyArray<ProgramProgressType>>;
 
-  constructor(db: Knex) {
+  constructor(protected db: Knex) {
     this.byIdLoader = new DataLoader(async (ids) => {
-      if (ids.length === 0) {
-        return [];
-      }
-      const rows = await db
-        .table('program_progress')
-        .whereIn('id', ids)
-        .select()
-        .then((results) => ids.map((id) => results.find((x) => x.id === id)));
+      if (ids.length === 0) return [];
 
-      return rows;
+      const rows = await db.table('program_progress').whereIn('id', ids).select();
+
+      return mapTo(ids, rows, (r) => r.id);
     });
 
     this.byAccountProgramIdLoader = new DataLoader(async (accountProgramIds) => {
-      if (accountProgramIds.length === 0) {
-        return [];
-      }
+      if (accountProgramIds.length === 0) return [];
 
       const rows = await db
         .table('program_progress')
         .whereIn('account__program_id', accountProgramIds)
-        .select()
-        .then((results) =>
-          accountProgramIds.map((id) => results.find((x) => x.account__program_id === id)),
-        );
+        .select();
 
-      return rows;
+      return mapTo(accountProgramIds, rows, (r) => r.account__program_id);
     });
 
     this.loadAll = async () => {
@@ -49,12 +42,14 @@ export class ProgramProgressReader {
       for (const row of result) {
         this.byIdLoader.prime(row.id, row);
       }
+
       return result;
     };
   }
 
   /**
-   * This property exposes the private loaders in order to prime or clear the cache of the loader.
+   * Exposes the underlying DataLoader instances so callers can prime or
+   * clear the cache directly when needed.
    */
   get loaders() {
     return {
@@ -63,16 +58,17 @@ export class ProgramProgressReader {
     };
   }
 
-  /** Load entities with the matching primary key */
+  /** Load a single ProgramProgress by its primary key */
   loadById(id: number): Promise<ProgramProgressType> {
     return this.byIdLoader.load(id);
   }
 
-  /** Load entities with the matching primary key */
+  /** Load many ProgramProgress records by primary key */
   loadManyByIds(ids: number[]): Promise<ReadonlyArray<ProgramProgressType | Error>> {
     return this.byIdLoader.loadMany(ids);
   }
 
+  /** Load the ProgramProgress record with account__program_id = `accountProgramId` */
   loadByAccountProgramId(accountProgramId: number): Promise<ProgramProgressType> {
     return this.byAccountProgramIdLoader.load(accountProgramId);
   }

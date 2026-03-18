@@ -1,36 +1,18 @@
 import DataLoader from 'dataloader';
-import { Knex } from 'knex';
 
 import { ContentComponent as ContentComponentType } from '../../../../types/db-generated-types';
+import { ContentComponentBase } from './ContentComponent.generated';
 
 type ParentType = 'lesson' | 'course';
 
-export class ContentComponentReader {
-  private byIdLoader: DataLoader<number, ContentComponentType>;
-
+export class ContentComponentReader extends ContentComponentBase {
   private byParentIdAndParentTypeLoader: DataLoader<
     { parentId: number; parentType: ParentType },
     ReadonlyArray<ContentComponentType>
   >;
 
-  /**
-   * Load all entities from the database.
-   */
-  loadAll: () => Promise<ReadonlyArray<ContentComponentType>>;
-
-  constructor(db: Knex) {
-    this.byIdLoader = new DataLoader(async (ids) => {
-      if (ids.length === 0) {
-        return [];
-      }
-      const rows = await db
-        .table('content_component')
-        .whereIn('id', ids)
-        .select()
-        .then((results) => ids.map((id) => results.find((x) => x.id === id)));
-
-      return rows;
-    });
+  constructor(db: ConstructorParameters<typeof ContentComponentBase>[0]) {
+    super(db);
 
     this.byParentIdAndParentTypeLoader = new DataLoader(
       async (keys) => {
@@ -38,7 +20,7 @@ export class ContentComponentReader {
           return [];
         }
 
-        const rows = await db
+        const rows = await this.db
           .table('content_component')
           .where((builder) =>
             keys.forEach((key) =>
@@ -63,35 +45,13 @@ export class ContentComponentReader {
         cacheKeyFn: (key) => `${key.parentId}:${key.parentType}`,
       },
     );
-
-    this.loadAll = async () => {
-      const result = await db.table('content_component').select();
-
-      for (const row of result) {
-        this.byIdLoader.prime(row.id, row);
-      }
-      return result;
-    };
   }
 
-  /**
-   * This property exposes the private loaders in order to prime or clear the cache of the loader.
-   */
   get loaders() {
     return {
-      byIdLoader: this.byIdLoader,
+      ...super.loaders,
       byParentIdAndParentTypeLoader: this.byParentIdAndParentTypeLoader,
     };
-  }
-
-  /** Load entities with the matching primary key */
-  loadById(id: number): Promise<ContentComponentType> {
-    return this.byIdLoader.load(id);
-  }
-
-  /** Load entities with the matching primary key */
-  loadManyByIds(ids: number[]): Promise<ReadonlyArray<ContentComponentType | Error>> {
-    return this.byIdLoader.loadMany(ids);
   }
 
   loadByParentIdAndParentType(

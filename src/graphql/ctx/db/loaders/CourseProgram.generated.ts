@@ -1,60 +1,46 @@
+// ⚠️  This file is auto-generated. Do NOT edit it manually.
+// To add custom loaders, create `CourseProgram.ts` in this directory
+// and extend `CourseProgramBase`. The generator will never overwrite that file.
+// Re-run `npm run generate-loaders` to refresh this file.
+
 import DataLoader from 'dataloader';
 import { Knex } from 'knex';
 
 import { CourseProgram as CourseProgramType } from '../../../../types/db-generated-types';
+import { mapTo, mapToMany } from './map';
 
-export class CourseProgramReader {
+export class CourseProgramBase {
   private byIdLoader: DataLoader<number, CourseProgramType>;
 
   private byProgramIdLoader: DataLoader<number, ReadonlyArray<CourseProgramType>>;
 
   private byCourseIdLoader: DataLoader<number, ReadonlyArray<CourseProgramType>>;
 
-  /**
-   * Load all entities from the database.
-   */
   loadAll: () => Promise<ReadonlyArray<CourseProgramType>>;
 
-  constructor(db: Knex) {
+  constructor(protected db: Knex) {
     this.byIdLoader = new DataLoader(async (ids) => {
-      if (ids.length === 0) {
-        return [];
-      }
-      const rows = await db
-        .table('course__program')
-        .whereIn('id', ids)
-        .select()
-        .then((results) => ids.map((id) => results.find((x) => x.id === id)));
+      if (ids.length === 0) return [];
 
-      return rows;
+      const rows = await db.table('course__program').whereIn('id', ids).select();
+
+      return mapTo(ids, rows, (r) => r.id);
     });
 
     this.byProgramIdLoader = new DataLoader(async (programIds) => {
-      if (programIds.length === 0) {
-        return [];
-      }
+      if (programIds.length === 0) return [];
 
-      const rows = await db
-        .table('course__program')
-        .whereIn('program_id', programIds)
-        .select()
-        .then((results) => programIds.map((id) => results.filter((x) => x.program_id === id)));
+      const rows = await db.table('course__program').whereIn('program_id', programIds).select();
 
-      return rows;
+      return mapToMany(programIds, rows, (r) => r.program_id);
     });
 
     this.byCourseIdLoader = new DataLoader(async (courseIds) => {
-      if (courseIds.length === 0) {
-        return [];
-      }
+      if (courseIds.length === 0) return [];
 
-      const rows = await db
-        .table('course__program')
-        .whereIn('course_id', courseIds)
-        .select()
-        .then((results) => courseIds.map((id) => results.filter((x) => x.course_id === id)));
+      const rows = await db.table('course__program').whereIn('course_id', courseIds).select();
 
-      return rows;
+      return mapToMany(courseIds, rows, (r) => r.course_id);
     });
 
     this.loadAll = async () => {
@@ -63,12 +49,14 @@ export class CourseProgramReader {
       for (const row of result) {
         this.byIdLoader.prime(row.id, row);
       }
+
       return result;
     };
   }
 
   /**
-   * This property exposes the private loaders in order to prime or clear the cache of the loader.
+   * Exposes the underlying DataLoader instances so callers can prime or
+   * clear the cache directly when needed.
    */
   get loaders() {
     return {
@@ -78,20 +66,22 @@ export class CourseProgramReader {
     };
   }
 
-  /** Load entities with the matching primary key */
+  /** Load a single CourseProgram by its primary key */
   loadById(id: number): Promise<CourseProgramType> {
     return this.byIdLoader.load(id);
   }
 
-  /** Load entities with the matching primary key */
+  /** Load many CourseProgram records by primary key */
   loadManyByIds(ids: number[]): Promise<ReadonlyArray<CourseProgramType | Error>> {
     return this.byIdLoader.loadMany(ids);
   }
 
+  /** Load all CourseProgram records with program_id = `programId` */
   loadByProgramId(programId: number): Promise<ReadonlyArray<CourseProgramType>> {
     return this.byProgramIdLoader.load(programId);
   }
 
+  /** Load all CourseProgram records with course_id = `courseId` */
   loadByCourseId(courseId: number): Promise<ReadonlyArray<CourseProgramType>> {
     return this.byCourseIdLoader.load(courseId);
   }
