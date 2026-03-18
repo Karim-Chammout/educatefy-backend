@@ -1,68 +1,16 @@
 import DataLoader from 'dataloader';
-import { Knex } from 'knex';
 
 import { Enrollment as EnrollmentType } from '../../../../types/db-generated-types';
+import { EnrollmentBase } from './Enrollment.generated';
 
-export class EnrollmentReader {
-  private byIdLoader: DataLoader<number, EnrollmentType>;
-
-  private byCourseIdLoader: DataLoader<number, ReadonlyArray<EnrollmentType>>;
-
-  private byAccountIdLoader: DataLoader<number, ReadonlyArray<EnrollmentType>>;
-
+export class EnrollmentReader extends EnrollmentBase {
   private byAccountIdAndCourseIdLoader: DataLoader<
     { accountId: number; courseId: number },
     EnrollmentType
   >;
 
-  /**
-   * Load all entities from the database.
-   */
-  loadAll: () => Promise<ReadonlyArray<EnrollmentType>>;
-
-  constructor(db: Knex) {
-    this.byIdLoader = new DataLoader(async (ids) => {
-      if (ids.length === 0) {
-        return [];
-      }
-      const rows = await db
-        .table('enrollment')
-        .whereIn('id', ids)
-        .select()
-        .then((results) => ids.map((id) => results.find((x) => x.id === id)));
-
-      return rows;
-    });
-
-    this.byCourseIdLoader = new DataLoader(async (courseIds) => {
-      if (courseIds.length === 0) {
-        return [];
-      }
-      const rows = await db
-        .table('enrollment')
-        .whereIn('course_id', courseIds)
-        .select()
-        .then((results) =>
-          courseIds.map((courseId) => results.filter((x) => x.course_id === courseId)),
-        );
-
-      return rows;
-    });
-
-    this.byAccountIdLoader = new DataLoader(async (accountIds) => {
-      if (accountIds.length === 0) {
-        return [];
-      }
-      const rows = await db
-        .table('enrollment')
-        .whereIn('account_id', accountIds)
-        .select()
-        .then((results) =>
-          accountIds.map((accountId) => results.filter((x) => x.account_id === accountId)),
-        );
-
-      return rows;
-    });
+  constructor(db: ConstructorParameters<typeof EnrollmentBase>[0]) {
+    super(db);
 
     this.byAccountIdAndCourseIdLoader = new DataLoader(
       async (keys) => {
@@ -70,7 +18,7 @@ export class EnrollmentReader {
           return [];
         }
 
-        const rows = await db
+        const rows = await this.db
           .table('enrollment')
           .where((builder) =>
             keys.forEach((key) =>
@@ -93,45 +41,13 @@ export class EnrollmentReader {
         cacheKeyFn: (key) => `${key.accountId}:${key.courseId}`,
       },
     );
-
-    this.loadAll = async () => {
-      const result = await db.table('enrollment').select();
-
-      for (const row of result) {
-        this.byIdLoader.prime(row.id, row);
-      }
-      return result;
-    };
   }
 
-  /**
-   * This property exposes the private loaders in order to prime or clear the cache of the loader.
-   */
   get loaders() {
     return {
-      byIdLoader: this.byIdLoader,
-      byAccountIdLoader: this.byAccountIdLoader,
-      byCourseIdLoader: this.byCourseIdLoader,
+      ...super.loaders,
       byAccountIdAndCourseIdLoader: this.byAccountIdAndCourseIdLoader,
     };
-  }
-
-  /** Load entities with the matching primary key */
-  loadById(id: number): Promise<EnrollmentType> {
-    return this.byIdLoader.load(id);
-  }
-
-  /** Load entities with the matching primary key */
-  loadManyByIds(ids: number[]): Promise<ReadonlyArray<EnrollmentType | Error>> {
-    return this.byIdLoader.loadMany(ids);
-  }
-
-  loadByAccountId(accountIds: number): Promise<ReadonlyArray<EnrollmentType>> {
-    return this.byAccountIdLoader.load(accountIds);
-  }
-
-  loadByCourseId(courseIds: number): Promise<ReadonlyArray<EnrollmentType>> {
-    return this.byCourseIdLoader.load(courseIds);
   }
 
   loadByAccountIdAndCourseId(accountId: number, courseId: number): Promise<EnrollmentType> {
