@@ -1,4 +1,4 @@
-import { Issuer } from 'openid-client';
+import * as client from 'openid-client';
 
 import config from '../../config';
 import { ErrorType } from '../../utils/ErrorType';
@@ -19,19 +19,17 @@ export const providers: { [key: string]: ProviderConfigType } = {
   },
 };
 
-export const getOidcClient = async (provider: string) => {
+export const getOidcConfig = async (provider: string): Promise<client.Configuration> => {
   const providerConfig = providers[provider];
 
   try {
-    const issuer = await Issuer.discover(providerConfig.issuer);
-    const authClient = new issuer.Client({
-      client_id: providerConfig.client_id,
-      client_secret: providerConfig.client_secret,
-      redirect_uri: providerConfig.redirect_uri,
-      response_types: ['code'],
-    });
+    const oidcConfig = await client.discovery(
+      new URL(providerConfig.issuer),
+      providerConfig.client_id,
+      providerConfig.client_secret,
+    );
 
-    return authClient;
+    return oidcConfig;
   } catch (error) {
     console.error('Failed to discover OpenID issuer: ', error);
     throw new Error(ErrorType.OIDC_INITIALIZE_FAILED);
