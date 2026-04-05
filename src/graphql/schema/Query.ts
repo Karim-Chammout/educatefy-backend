@@ -11,6 +11,7 @@ import { CourseStatus } from '../../types/schema-types';
 import { ContextType } from '../../types/types';
 import { ErrorType } from '../../utils/ErrorType';
 import { authenticated } from '../utils/auth';
+import { hasValidProgramVersion } from '../utils/contentUtils';
 import { hasTeacherRole } from '../utils/hasTeacherRole';
 import { Account } from './types/Account';
 import { Country } from './types/Country';
@@ -217,10 +218,16 @@ const Query = new GraphQLObjectType<any, ContextType>({
           description: 'The slug of the program.',
         },
       },
-      resolve: async (_, { slug }: { slug: string }, { loaders }) => {
+      resolve: async (_, { slug }: { slug: string }, { loaders, user }) => {
         const program = await loaders.Program.loadBySlug(slug);
 
         if (!program || !program.is_published) {
+          return null;
+        }
+
+        const hasValidVersion = await hasValidProgramVersion(program.id, user, loaders);
+
+        if (!hasValidVersion) {
           return null;
         }
 

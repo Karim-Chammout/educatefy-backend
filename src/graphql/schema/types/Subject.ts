@@ -2,6 +2,7 @@ import { GraphQLID, GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLStrin
 
 import { Subject as SubjectType } from '../../../types/db-generated-types';
 import { ContextType } from '../../../types/types';
+import { filterProgramsWithValidVersions } from '../../utils/contentUtils';
 import { filterPublishedContent } from '../../utils/filterPublishedContent';
 import { Course } from './Course';
 import { Program } from './Program';
@@ -34,14 +35,20 @@ export const Subject = new GraphQLObjectType<SubjectType, ContextType>({
     programs: {
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Program))),
       description: 'The programs linked to this subject.',
-      resolve: async (parent, _, { loaders }) => {
+      resolve: async (parent, _, { loaders, user }) => {
         const programs = await loaders.Program.loadBySubjectId(parent.id);
 
         if (!programs || programs.length === 0) {
           return [];
         }
 
-        return filterPublishedContent(programs);
+        const filteredPrograms = await filterProgramsWithValidVersions(programs, user, loaders);
+
+        if (filteredPrograms.length === 0) {
+          return [];
+        }
+
+        return filterPublishedContent(filteredPrograms);
       },
     },
   },

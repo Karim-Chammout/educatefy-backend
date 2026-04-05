@@ -10,6 +10,7 @@ import {
 import { Account as AccountType } from '../../../types/db-generated-types';
 import { ContextType } from '../../../types/types';
 import { getImageURL } from '../../../utils/getImageURL';
+import { filterProgramsWithValidVersions } from '../../utils/contentUtils';
 import { filterPublishedContent } from '../../utils/filterPublishedContent';
 import { Course } from './Course';
 import { Program } from './Program';
@@ -93,14 +94,20 @@ export const Teacher = new GraphQLObjectType<AccountType, ContextType>({
     programs: {
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Program))),
       description: 'List of programs created by the teacher',
-      resolve: async (parent, _, { loaders }) => {
+      resolve: async (parent, _, { loaders, user }) => {
         const programs = await loaders.Program.loadByTeacherId(parent.id);
 
-        if (!programs) {
+        if (!programs || programs.length === 0) {
           return [];
         }
 
-        return filterPublishedContent(programs);
+        const filteredPrograms = await filterProgramsWithValidVersions(programs, user, loaders);
+
+        if (filteredPrograms.length === 0) {
+          return [];
+        }
+
+        return filterPublishedContent(filteredPrograms);
       },
     },
   }),
