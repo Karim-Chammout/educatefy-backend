@@ -49,7 +49,7 @@ const createProgramVersion: GraphQLFieldConfig<null, ContextType> = {
       // Only one draft can exist at a time — reject if one already exists
       const existingDraft = await db('program_version')
         .where('program_id', parsedProgramId)
-        .where('status', 'draft')
+        .where('status', ProgramVersionStatusType.Draft)
         .first();
 
       if (existingDraft) {
@@ -62,7 +62,7 @@ const createProgramVersion: GraphQLFieldConfig<null, ContextType> = {
 
       const latestPublishedVersion = await db('program_version')
         .where('program_id', parsedProgramId)
-        .where('status', 'published')
+        .where('status', ProgramVersionStatusType.Published)
         .orderBy('version_number', 'desc')
         .first();
 

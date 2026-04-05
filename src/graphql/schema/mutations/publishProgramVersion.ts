@@ -78,7 +78,7 @@ const publishProgramVersion: GraphQLFieldConfig<null, ContextType> = {
           .where('program_id', parsedProgramId)
           .where('status', ProgramVersionStatusType.Published)
           .update({
-            status: 'archived',
+            status: ProgramVersionStatusType.Archived,
             updated_at: db.fn.now(),
           });
 
