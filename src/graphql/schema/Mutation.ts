@@ -6,6 +6,7 @@ import createCourse from './mutations/createCourse';
 import createCourseSection from './mutations/createCourseSection';
 import createLesson from './mutations/createLesson';
 import createProgram from './mutations/createProgram';
+import createProgramVersion from './mutations/createProgramVersion';
 import deleteContentComponent from './mutations/deleteContentComponent';
 import deleteCourse from './mutations/deleteCourse';
 import deleteCourseRating from './mutations/deleteCourseRating';
@@ -15,6 +16,7 @@ import deleteLesson from './mutations/deleteLesson';
 import deleteProgram from './mutations/deleteProgram';
 import enrollInProgram from './mutations/enrollInProgram';
 import followTeacher from './mutations/followTeacher';
+import publishProgramVersion from './mutations/publishProgramVersion';
 import rateCourse from './mutations/rateCourse';
 import removeProfilePicture from './mutations/removeProfilePicture';
 import unenrollFromProgram from './mutations/unenrollFromProgram';
@@ -30,8 +32,8 @@ import updateCourseStatus from './mutations/updateCourseStatus';
 import updateLesson from './mutations/updateLesson';
 import updateProfile from './mutations/updateProfile';
 import updateProgram from './mutations/updateProgram';
-import updateProgramCourseRanks from './mutations/updateProgramCourseRanks';
-import trackProgramProgress from './mutations/trackProgramProgress';
+import updateProgramVersionCourses from './mutations/updateProgramVersionCourses';
+import upgradeToLatestProgramVersion from './mutations/upgradeToLatestProgramVersion';
 
 const Mutation = new GraphQLObjectType({
   name: 'Mutation',
@@ -42,6 +44,7 @@ const Mutation = new GraphQLObjectType({
     createCourseSection,
     createLesson,
     createProgram,
+    createProgramVersion,
     deleteContentComponent,
     deleteCourse,
     deleteCourseRating,
@@ -51,6 +54,7 @@ const Mutation = new GraphQLObjectType({
     deleteProgram,
     enrollInProgram,
     followTeacher,
+    publishProgramVersion,
     rateCourse,
     removeProfilePicture,
     unenrollFromProgram,
@@ -66,8 +70,8 @@ const Mutation = new GraphQLObjectType({
     updateLesson,
     updateProfile,
     updateProgram,
-    updateProgramCourseRanks,
-    trackProgramProgress,
+    updateProgramVersionCourses,
+    upgradeToLatestProgramVersion,
   },
 });
 
