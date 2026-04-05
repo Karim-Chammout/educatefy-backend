@@ -1,4 +1,4 @@
-import { GraphQLID, GraphQLInputObjectType, GraphQLNonNull } from 'graphql';
+import { GraphQLID, GraphQLInputObjectType, GraphQLNonNull, GraphQLString } from 'graphql';
 
 import CourseStatus from '../types/enum/CourseStatus';
 
@@ -13,6 +13,10 @@ const CourseStatusInput = new GraphQLInputObjectType({
     status: {
       type: new GraphQLNonNull(CourseStatus),
       description: 'The new status of the course',
+    },
+    programSlug: {
+      type: GraphQLString,
+      description: 'The slug of the program the course belongs to',
     },
   },
 });

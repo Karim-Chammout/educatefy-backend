@@ -7,6 +7,7 @@ import {
 import { ContextType } from '../../../types/types';
 import { ErrorType } from '../../../utils/ErrorType';
 import { authenticated } from '../../utils/auth';
+import { attachProgramToEnrollment } from '../../utils/contentUtils';
 import CourseStatusInput from '../inputs/CourseStatus';
 import { UpdateCourseStatusResult } from '../types/UpdateCourseStatusResult';
 
@@ -25,7 +26,7 @@ const updateCourseStatus: GraphQLFieldConfig<null, ContextType> = {
       { courseStatusInput }: { courseStatusInput: CourseStatusInputType },
       { db, loaders, user },
     ) => {
-      const { id, status } = courseStatusInput;
+      const { id, status, programSlug } = courseStatusInput;
 
       if (!id || !status || !Object.values(CourseStatus).includes(status)) {
         return {
@@ -63,6 +64,16 @@ const updateCourseStatus: GraphQLFieldConfig<null, ContextType> = {
               })
               .returning('id');
 
+            if (programSlug) {
+              await attachProgramToEnrollment(
+                transaction,
+                loaders,
+                user.id,
+                enrollment.id,
+                programSlug,
+              );
+            }
+
             // Create initial enrollment_history record
             await transaction('enrollment_history').insert({
               enrollment_id: enrollment.id,
@@ -94,6 +105,16 @@ const updateCourseStatus: GraphQLFieldConfig<null, ContextType> = {
               status,
               updated_at: db.fn.now(),
             });
+
+          if (programSlug) {
+            await attachProgramToEnrollment(
+              transaction,
+              loaders,
+              user.id,
+              existingEnrollment.id,
+              programSlug,
+            );
+          }
 
           // Create enrollment_history record
           await transaction('enrollment_history').insert({
