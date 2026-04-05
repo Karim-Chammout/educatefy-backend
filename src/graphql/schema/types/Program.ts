@@ -1,6 +1,6 @@
 import {
   GraphQLBoolean,
-  GraphQLFloat,
+  GraphQLError,
   GraphQLID,
   GraphQLInt,
   GraphQLList,
@@ -10,19 +10,20 @@ import {
 } from 'graphql';
 
 import {
-  ProgramProgressStatusType,
+  EnrollmentStatusType,
   Program as ProgramType,
+  ProgramVersionStatusType,
 } from '../../../types/db-generated-types';
 import { ContextType } from '../../../types/types';
+import { ErrorType } from '../../../utils/ErrorType';
 import { getImageURL } from '../../../utils/getImageURL';
-import { filterError } from '../../utils/filterError';
-import { filterPublishedContent } from '../../utils/filterPublishedContent';
+import { authenticated } from '../../utils/auth';
 import GraphQLDate from '../Scalars/Date';
-import { Course } from './Course';
 import ProgramLevel from './enum/ProgramLevel';
-import ProgramStatus from './enum/ProgramStatus';
+import ProgramStatus, { ProgramStatusEnum } from './enum/ProgramStatus';
 import { ProgramObjective } from './ProgramObjective';
 import { ProgramRequirement } from './ProgramRequirement';
+import { ProgramVersion } from './ProgramVersion';
 import { Subject } from './Subject';
 import { Teacher } from './Teacher';
 
@@ -54,17 +55,13 @@ export const Program: GraphQLObjectType = new GraphQLObjectType<ProgramType, Con
       type: new GraphQLNonNull(ProgramLevel),
       description: 'The difficulty level of this program.',
     },
-    external_resource_link: {
-      type: GraphQLString,
-      description: 'A link to an external resource.',
-    },
     is_published: {
       type: new GraphQLNonNull(GraphQLBoolean),
-      description: 'A flag to indicate whether this program is published or not',
+      description: 'A flag to indicate whether this program is published or not.',
     },
     image: {
       type: GraphQLString,
-      description: 'The image of this program',
+      description: 'The image of this program.',
       resolve: async (parent) => {
         return parent.image ? getImageURL(parent.image) : null;
       },
@@ -118,10 +115,10 @@ export const Program: GraphQLObjectType = new GraphQLObjectType<ProgramType, Con
     },
     status: {
       type: new GraphQLNonNull(ProgramStatus),
-      description: 'The status of the program for the current user',
+      description: 'The status of the program for the current user.',
       resolve: async (parent, _, { user, loaders }) => {
         if (!user.authenticated) {
-          return ProgramProgressStatusType.NotStarted;
+          return ProgramStatusEnum.NOT_STARTED;
         }
 
         const programEnrollment = await loaders.AccountProgram.loadByAccountIdAndProgramId(
@@ -129,110 +126,128 @@ export const Program: GraphQLObjectType = new GraphQLObjectType<ProgramType, Con
           parent.id,
         );
 
-        if (!programEnrollment) {
-          return ProgramProgressStatusType.NotStarted;
+        if (!programEnrollment || programEnrollment.deleted_at) {
+          return ProgramStatusEnum.NOT_STARTED;
         }
 
-        const programProgress = await loaders.ProgramProgress.loadByAccountProgramId(
-          programEnrollment.id,
+        const programVersion = await loaders.ProgramVersion.loadById(
+          programEnrollment.program_version_id,
         );
 
-        if (
-          (programEnrollment && !programProgress) ||
-          (programProgress && programProgress.status === ProgramProgressStatusType.InProgress)
-        ) {
-          return ProgramProgressStatusType.InProgress;
+        if (!programVersion) {
+          throw new GraphQLError(ErrorType.NOT_FOUND);
         }
 
-        if (
-          programProgress.status === ProgramProgressStatusType.NotStarted ||
-          programProgress.status === ProgramProgressStatusType.Unenrolled
-        ) {
-          return ProgramProgressStatusType.NotStarted;
+        const courseProgramVersionLinks = await loaders.CourseProgramVersion.loadByProgramVersionId(
+          programVersion.id,
+        );
+
+        if (!courseProgramVersionLinks || courseProgramVersionLinks.length === 0) {
+          return ProgramStatusEnum.IN_PROGRESS;
         }
 
-        if (programProgress.status === ProgramProgressStatusType.Completed) {
-          return ProgramProgressStatusType.Completed;
+        const versionCourseIds = new Set(courseProgramVersionLinks.map((link) => link.course_id));
+
+        const allAccountEnrollments = await loaders.Enrollment.loadByAccountId(user.id);
+
+        const completedCount = allAccountEnrollments.filter(
+          (enrollment) =>
+            versionCourseIds.has(enrollment.course_id) &&
+            enrollment.status === EnrollmentStatusType.Completed,
+        ).length;
+
+        if (completedCount === versionCourseIds.size) {
+          return ProgramStatusEnum.COMPLETED;
         }
 
-        // Default case
-        return ProgramProgressStatusType.NotStarted;
+        return ProgramStatusEnum.IN_PROGRESS;
+      },
+    },
+    currentVersion: {
+      type: new GraphQLNonNull(ProgramVersion),
+      description:
+        'The relevant program version for the current user. Returns the draft version for the owning teacher, the enrolled version for an enrolled student, and the latest published version for everyone else.',
+      resolve: async (parent, _, { user, loaders, db }) => {
+        // Enrolled student — return the version they enrolled on
+        if (user.authenticated) {
+          const programEnrollment = await loaders.AccountProgram.loadByAccountIdAndProgramId(
+            user.id,
+            parent.id,
+          );
+
+          if (programEnrollment && !programEnrollment.deleted_at) {
+            return loaders.ProgramVersion.loadById(programEnrollment.program_version_id);
+          }
+        }
+
+        // Not enrolled students — return the latest published version
+        return db('program_version')
+          .where('program_id', parent.id)
+          .where('status', ProgramVersionStatusType.Published)
+          .orderBy('version_number', 'desc')
+          .first();
+      },
+    },
+    editableVersion: {
+      type: new GraphQLNonNull(ProgramVersion),
+      description:
+        'The version the owning teacher should edit. Returns the current draft if one exists, otherwise the latest published version.',
+      resolve: authenticated(async (parent, _, { user, db }) => {
+        if (user.id !== parent.teacher_id) {
+          throw new GraphQLError(ErrorType.FORBIDDEN);
+        }
+
+        const draftVersion = await db('program_version')
+          .where('program_id', parent.id)
+          .where('status', ProgramVersionStatusType.Draft)
+          .first();
+
+        if (draftVersion) {
+          return draftVersion;
+        }
+
+        return db('program_version')
+          .where('program_id', parent.id)
+          .where('status', ProgramVersionStatusType.Published)
+          .orderBy('version_number', 'desc')
+          .first();
+      }),
+    },
+    latestVersionNumber: {
+      type: GraphQLInt,
+      description: 'The latest program version number.',
+      resolve: async (parent, _, { user, db }) => {
+        if (!user.authenticated) {
+          return null;
+        }
+
+        const latestProgramVersion = await db('program_version')
+          .where('program_id', parent.id)
+          .where('status', ProgramVersionStatusType.Published)
+          .orderBy('version_number', 'desc')
+          .first();
+
+        if (!latestProgramVersion) {
+          return null;
+        }
+
+        return latestProgramVersion.version_number;
       },
     },
     enrolledLearnersCount: {
       type: new GraphQLNonNull(GraphQLInt),
-      description: 'Number of learners enrolled in this program.',
+      description: 'Number of learners currently enrolled in this program.',
       resolve: async (parent, _, { loaders }) => {
         const programEnrollments = await loaders.AccountProgram.loadByProgramId(parent.id);
 
         return programEnrollments.length;
       },
     },
-    rating: {
-      type: new GraphQLNonNull(GraphQLFloat),
-      description: 'Average rating across all courses in this program',
-      resolve: async (parent, _, { db }) => {
-        const result = await db('course__program')
-          .join('course_rating', 'course__program.course_id', 'course_rating.course_id')
-          .where('course__program.program_id', parent.id)
-          .avg('course_rating.rating as average')
-          .first();
-
-        if (!result || result.average === null) {
-          return 0;
-        }
-
-        return parseFloat(result.average);
-      },
-    },
-    ratingsCount: {
-      type: new GraphQLNonNull(GraphQLInt),
-      description: 'Total number of course ratings in this program',
-      resolve: async (parent, _, { db }) => {
-        const result = await db('course__program')
-          .join('course_rating', 'course__program.course_id', 'course_rating.course_id')
-          .where('course__program.program_id', parent.id)
-          .count('course_rating.id as count')
-          .first();
-
-        if (!result || result.count === 0) {
-          return 0;
-        }
-
-        return parseInt(String(result.count));
-      },
-    },
     instructor: {
       type: new GraphQLNonNull(Teacher),
-      description: 'The name of the instructor for this program',
+      description: 'The instructor of this program.',
       resolve: async (parent, _, { loaders }) => {
-        const instructor = await loaders.Account.loadById(parent.teacher_id);
-
-        return instructor;
-      },
-    },
-    courses: {
-      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Course))),
-      description: 'The courses linked to this program.',
-      resolve: async (parent, _, { loaders }) => {
-        const courseProgramRelations = await loaders.CourseProgram.loadByProgramId(parent.id);
-
-        if (!courseProgramRelations || courseProgramRelations.length === 0) {
-          return [];
-        }
-
-        // Sort relations by rank
-        const sortedCourseIds = [...courseProgramRelations]
-          .sort((a, b) => a.rank - b.rank)
-          .map((relation) => relation.course_id);
-
-        const courses = await filterError(loaders.Course.loadManyByIds(sortedCourseIds));
-
-        if (!courses || courses.length === 0) {
-          return [];
-        }
-
-        return filterPublishedContent(courses);
+        return loaders.Account.loadById(parent.teacher_id);
       },
     },
   }),
