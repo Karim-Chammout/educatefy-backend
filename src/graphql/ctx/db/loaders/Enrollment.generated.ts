@@ -16,6 +16,8 @@ export class EnrollmentBase {
 
   private byAccountIdLoader: DataLoader<number, ReadonlyArray<EnrollmentType>>;
 
+  private byProgramIdLoader: DataLoader<number, ReadonlyArray<EnrollmentType>>;
+
   loadAll: () => Promise<ReadonlyArray<EnrollmentType>>;
 
   constructor(protected db: Knex) {
@@ -43,6 +45,14 @@ export class EnrollmentBase {
       return mapToMany(accountIds, rows, (r) => r.account_id);
     });
 
+    this.byProgramIdLoader = new DataLoader(async (programIds) => {
+      if (programIds.length === 0) return [];
+
+      const rows = await db.table('enrollment').whereIn('program_id', programIds).select();
+
+      return mapToMany(programIds, rows, (r) => r.program_id);
+    });
+
     this.loadAll = async () => {
       const result = await db.table('enrollment').select();
 
@@ -63,6 +73,7 @@ export class EnrollmentBase {
       byIdLoader: this.byIdLoader,
       byCourseIdLoader: this.byCourseIdLoader,
       byAccountIdLoader: this.byAccountIdLoader,
+      byProgramIdLoader: this.byProgramIdLoader,
     };
   }
 
@@ -84,5 +95,10 @@ export class EnrollmentBase {
   /** Load all Enrollment records with account_id = `accountId` */
   loadByAccountId(accountId: number): Promise<ReadonlyArray<EnrollmentType>> {
     return this.byAccountIdLoader.load(accountId);
+  }
+
+  /** Load all Enrollment records with program_id = `programId` */
+  loadByProgramId(programId: number): Promise<ReadonlyArray<EnrollmentType>> {
+    return this.byProgramIdLoader.load(programId);
   }
 }

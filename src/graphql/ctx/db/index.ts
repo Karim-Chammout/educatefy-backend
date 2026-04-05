@@ -12,7 +12,7 @@ import { ContentComponentProgressReader } from './loaders/ContentComponentProgre
 import { CountryBase as CountryReader } from './loaders/Country.generated';
 import { CourseReader } from './loaders/Course';
 import { CourseObjectiveBase as CourseObjectiveReader } from './loaders/CourseObjective.generated';
-import { CourseProgramBase as CourseProgramReader } from './loaders/CourseProgram.generated';
+import { CourseProgramVersionBase as CourseProgramVersionReader } from './loaders/CourseProgramVersion.generated';
 import { CourseRatingReader } from './loaders/CourseRating';
 import { CourseRequirementBase as CourseRequirementReader } from './loaders/CourseRequirement.generated';
 import { CourseSectionBase as CourseSectionReader } from './loaders/CourseSection.generated';
@@ -26,9 +26,9 @@ import { LessonBase as LessonReader } from './loaders/Lesson.generated';
 import { OpenidClientBase as OpenidClientReader } from './loaders/OpenidClient.generated';
 import { ProgramReader } from './loaders/Program';
 import { ProgramObjectiveBase as ProgramObjectiveReader } from './loaders/ProgramObjective.generated';
-import { ProgramProgressBase as ProgramProgressReader } from './loaders/ProgramProgress.generated';
 import { ProgramRequirementBase as ProgramRequirementReader } from './loaders/ProgramRequirement.generated';
 import { ProgramSubjectBase as ProgramSubjectReader } from './loaders/ProgramSubject.generated';
+import { ProgramVersionBase as ProgramVersionReader } from './loaders/ProgramVersion.generated';
 import { RefreshTokenBase as RefreshTokenReader } from './loaders/RefreshToken.generated';
 import { StudentTeacherFollowReader } from './loaders/StudentTeacherFollow';
 import { SubjectReader } from './loaders/Subject';
@@ -46,7 +46,7 @@ export type ReadersType = {
   Country: CountryReader;
   Course: CourseReader;
   CourseObjective: CourseObjectiveReader;
-  CourseProgram: CourseProgramReader;
+  CourseProgramVersion: CourseProgramVersionReader;
   CourseRating: CourseRatingReader;
   CourseRequirement: CourseRequirementReader;
   CourseSection: CourseSectionReader;
@@ -60,9 +60,9 @@ export type ReadersType = {
   OpenidClient: OpenidClientReader;
   Program: ProgramReader;
   ProgramObjective: ProgramObjectiveReader;
-  ProgramProgress: ProgramProgressReader;
   ProgramRequirement: ProgramRequirementReader;
   ProgramSubject: ProgramSubjectReader;
+  ProgramVersion: ProgramVersionReader;
   RefreshToken: RefreshTokenReader;
   StudentTeacherFollow: StudentTeacherFollowReader;
   Subject: SubjectReader;
@@ -82,7 +82,7 @@ export function createLoaders(db: Knex): ReadersType {
     Country: new CountryReader(db),
     Course: new CourseReader(db),
     CourseObjective: new CourseObjectiveReader(db),
-    CourseProgram: new CourseProgramReader(db),
+    CourseProgramVersion: new CourseProgramVersionReader(db),
     CourseRating: new CourseRatingReader(db),
     CourseRequirement: new CourseRequirementReader(db),
     CourseSection: new CourseSectionReader(db),
@@ -96,9 +96,9 @@ export function createLoaders(db: Knex): ReadersType {
     OpenidClient: new OpenidClientReader(db),
     Program: new ProgramReader(db),
     ProgramObjective: new ProgramObjectiveReader(db),
-    ProgramProgress: new ProgramProgressReader(db),
     ProgramRequirement: new ProgramRequirementReader(db),
     ProgramSubject: new ProgramSubjectReader(db),
+    ProgramVersion: new ProgramVersionReader(db),
     RefreshToken: new RefreshTokenReader(db),
     StudentTeacherFollow: new StudentTeacherFollowReader(db),
     Subject: new SubjectReader(db),

@@ -16,6 +16,8 @@ export class AccountProgramBase {
 
   private byProgramIdLoader: DataLoader<number, ReadonlyArray<AccountProgramType>>;
 
+  private byProgramVersionIdLoader: DataLoader<number, ReadonlyArray<AccountProgramType>>;
+
   loadAll: () => Promise<ReadonlyArray<AccountProgramType>>;
 
   constructor(protected db: Knex) {
@@ -55,6 +57,18 @@ export class AccountProgramBase {
       return mapToMany(programIds, rows, (r) => r.program_id);
     });
 
+    this.byProgramVersionIdLoader = new DataLoader(async (programVersionIds) => {
+      if (programVersionIds.length === 0) return [];
+
+      const rows = await db
+        .table('account__program')
+        .whereIn('program_version_id', programVersionIds)
+        .whereNull('deleted_at')
+        .select();
+
+      return mapToMany(programVersionIds, rows, (r) => r.program_version_id);
+    });
+
     this.loadAll = async () => {
       const result = await db.table('account__program').whereNull('deleted_at').select();
 
@@ -75,6 +89,7 @@ export class AccountProgramBase {
       byIdLoader: this.byIdLoader,
       byAccountIdLoader: this.byAccountIdLoader,
       byProgramIdLoader: this.byProgramIdLoader,
+      byProgramVersionIdLoader: this.byProgramVersionIdLoader,
     };
   }
 
@@ -96,5 +111,10 @@ export class AccountProgramBase {
   /** Load all AccountProgram records with program_id = `programId` */
   loadByProgramId(programId: number): Promise<ReadonlyArray<AccountProgramType>> {
     return this.byProgramIdLoader.load(programId);
+  }
+
+  /** Load all AccountProgram records with program_version_id = `programVersionId` */
+  loadByProgramVersionId(programVersionId: number): Promise<ReadonlyArray<AccountProgramType>> {
+    return this.byProgramVersionIdLoader.load(programVersionId);
   }
 }
