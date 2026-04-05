@@ -1,5 +1,11 @@
 import { GraphQLEnumType } from 'graphql';
 
+export enum ProgramStatusEnum {
+  NOT_STARTED = 'not_started',
+  IN_PROGRESS = 'in_progress',
+  COMPLETED = 'completed',
+}
+
 const ProgramStatus = new GraphQLEnumType({
   name: 'ProgramStatus',
   description: 'The status of the program for the current user.',
@@ -11,10 +17,6 @@ const ProgramStatus = new GraphQLEnumType({
     in_progress: {
       value: 'in_progress',
       description: 'The user is currently in progress in this program.',
-    },
-    unenrolled: {
-      value: 'unenrolled',
-      description: 'The user unenrolled from this program.',
     },
     completed: {
       value: 'completed',

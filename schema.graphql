@@ -550,13 +550,10 @@ type Program {
   """The difficulty level of this program."""
   level: ProgramLevel!
 
-  """A link to an external resource."""
-  external_resource_link: String
-
-  """A flag to indicate whether this program is published or not"""
+  """A flag to indicate whether this program is published or not."""
   is_published: Boolean!
 
-  """The image of this program"""
+  """The image of this program."""
   image: String
 
   """The date of when this program was created."""
@@ -574,23 +571,27 @@ type Program {
   """The requirements of this program."""
   requirements: [ProgramRequirement!]!
 
-  """The status of the program for the current user"""
+  """The status of the program for the current user."""
   status: ProgramStatus!
 
-  """Number of learners enrolled in this program."""
+  """
+  The relevant program version for the current user. Returns the draft version for the owning teacher, the enrolled version for an enrolled student, and the latest published version for everyone else.
+  """
+  currentVersion: ProgramVersion!
+
+  """
+  The version the owning teacher should edit. Returns the current draft if one exists, otherwise the latest published version.
+  """
+  editableVersion: ProgramVersion!
+
+  """The latest program version number."""
+  latestVersionNumber: Int
+
+  """Number of learners currently enrolled in this program."""
   enrolledLearnersCount: Int!
 
-  """Average rating across all courses in this program"""
-  rating: Float!
-
-  """Total number of course ratings in this program"""
-  ratingsCount: Int!
-
-  """The name of the instructor for this program"""
+  """The instructor of this program."""
   instructor: Teacher!
-
-  """The courses linked to this program."""
-  courses: [Course!]!
 }
 
 """The difficulty level of a program."""
@@ -626,11 +627,63 @@ enum ProgramStatus {
   """The user is currently in progress in this program."""
   in_progress
 
-  """The user unenrolled from this program."""
-  unenrolled
-
   """This program has been completed by the user."""
   completed
+}
+
+"""A versioned snapshot of a program's course list."""
+type ProgramVersion {
+  """A unique id of this program version."""
+  id: ID!
+
+  """The ID of the program this version belongs to."""
+  program_id: ID!
+
+  """The sequential version number of this program version."""
+  version_number: Int!
+
+  """The lifecycle status of this program version."""
+  status: ProgramVersionStatus!
+
+  """The date this version was published. Null if not yet published."""
+  published_at: Date
+
+  """The date this program version was created."""
+  created_at: Date!
+
+  """The date this program version was last updated."""
+  updated_at: Date!
+
+  """The ordered list of courses in this program version."""
+  courses: [Course!]!
+
+  """
+  The ordered list of course entries in this program version, including rank and prerequisite metadata.
+  """
+  courseEntries: [ProgramVersionCourseEntry!]!
+}
+
+"""The lifecycle status of a program version."""
+enum ProgramVersionStatus {
+  draft
+  published
+  archived
+}
+
+"""
+A course entry within a program version, including its rank and prerequisite course.
+"""
+type ProgramVersionCourseEntry {
+  """The course in this program version."""
+  course: Course!
+
+  """The position of this course within the program version."""
+  rank: Int!
+
+  """
+  The ID of the course that must be completed before this one. Null means no prerequisite.
+  """
+  prerequisiteCourseId: ID
 }
 
 """Statistics info for the current user."""
@@ -718,6 +771,14 @@ type Mutation {
     programInfo: ProgramInfoInput!
   ): CreateOrUpdateProgramResult
 
+  """
+  Creates a new draft version of a program, copying the course list from the latest published version.
+  """
+  createProgramVersion(
+    """The ID of the program to create a new version for."""
+    programId: ID!
+  ): CreateProgramVersionResult
+
   """Deletes a content component."""
   deleteContentComponent(
     """The ID of the content component to delete."""
@@ -774,6 +835,12 @@ type Mutation {
     """The teacher follow information"""
     followTeacherInfo: FollowTeacherInput!
   ): FollowTeacherResult
+
+  """Publishes the current draft version of a program."""
+  publishProgramVersion(
+    """The ID of the program to publish a version for."""
+    programId: ID!
+  ): PublishProgramVersionResult
 
   """Rate a course."""
   rateCourse(
@@ -871,25 +938,19 @@ type Mutation {
     updateProgramInfo: UpdateProgramInfoInput!
   ): CreateOrUpdateProgramResult
 
-  """Updates the ranks of multiple courses within a program."""
-  updateProgramCourseRanks(
-    """The ID of the program to update course ranks for."""
+  """Updates the courses linked to the current draft version of a program."""
+  updateProgramVersionCourses(
+    """The program version courses information to be updated."""
+    updateProgramVersionCoursesInfo: UpdateProgramVersionCoursesInput!
+  ): UpdateProgramVersionCoursesResult
+
+  """
+  Upgrades an enrolled student to the latest published version of a program, preserving all existing course enrollment records.
+  """
+  upgradeToLatestProgramVersion(
+    """The ID of the program to upgrade to the latest version for."""
     programId: ID!
-
-    """The courses and their new ranks within the program"""
-    courseRanks: [UpdateProgramCourseRankInput!]!
-  ): MutationResult
-
-  """Updates the last_viewed_at timestamp for a program progress."""
-  trackProgramProgress(
-    """The ID of the program."""
-    programId: ID!
-
-    """
-    Boolean flag to check if the courses of ther program are completed or not.
-    """
-    shouldMarkProgramAsCompleted: Boolean!
-  ): MutationResult
+  ): UpgradeToLatestProgramVersionResult
 }
 
 """The result of the changeProfilePicture mutation."""
@@ -1139,6 +1200,18 @@ input ProgramInfoInput {
   requirements: [String!]
 }
 
+"""The result of creating a new program version."""
+type CreateProgramVersionResult {
+  """Indicates if the mutation was successful."""
+  success: Boolean!
+
+  """A list of errors that occurred executing this mutation."""
+  errors: [Error!]!
+
+  """The newly created draft program version."""
+  programVersion: ProgramVersion
+}
+
 """The result of a mutation."""
 type MutationResult {
   """Indicates if the mutation was successful."""
@@ -1185,6 +1258,18 @@ type FollowTeacherResult {
 input FollowTeacherInput {
   """The ID of the teacher to follow/unfollow"""
   teacherId: String!
+}
+
+"""The result of publishing a program version."""
+type PublishProgramVersionResult {
+  """Indicates if the mutation was successful."""
+  success: Boolean!
+
+  """A list of errors that occurred executing this mutation."""
+  errors: [Error!]!
+
+  """The newly published program version."""
+  programVersion: ProgramVersion
 }
 
 """The result of the rateCourse mutation."""
@@ -1409,6 +1494,9 @@ input CourseStatusInput {
 
   """The new status of the course"""
   status: CourseStatus!
+
+  """The slug of the program the course belongs to"""
+  programSlug: String
 }
 
 """Input for updating a lesson record."""
@@ -1508,9 +1596,6 @@ input UpdateProgramInfoInput {
 
   """List of requirements for the program"""
   requirements: [ProgramRequirementInput!]
-
-  """List of course IDs to link to the program"""
-  courseIds: [ID]
 }
 
 """Input for a program objective record."""
@@ -1531,11 +1616,55 @@ input ProgramRequirementInput {
   requirement: String!
 }
 
-"""Input for updating a program courses rank"""
-input UpdateProgramCourseRankInput {
-  """The ID of the course"""
-  id: String!
+"""The result of updating the courses in a program version."""
+type UpdateProgramVersionCoursesResult {
+  """Indicates if the mutation was successful."""
+  success: Boolean!
 
-  """The new rank of the course"""
+  """A list of errors that occurred executing this mutation."""
+  errors: [Error!]!
+
+  """The updated program version."""
+  programVersion: ProgramVersion
+}
+
+"""
+Input for updating the courses linked to the current draft version of a program.
+"""
+input UpdateProgramVersionCoursesInput {
+  """The ID of the program whose draft version will be updated."""
+  programId: ID!
+
+  """
+  The full ordered list of courses for this version. This is a full replace — existing links are deleted and re-inserted.
+  """
+  courses: [ProgramVersionCourseInput!]!
+}
+
+"""Input for a single course entry in a program version."""
+input ProgramVersionCourseInput {
+  """The ID of the course to link to the program version."""
+  courseId: ID!
+
+  """The position of this course within the program version."""
   rank: Int!
+
+  """
+  The ID of the course that must be completed before this one. Null means no prerequisite.
+  """
+  prerequisiteCourseId: ID
+}
+
+"""
+The result of upgrading a student to the latest published program version.
+"""
+type UpgradeToLatestProgramVersionResult {
+  """Indicates if the mutation was successful."""
+  success: Boolean!
+
+  """A list of errors that occurred executing this mutation."""
+  errors: [Error!]!
+
+  """The program after the version upgrade."""
+  program: Program
 }

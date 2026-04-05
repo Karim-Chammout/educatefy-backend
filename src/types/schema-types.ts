@@ -356,6 +356,8 @@ export enum CourseStatus {
 export type CourseStatusInput = {
   /** The ID of the course */
   id: Scalars['ID']['input'];
+  /** The slug of the program the course belongs to */
+  programSlug?: InputMaybe<Scalars['String']['input']>;
   /** The new status of the course */
   status: CourseStatus;
 };
@@ -411,6 +413,17 @@ export type CreateOrUpdateProgramResult = {
   errors: Array<Error>;
   /** The created or updated program information. */
   program?: Maybe<Program>;
+  /** Indicates if the mutation was successful. */
+  success: Scalars['Boolean']['output'];
+};
+
+/** The result of creating a new program version. */
+export type CreateProgramVersionResult = {
+  __typename?: 'CreateProgramVersionResult';
+  /** A list of errors that occurred executing this mutation. */
+  errors: Array<Error>;
+  /** The newly created draft program version. */
+  programVersion?: Maybe<ProgramVersion>;
   /** Indicates if the mutation was successful. */
   success: Scalars['Boolean']['output'];
 };
@@ -510,6 +523,8 @@ export type Mutation = {
   createLesson?: Maybe<CreateOrUpdateLessonResult>;
   /** Creates a program. */
   createProgram?: Maybe<CreateOrUpdateProgramResult>;
+  /** Creates a new draft version of a program, copying the course list from the latest published version. */
+  createProgramVersion?: Maybe<CreateProgramVersionResult>;
   /** Deletes a content component. */
   deleteContentComponent?: Maybe<MutationResult>;
   /** Deletes a course. */
@@ -528,12 +543,12 @@ export type Mutation = {
   enrollInProgram?: Maybe<UpdateProgramStatusResult>;
   /** Follow or unfollow a teacher. Toggles the follow status. */
   followTeacher?: Maybe<FollowTeacherResult>;
+  /** Publishes the current draft version of a program. */
+  publishProgramVersion?: Maybe<PublishProgramVersionResult>;
   /** Rate a course. */
   rateCourse?: Maybe<RateCourseResult>;
   /** Remove the profile picture of a user. */
   removeProfilePicture?: Maybe<ChangeProfilePictureResult>;
-  /** Updates the last_viewed_at timestamp for a program progress. */
-  trackProgramProgress?: Maybe<MutationResult>;
   /** Unenrolls an account from a program. */
   unenrollFromProgram?: Maybe<UpdateProgramStatusResult>;
   /** Updates a user account information. */
@@ -560,8 +575,10 @@ export type Mutation = {
   updateProfile?: Maybe<UpdateProfileResult>;
   /** Updates a program. */
   updateProgram?: Maybe<CreateOrUpdateProgramResult>;
-  /** Updates the ranks of multiple courses within a program. */
-  updateProgramCourseRanks?: Maybe<MutationResult>;
+  /** Updates the courses linked to the current draft version of a program. */
+  updateProgramVersionCourses?: Maybe<UpdateProgramVersionCoursesResult>;
+  /** Upgrades an enrolled student to the latest published version of a program, preserving all existing course enrollment records. */
+  upgradeToLatestProgramVersion?: Maybe<UpgradeToLatestProgramVersionResult>;
 };
 
 
@@ -595,6 +612,11 @@ export type MutationCreateLessonArgs = {
 
 export type MutationCreateProgramArgs = {
   programInfo: ProgramInfoInput;
+};
+
+
+export type MutationCreateProgramVersionArgs = {
+  programId: Scalars['ID']['input'];
 };
 
 
@@ -644,14 +666,13 @@ export type MutationFollowTeacherArgs = {
 };
 
 
-export type MutationRateCourseArgs = {
-  ratingInfo: RateCourse;
+export type MutationPublishProgramVersionArgs = {
+  programId: Scalars['ID']['input'];
 };
 
 
-export type MutationTrackProgramProgressArgs = {
-  programId: Scalars['ID']['input'];
-  shouldMarkProgramAsCompleted: Scalars['Boolean']['input'];
+export type MutationRateCourseArgs = {
+  ratingInfo: RateCourse;
 };
 
 
@@ -723,8 +744,12 @@ export type MutationUpdateProgramArgs = {
 };
 
 
-export type MutationUpdateProgramCourseRanksArgs = {
-  courseRanks: Array<UpdateProgramCourseRankInput>;
+export type MutationUpdateProgramVersionCoursesArgs = {
+  updateProgramVersionCoursesInfo: UpdateProgramVersionCoursesInput;
+};
+
+
+export type MutationUpgradeToLatestProgramVersionArgs = {
   programId: Scalars['ID']['input'];
 };
 
@@ -795,39 +820,37 @@ export type ProfilePictureDetailsInput = {
 /** The program info. */
 export type Program = {
   __typename?: 'Program';
-  /** The courses linked to this program. */
-  courses: Array<Course>;
   /** The date of when this program was created. */
   created_at: Scalars['Date']['output'];
+  /** The relevant program version for the current user. Returns the draft version for the owning teacher, the enrolled version for an enrolled student, and the latest published version for everyone else. */
+  currentVersion: ProgramVersion;
   /** The denomination of this program. */
   denomination: Scalars['String']['output'];
   /** The description of this program. */
   description: Scalars['String']['output'];
-  /** Number of learners enrolled in this program. */
+  /** The version the owning teacher should edit. Returns the current draft if one exists, otherwise the latest published version. */
+  editableVersion: ProgramVersion;
+  /** Number of learners currently enrolled in this program. */
   enrolledLearnersCount: Scalars['Int']['output'];
-  /** A link to an external resource. */
-  external_resource_link?: Maybe<Scalars['String']['output']>;
   /** A unique id of this program. */
   id: Scalars['ID']['output'];
-  /** The image of this program */
+  /** The image of this program. */
   image?: Maybe<Scalars['String']['output']>;
-  /** The name of the instructor for this program */
+  /** The instructor of this program. */
   instructor: Teacher;
-  /** A flag to indicate whether this program is published or not */
+  /** A flag to indicate whether this program is published or not. */
   is_published: Scalars['Boolean']['output'];
+  /** The latest program version number. */
+  latestVersionNumber?: Maybe<Scalars['Int']['output']>;
   /** The difficulty level of this program. */
   level: ProgramLevel;
   /** The objectives of this program. */
   objectives: Array<ProgramObjective>;
-  /** Average rating across all courses in this program */
-  rating: Scalars['Float']['output'];
-  /** Total number of course ratings in this program */
-  ratingsCount: Scalars['Int']['output'];
   /** The requirements of this program. */
   requirements: Array<ProgramRequirement>;
   /** A unique slug of this program. */
   slug: Scalars['String']['output'];
-  /** The status of the program for the current user */
+  /** The status of the program for the current user. */
   status: ProgramStatus;
   /** The subjects linked to this program. */
   subjects: Array<Subject>;
@@ -909,9 +932,58 @@ export enum ProgramStatus {
   /** The user is currently in progress in this program. */
   InProgress = 'in_progress',
   /** This program is not started yet. */
-  NotStarted = 'not_started',
-  /** The user unenrolled from this program. */
-  Unenrolled = 'unenrolled'
+  NotStarted = 'not_started'
+}
+
+/** A versioned snapshot of a program's course list. */
+export type ProgramVersion = {
+  __typename?: 'ProgramVersion';
+  /** The ordered list of course entries in this program version, including rank and prerequisite metadata. */
+  courseEntries: Array<ProgramVersionCourseEntry>;
+  /** The ordered list of courses in this program version. */
+  courses: Array<Course>;
+  /** The date this program version was created. */
+  created_at: Scalars['Date']['output'];
+  /** A unique id of this program version. */
+  id: Scalars['ID']['output'];
+  /** The ID of the program this version belongs to. */
+  program_id: Scalars['ID']['output'];
+  /** The date this version was published. Null if not yet published. */
+  published_at?: Maybe<Scalars['Date']['output']>;
+  /** The lifecycle status of this program version. */
+  status: ProgramVersionStatus;
+  /** The date this program version was last updated. */
+  updated_at: Scalars['Date']['output'];
+  /** The sequential version number of this program version. */
+  version_number: Scalars['Int']['output'];
+};
+
+/** A course entry within a program version, including its rank and prerequisite course. */
+export type ProgramVersionCourseEntry = {
+  __typename?: 'ProgramVersionCourseEntry';
+  /** The course in this program version. */
+  course: Course;
+  /** The ID of the course that must be completed before this one. Null means no prerequisite. */
+  prerequisiteCourseId?: Maybe<Scalars['ID']['output']>;
+  /** The position of this course within the program version. */
+  rank: Scalars['Int']['output'];
+};
+
+/** Input for a single course entry in a program version. */
+export type ProgramVersionCourseInput = {
+  /** The ID of the course to link to the program version. */
+  courseId: Scalars['ID']['input'];
+  /** The ID of the course that must be completed before this one. Null means no prerequisite. */
+  prerequisiteCourseId?: InputMaybe<Scalars['ID']['input']>;
+  /** The position of this course within the program version. */
+  rank: Scalars['Int']['input'];
+};
+
+/** The lifecycle status of a program version. */
+export enum ProgramVersionStatus {
+  Archived = 'archived',
+  Draft = 'draft',
+  Published = 'published'
 }
 
 /** The properties of a public account */
@@ -929,6 +1001,17 @@ export type PublicAccount = {
   name?: Maybe<Scalars['String']['output']>;
   /** The nickname of the account */
   nickname?: Maybe<Scalars['String']['output']>;
+};
+
+/** The result of publishing a program version. */
+export type PublishProgramVersionResult = {
+  __typename?: 'PublishProgramVersionResult';
+  /** A list of errors that occurred executing this mutation. */
+  errors: Array<Error>;
+  /** The newly published program version. */
+  programVersion?: Maybe<ProgramVersion>;
+  /** Indicates if the mutation was successful. */
+  success: Scalars['Boolean']['output'];
 };
 
 export type Query = {
@@ -1220,18 +1303,8 @@ export type UpdateProfileResult = {
   user?: Maybe<Account>;
 };
 
-/** Input for updating a program courses rank */
-export type UpdateProgramCourseRankInput = {
-  /** The ID of the course */
-  id: Scalars['String']['input'];
-  /** The new rank of the course */
-  rank: Scalars['Int']['input'];
-};
-
 /** Input for updating a program record. */
 export type UpdateProgramInfoInput = {
-  /** List of course IDs to link to the program */
-  courseIds?: InputMaybe<Array<InputMaybe<Scalars['ID']['input']>>>;
   /** The denomination of this program */
   denomination?: InputMaybe<Scalars['String']['input']>;
   /** The description of this program */
@@ -1262,6 +1335,36 @@ export type UpdateProgramStatusResult = {
   /** A list of errors that occurred executing this mutation. */
   errors: Array<Error>;
   /** The updated course information. */
+  program?: Maybe<Program>;
+  /** Indicates if the mutation was successful. */
+  success: Scalars['Boolean']['output'];
+};
+
+/** Input for updating the courses linked to the current draft version of a program. */
+export type UpdateProgramVersionCoursesInput = {
+  /** The full ordered list of courses for this version. This is a full replace — existing links are deleted and re-inserted. */
+  courses: Array<ProgramVersionCourseInput>;
+  /** The ID of the program whose draft version will be updated. */
+  programId: Scalars['ID']['input'];
+};
+
+/** The result of updating the courses in a program version. */
+export type UpdateProgramVersionCoursesResult = {
+  __typename?: 'UpdateProgramVersionCoursesResult';
+  /** A list of errors that occurred executing this mutation. */
+  errors: Array<Error>;
+  /** The updated program version. */
+  programVersion?: Maybe<ProgramVersion>;
+  /** Indicates if the mutation was successful. */
+  success: Scalars['Boolean']['output'];
+};
+
+/** The result of upgrading a student to the latest published program version. */
+export type UpgradeToLatestProgramVersionResult = {
+  __typename?: 'UpgradeToLatestProgramVersionResult';
+  /** A list of errors that occurred executing this mutation. */
+  errors: Array<Error>;
+  /** The program after the version upgrade. */
   program?: Maybe<Program>;
   /** Indicates if the mutation was successful. */
   success: Scalars['Boolean']['output'];

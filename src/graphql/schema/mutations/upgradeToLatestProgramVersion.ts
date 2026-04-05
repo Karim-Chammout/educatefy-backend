@@ -4,15 +4,16 @@ import { ProgramVersionStatusType } from '../../../types/db-generated-types';
 import { ContextType } from '../../../types/types';
 import { ErrorType } from '../../../utils/ErrorType';
 import { authenticated } from '../../utils/auth';
-import { UpdateProgramStatusResult } from '../types/UpdateProgramStatusResult';
+import { UpgradeToLatestProgramVersionResult } from '../types/UpgradeToLatestProgramVersionResult';
 
-const enrollInProgram: GraphQLFieldConfig<null, ContextType> = {
-  type: UpdateProgramStatusResult,
-  description: 'Enrolls an account in a program.',
+const upgradeToLatestProgramVersion: GraphQLFieldConfig<null, ContextType> = {
+  type: UpgradeToLatestProgramVersionResult,
+  description:
+    'Upgrades an enrolled student to the latest published version of a program, preserving all existing course enrollment records.',
   args: {
     programId: {
       type: new GraphQLNonNull(GraphQLID),
-      description: 'The ID of the program to enroll in.',
+      description: 'The ID of the program to upgrade to the latest version for.',
     },
   },
   resolve: authenticated(async (_, { programId }: { programId: string }, { db, loaders, user }) => {
@@ -21,7 +22,7 @@ const enrollInProgram: GraphQLFieldConfig<null, ContextType> = {
 
       const program = await loaders.Program.loadById(parsedProgramId);
 
-      if (!program || (program && !program.is_published)) {
+      if (!program) {
         return {
           success: false,
           errors: [new Error(ErrorType.NOT_FOUND)],
@@ -29,20 +30,19 @@ const enrollInProgram: GraphQLFieldConfig<null, ContextType> = {
         };
       }
 
-      const existingEnrollment = await loaders.AccountProgram.loadByAccountIdAndProgramId(
+      const enrollment = await loaders.AccountProgram.loadByAccountIdAndProgramId(
         user.id,
         parsedProgramId,
       );
 
-      if (existingEnrollment) {
+      if (!enrollment) {
         return {
           success: false,
-          errors: [new Error(ErrorType.ALREADY_ENROLLED)],
+          errors: [new Error(ErrorType.NO_ENROLLMENT_FOUND)],
           program: null,
         };
       }
 
-      // Enroll to the latest published version
       const latestPublishedVersion = await db('program_version')
         .where('program_id', parsedProgramId)
         .where('status', ProgramVersionStatusType.Published)
@@ -52,15 +52,22 @@ const enrollInProgram: GraphQLFieldConfig<null, ContextType> = {
       if (!latestPublishedVersion) {
         return {
           success: false,
-          errors: [new Error(ErrorType.NOT_FOUND)],
+          errors: [new Error(ErrorType.NO_PUBLISHED_PROGRAM_VERSION_FOUND)],
           program: null,
         };
       }
 
-      await db('account__program').insert({
-        account_id: user.id,
-        program_id: parsedProgramId,
+      if (enrollment.program_version_id === latestPublishedVersion.id) {
+        return {
+          success: false,
+          errors: [new Error(ErrorType.ALREADY_ON_LATEST_VERSION)],
+          program: null,
+        };
+      }
+
+      await db('account__program').where('id', enrollment.id).update({
         program_version_id: latestPublishedVersion.id,
+        updated_at: db.fn.now(),
       });
 
       loaders.Program.loaders.byIdLoader.clear(parsedProgramId);
@@ -72,7 +79,7 @@ const enrollInProgram: GraphQLFieldConfig<null, ContextType> = {
         program: updatedProgram,
       };
     } catch (error) {
-      console.log('Failed to enroll in program: ', error);
+      console.log('Failed to upgrade to latest program version: ', error);
       return {
         success: false,
         errors: [new Error(ErrorType.INTERNAL_SERVER_ERROR)],
@@ -82,4 +89,4 @@ const enrollInProgram: GraphQLFieldConfig<null, ContextType> = {
   }),
 };
 
-export default enrollInProgram;
+export default upgradeToLatestProgramVersion;

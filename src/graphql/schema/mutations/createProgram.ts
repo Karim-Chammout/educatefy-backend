@@ -1,5 +1,6 @@
 import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
 
+import { ProgramVersionStatusType } from '../../../types/db-generated-types';
 import {
   ProgramInfoInput as ProgramInfoInputType,
   ProgramLevel,
@@ -97,6 +98,13 @@ const createProgram: GraphQLFieldConfig<null, ContextType> = {
           const [program] = await transaction('program')
             .insert(filteredProgramInfo)
             .returning('id');
+
+          // Create the initial draft version atomically with the program
+          await transaction('program_version').insert({
+            program_id: program.id,
+            version_number: 1,
+            status: ProgramVersionStatusType.Draft,
+          });
 
           if (subjectIds && subjectIds.length > 0) {
             // Verify that all subject IDs exist

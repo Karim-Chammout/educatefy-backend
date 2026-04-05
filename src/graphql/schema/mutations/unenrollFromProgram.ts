@@ -1,6 +1,5 @@
 import { GraphQLFieldConfig, GraphQLID, GraphQLNonNull } from 'graphql';
 
-import { ProgramProgressStatusType } from '../../../types/db-generated-types';
 import { ContextType } from '../../../types/types';
 import { ErrorType } from '../../../utils/ErrorType';
 import { authenticated } from '../../utils/auth';
@@ -19,13 +18,10 @@ const unenrollFromProgram: GraphQLFieldConfig<null, ContextType> = {
     try {
       const parsedProgramId = parseInt(programId, 10);
 
-      const enrollment = await db('account__program')
-        .where({
-          account_id: user.id,
-          program_id: parsedProgramId,
-          deleted_at: null,
-        })
-        .first();
+      const enrollment = await loaders.AccountProgram.loadByAccountIdAndProgramId(
+        user.id,
+        parsedProgramId,
+      );
 
       if (!enrollment) {
         return {
@@ -37,10 +33,6 @@ const unenrollFromProgram: GraphQLFieldConfig<null, ContextType> = {
 
       await db('account__program').where('id', enrollment.id).update({
         deleted_at: db.fn.now(),
-      });
-
-      await db('program_progress').where('account__program_id', enrollment.id).update({
-        status: ProgramProgressStatusType.Unenrolled,
       });
 
       loaders.Program.loaders.byIdLoader.clear(parsedProgramId);
