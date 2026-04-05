@@ -225,16 +225,16 @@ export const Program: GraphQLObjectType = new GraphQLObjectType<ProgramType, Con
     latestVersionNumber: {
       type: GraphQLInt,
       description: 'The latest program version number.',
-      resolve: async (parent, _, { user, db }) => {
+      resolve: async (parent, _, { user, loaders }) => {
         if (!user.authenticated) {
           return null;
         }
 
-        const latestProgramVersion = await db('program_version')
-          .where('program_id', parent.id)
-          .where('status', ProgramVersionStatusType.Published)
-          .orderBy('version_number', 'desc')
-          .first();
+        const programVersions = await loaders.ProgramVersion.loadByProgramId(parent.id);
+
+        const latestProgramVersion = programVersions
+          .filter((version) => version.status === ProgramVersionStatusType.Published)
+          .sort((a, b) => b.version_number - a.version_number)[0];
 
         if (!latestProgramVersion) {
           return null;
