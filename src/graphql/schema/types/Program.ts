@@ -126,7 +126,7 @@ export const Program: GraphQLObjectType = new GraphQLObjectType<ProgramType, Con
           parent.id,
         );
 
-        if (!programEnrollment || programEnrollment.deleted_at) {
+        if (!programEnrollment) {
           return ProgramStatusEnum.NOT_STARTED;
         }
 
