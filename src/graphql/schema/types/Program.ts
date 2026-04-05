@@ -167,7 +167,7 @@ export const Program: GraphQLObjectType = new GraphQLObjectType<ProgramType, Con
       type: new GraphQLNonNull(ProgramVersion),
       description:
         'The relevant program version for the current user. Returns the draft version for the owning teacher, the enrolled version for an enrolled student, and the latest published version for everyone else.',
-      resolve: async (parent, _, { user, loaders, db }) => {
+      resolve: async (parent, _, { user, loaders }) => {
         // Enrolled student — return the version they enrolled on
         if (user.authenticated) {
           const programEnrollment = await loaders.AccountProgram.loadByAccountIdAndProgramId(
@@ -180,12 +180,21 @@ export const Program: GraphQLObjectType = new GraphQLObjectType<ProgramType, Con
           }
         }
 
-        // Not enrolled students — return the latest published version
-        return db('program_version')
-          .where('program_id', parent.id)
-          .where('status', ProgramVersionStatusType.Published)
-          .orderBy('version_number', 'desc')
-          .first();
+        const programVersions = await loaders.ProgramVersion.loadByProgramId(parent.id);
+
+        if (programVersions.length === 0) {
+          throw new GraphQLError(ErrorType.NOT_FOUND);
+        }
+
+        const latestPublishedVersion = programVersions
+          .filter((version) => version.status === ProgramVersionStatusType.Published)
+          .sort((a, b) => b.version_number - a.version_number)[0];
+
+        if (!latestPublishedVersion) {
+          throw new GraphQLError(ErrorType.NO_PUBLISHED_PROGRAM_VERSION_FOUND);
+        }
+
+        return latestPublishedVersion;
       },
     },
     editableVersion: {
