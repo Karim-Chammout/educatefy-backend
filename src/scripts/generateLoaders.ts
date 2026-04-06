@@ -30,6 +30,7 @@
  * imported by every generated file that needs them.
  */
 
+import 'dotenv/config';
 import path from 'path';
 import fs from 'fs/promises';
 import { execSync } from 'child_process';
