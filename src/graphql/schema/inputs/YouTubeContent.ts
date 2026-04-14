@@ -1,4 +1,5 @@
 import { GraphQLInputObjectType, GraphQLNonNull, GraphQLString } from 'graphql';
+import GraphQLJSON from 'graphql-type-json';
 
 const YouTubeContentInput = new GraphQLInputObjectType({
   name: 'YouTubeContentInput',
@@ -8,7 +9,7 @@ const YouTubeContentInput = new GraphQLInputObjectType({
       description: 'The video ID of the YouTube video.',
     },
     description: {
-      type: GraphQLString,
+      type: GraphQLJSON,
       description: 'The description of the YouTube.',
     },
   },

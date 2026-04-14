@@ -6,6 +6,7 @@ import {
   GraphQLNonNull,
   GraphQLString,
 } from 'graphql';
+import GraphQLJSON from 'graphql-type-json';
 
 import ProgramLevel from '../types/enum/ProgramLevel';
 
@@ -60,7 +61,7 @@ const UpdateProgramInfoInput = new GraphQLInputObjectType({
       description: 'The subtitle of this program',
     },
     description: {
-      type: GraphQLString,
+      type: GraphQLJSON,
       description: 'The description of this program',
     },
     level: {

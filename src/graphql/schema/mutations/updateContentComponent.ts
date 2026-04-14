@@ -8,7 +8,6 @@ import {
 } from '../../../types/schema-types';
 import { ContextType } from '../../../types/types';
 import { ErrorType } from '../../../utils/ErrorType';
-import { sanitizeText } from '../../../utils/sanitizeText';
 import { authenticated } from '../../utils/auth';
 import { hasTeacherRole } from '../../utils/hasTeacherRole';
 import TextContentInput from '../inputs/TextContent';
@@ -120,12 +119,10 @@ const updateContentComponent: GraphQLFieldConfig<null, ContextType> = {
                 };
               }
 
-              await transaction('text_content')
-                .where('component_id', id)
-                .update({
-                  content: sanitizeText(textContent.content),
-                  updated_at: db.fn.now(),
-                });
+              await transaction('text_content').where('component_id', id).update({
+                content: textContent.content,
+                updated_at: db.fn.now(),
+              });
               break;
 
             case 'video':

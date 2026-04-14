@@ -5,6 +5,7 @@ import {
   GraphQLNonNull,
   GraphQLString,
 } from 'graphql';
+import GraphQLJSON from 'graphql-type-json';
 
 import GraphQLDate from '../Scalars/Date';
 import Gender from '../types/enum/Gender';
@@ -54,7 +55,7 @@ const AccountInfoInput = new GraphQLInputObjectType({
       description: 'The short bio about the teacher.',
     },
     teacherDescription: {
-      type: GraphQLString,
+      type: GraphQLJSON,
       description: 'The short description about the teacher.',
     },
   },

@@ -7,7 +7,6 @@ import {
 } from '../../../types/schema-types';
 import { ContextType } from '../../../types/types';
 import { ErrorType } from '../../../utils/ErrorType';
-import { sanitizeText } from '../../../utils/sanitizeText';
 import { authenticated } from '../../utils/auth';
 import { getSelectedLanguageId } from '../../utils/getSelectedLanguageId';
 import { isValidSlug } from '../../utils/isValidSlug';
@@ -112,7 +111,7 @@ const updateCourse: GraphQLFieldConfig<null, ContextType> = {
         const filteredUpdatedCourseInfo = {
           ...(denomination && { denomination }),
           ...(updatedSlug && { slug: updatedSlug }),
-          ...(description && { description: sanitizeText(description) }),
+          ...(description && { description }),
           ...(subtitle && { subtitle }),
           ...(level && { level }),
           ...(is_published !== undefined && { is_published }),

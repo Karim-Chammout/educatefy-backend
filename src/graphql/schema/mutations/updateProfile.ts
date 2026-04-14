@@ -3,7 +3,6 @@ import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
 import { ProfileDetailsInput as ProfileDetailsType } from '../../../types/schema-types';
 import { ContextType } from '../../../types/types';
 import { ErrorType } from '../../../utils/ErrorType';
-import { sanitizeText } from '../../../utils/sanitizeText';
 import { authenticated } from '../../utils/auth';
 import { getSelectedLanguageId } from '../../utils/getSelectedLanguageId';
 import ProfileDetailsInput from '../inputs/ProfileDetails';
@@ -55,7 +54,7 @@ const updateProfile: GraphQLFieldConfig<null, ContextType> = {
         ...(selectedLanguageId && { preferred_language_id: selectedLanguageId }),
         ...(dateOfBirth && { date_of_birth: dateOfBirth }),
         ...(teacherBio && { bio: teacherBio }),
-        ...(teacherDescription && { description: sanitizeText(teacherDescription) }),
+        ...(teacherDescription && { description: teacherDescription }),
       };
 
       if (Object.keys(dataToUpdate).length === 0) {
