@@ -82,10 +82,13 @@ const updateAccountInfo: GraphQLFieldConfig<null, ContextType> = {
 
         if (isTeacherAccount && teacherSpecialties && teacherSpecialties.length > 0) {
           for (const subjectId of teacherSpecialties) {
-            await db('account__subject').insert({
-              account_id: user.id,
-              subject_id: subjectId,
-            });
+            await db('account__subject')
+              .insert({
+                account_id: user.id,
+                subject_id: subjectId,
+              })
+              .onConflict(['account_id', 'subject_id'])
+              .ignore();
           }
         }
 

@@ -3,7 +3,6 @@ import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
 import { CourseInfoInput as CourseInfoInputType, CourseLevel } from '../../../types/schema-types';
 import { ContextType } from '../../../types/types';
 import { ErrorType } from '../../../utils/ErrorType';
-import { sanitizeText } from '../../../utils/sanitizeText';
 import { authenticated } from '../../utils/auth';
 import { getSelectedLanguageId } from '../../utils/getSelectedLanguageId';
 import { hasTeacherRole } from '../../utils/hasTeacherRole';
@@ -97,7 +96,7 @@ const createCourse: GraphQLFieldConfig<null, ContextType> = {
         const filteredCourseInfo = {
           denomination,
           slug: lowercaseSlug,
-          description: sanitizeText(description),
+          description,
           level,
           is_published,
           subtitle,

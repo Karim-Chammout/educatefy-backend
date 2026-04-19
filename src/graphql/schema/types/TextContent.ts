@@ -1,4 +1,5 @@
-import { GraphQLID, GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql';
+import { GraphQLID, GraphQLNonNull, GraphQLObjectType } from 'graphql';
+import GraphQLJSON from 'graphql-type-json';
 
 import { defaultContentComponentFields } from './ContentComponent';
 
@@ -11,7 +12,7 @@ export const TextContent = new GraphQLObjectType({
       description: 'A unique id of this text content component.',
     },
     content: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: new GraphQLNonNull(GraphQLJSON),
       description: 'The text content.',
     },
     component_id: {

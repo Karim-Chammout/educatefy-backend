@@ -7,7 +7,6 @@ import {
 } from '../../../types/schema-types';
 import { ContextType } from '../../../types/types';
 import { ErrorType } from '../../../utils/ErrorType';
-import { sanitizeText } from '../../../utils/sanitizeText';
 import { authenticated } from '../../utils/auth';
 import { isValidSlug } from '../../utils/isValidSlug';
 import UpdateProgramInfoInput from '../inputs/UpdateProgramInfo';
@@ -101,7 +100,7 @@ const updateProgram: GraphQLFieldConfig<null, ContextType> = {
         const filteredUpdatedProgramInfo = {
           ...(denomination && { denomination }),
           ...(updatedSlug && { slug: updatedSlug }),
-          ...(description && { description: sanitizeText(description) }),
+          ...(description && { description }),
           ...(subtitle && { subtitle }),
           ...(level && { level }),
           ...(is_published !== undefined && { is_published }),

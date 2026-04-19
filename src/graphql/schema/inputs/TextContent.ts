@@ -1,10 +1,11 @@
-import { GraphQLInputObjectType, GraphQLNonNull, GraphQLString } from 'graphql';
+import { GraphQLInputObjectType, GraphQLNonNull } from 'graphql';
+import GraphQLJSON from 'graphql-type-json';
 
 const TextContentInput = new GraphQLInputObjectType({
   name: 'TextContentInput',
   fields: {
     content: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: new GraphQLNonNull(GraphQLJSON),
       description: 'The text content.',
     },
   },

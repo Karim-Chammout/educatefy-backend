@@ -1,4 +1,5 @@
 import { GraphQLID, GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql';
+import GraphQLJSON from 'graphql-type-json';
 
 import { YoutubeContent as YouTubeContentType } from '../../../types/db-generated-types';
 import { ContextType } from '../../../types/types';
@@ -17,7 +18,7 @@ export const YouTubeContent = new GraphQLObjectType<YouTubeContentType, ContextT
       description: 'The YouTube video id.',
     },
     description: {
-      type: GraphQLString,
+      type: GraphQLJSON,
       description: 'The description of the YouTube.',
     },
     component_id: {

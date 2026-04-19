@@ -111,7 +111,7 @@ type Account {
   bio: String
 
   """A detailed overview about this teacher."""
-  description: String
+  description: JSON
 
   """Statistics for the current user."""
   statistics: Statistics
@@ -184,7 +184,7 @@ type Course {
   subtitle: String!
 
   """The description of this course."""
-  description: String!
+  description: JSON!
 
   """The difficulty level of this course."""
   level: CourseLevel!
@@ -246,6 +246,11 @@ type Course {
   """The number of participants enrolled in this course (or completed it)"""
   participationCount: Int!
 }
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
 
 """The difficulty level of a course."""
 enum CourseLevel {
@@ -338,7 +343,7 @@ type TextContent {
   id: ID!
 
   """The text content."""
-  content: String!
+  content: JSON!
 
   """The id of the component this text content belongs to."""
   component_id: ID!
@@ -423,7 +428,7 @@ type YouTubeContent {
   youtube_video_id: String!
 
   """The description of the YouTube."""
-  description: String
+  description: JSON
 
   """The id of the component this video content belongs to."""
   component_id: ID!
@@ -513,7 +518,7 @@ type Teacher {
   bio: String
 
   """A detailed description of the teacher"""
-  description: String
+  description: JSON
 
   """Indicates if the current user is following this teacher"""
   isFollowed: Boolean!
@@ -545,7 +550,7 @@ type Program {
   subtitle: String!
 
   """The description of this program."""
-  description: String!
+  description: JSON!
 
   """The difficulty level of this program."""
   level: ProgramLevel!
@@ -1028,7 +1033,7 @@ enum ComponentParentType {
 
 input TextContentInput {
   """The text content."""
-  content: String!
+  content: JSON!
 }
 
 input VideoContentInput {
@@ -1041,7 +1046,7 @@ input YouTubeContentInput {
   videoId: String!
 
   """The description of the YouTube."""
-  description: String
+  description: JSON
 }
 
 """The result of the creating or updating a course."""
@@ -1068,7 +1073,7 @@ input CourseInfoInput {
   subtitle: String!
 
   """The description of this course."""
-  description: String!
+  description: JSON!
 
   """The language of this course."""
   language: String!
@@ -1179,7 +1184,7 @@ input ProgramInfoInput {
   subtitle: String!
 
   """The description of this program."""
-  description: String!
+  description: JSON!
 
   """The difficulty level of this program."""
   level: ProgramLevel!
@@ -1329,7 +1334,7 @@ input AccountInfoInput {
   teacherBio: String
 
   """The short description about the teacher."""
-  teacherDescription: String
+  teacherDescription: JSON
 }
 
 input UpdateContentComponentBaseInput {
@@ -1394,7 +1399,7 @@ input UpdateCourseInfoInput {
   subtitle: String
 
   """The description of this course"""
-  description: String
+  description: JSON
 
   """The language of this course."""
   language: String
@@ -1559,7 +1564,7 @@ input ProfileDetailsInput {
   teacherBio: String
 
   """The short description about the teacher."""
-  teacherDescription: String
+  teacherDescription: JSON
 }
 
 """Input for updating a program record."""
@@ -1577,7 +1582,7 @@ input UpdateProgramInfoInput {
   subtitle: String
 
   """The description of this program"""
-  description: String
+  description: JSON
 
   """The difficulty level of this program"""
   level: ProgramLevel

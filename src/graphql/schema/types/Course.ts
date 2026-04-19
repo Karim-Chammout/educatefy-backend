@@ -8,6 +8,7 @@ import {
   GraphQLObjectType,
   GraphQLString,
 } from 'graphql';
+import GraphQLJSON from 'graphql-type-json';
 
 import { Course as CourseType, EnrollmentStatusType } from '../../../types/db-generated-types';
 import { ContextType } from '../../../types/types';
@@ -44,7 +45,7 @@ export const Course: GraphQLObjectType = new GraphQLObjectType<CourseType, Conte
       description: 'The subtitle of this course.',
     },
     description: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: new GraphQLNonNull(GraphQLJSON),
       description: 'The description of this course.',
     },
     level: {

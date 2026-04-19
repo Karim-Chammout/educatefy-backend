@@ -137,7 +137,7 @@ export type Account = {
   country_id: number | null;
   role_id: number;
   bio: string | null;
-  description: string | null;
+  description: unknown | null;
   created_at: Date;
   updated_at: Date;
   preferred_language_id: number;
@@ -206,7 +206,7 @@ export type Course = {
   denomination: string;
   slug: string;
   subtitle: string;
-  description: string;
+  description: unknown | null;
   level: CourseLevelEnumType;
   image: string | null;
   external_resource_link: string | null;
@@ -359,7 +359,7 @@ export type Program = {
   denomination: string;
   slug: string;
   subtitle: string;
-  description: string;
+  description: unknown | null;
   level: ProgramLevelEnumType;
   image: string | null;
   is_published: boolean;
@@ -425,7 +425,7 @@ export type Subject = {
 
 export type TextContent = {
   id: number;
-  content: string;
+  content: unknown | null;
   component_id: number;
   created_at: Date;
   updated_at: Date;
@@ -442,7 +442,7 @@ export type VideoContent = {
 export type YoutubeContent = {
   id: number;
   youtube_video_id: string;
-  description: string | null;
+  description: unknown | null;
   component_id: number;
   created_at: Date;
   updated_at: Date;

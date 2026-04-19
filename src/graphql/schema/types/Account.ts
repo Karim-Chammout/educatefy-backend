@@ -1,4 +1,5 @@
 import { GraphQLID, GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql';
+import GraphQLJSON from 'graphql-type-json';
 
 import { Account as AccountType, Country as CountryType } from '../../../types/db-generated-types';
 import { CourseStatus } from '../../../types/schema-types';
@@ -135,7 +136,7 @@ export const Account = new GraphQLObjectType<AccountType, ContextType>({
       description: 'The bio of the teacher.',
     },
     description: {
-      type: GraphQLString,
+      type: GraphQLJSON,
       description: 'A detailed overview about this teacher.',
     },
     statistics: {

@@ -6,6 +6,7 @@ import {
   GraphQLObjectType,
   GraphQLString,
 } from 'graphql';
+import GraphQLJSON from 'graphql-type-json';
 
 import { Account as AccountType } from '../../../types/db-generated-types';
 import { ContextType } from '../../../types/types';
@@ -49,7 +50,7 @@ export const Teacher = new GraphQLObjectType<AccountType, ContextType>({
       description: 'A short biography of the teacher',
     },
     description: {
-      type: GraphQLString,
+      type: GraphQLJSON,
       description: 'A detailed description of the teacher',
     },
     isFollowed: {

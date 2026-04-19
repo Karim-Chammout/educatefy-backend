@@ -8,6 +8,7 @@ import {
   GraphQLObjectType,
   GraphQLString,
 } from 'graphql';
+import GraphQLJSON from 'graphql-type-json';
 
 import {
   EnrollmentStatusType,
@@ -48,7 +49,7 @@ export const Program: GraphQLObjectType = new GraphQLObjectType<ProgramType, Con
       description: 'The subtitle of this program.',
     },
     description: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: new GraphQLNonNull(GraphQLJSON),
       description: 'The description of this program.',
     },
     level: {

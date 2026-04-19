@@ -6,6 +6,7 @@ import {
   GraphQLNonNull,
   GraphQLString,
 } from 'graphql';
+import GraphQLJSON from 'graphql-type-json';
 
 import GraphQLDate from '../Scalars/Date';
 import CourseLevel from '../types/enum/CourseLevel';
@@ -61,7 +62,7 @@ const UpdateCourseInfoInput = new GraphQLInputObjectType({
       description: 'The subtitle of this course',
     },
     description: {
-      type: GraphQLString,
+      type: GraphQLJSON,
       description: 'The description of this course',
     },
     language: {

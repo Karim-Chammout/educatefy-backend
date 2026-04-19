@@ -14,6 +14,8 @@ export type Scalars = {
   Float: { input: number; output: number; }
   /** Date custom scalar type */
   Date: { input: any; output: any; }
+  /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
+  JSON: { input: any; output: any; }
 };
 
 /** The properties of the account */
@@ -30,7 +32,7 @@ export type Account = {
   /** The date of birth of this account */
   date_of_birth?: Maybe<Scalars['Date']['output']>;
   /** A detailed overview about this teacher. */
-  description?: Maybe<Scalars['String']['output']>;
+  description?: Maybe<Scalars['JSON']['output']>;
   /** The first name of the account */
   first_name?: Maybe<Scalars['String']['output']>;
   /** The gender of the account */
@@ -74,7 +76,7 @@ export type AccountInfoInput = {
   /** The short bio about the teacher. */
   teacherBio?: InputMaybe<Scalars['String']['input']>;
   /** The short description about the teacher. */
-  teacherDescription?: InputMaybe<Scalars['String']['input']>;
+  teacherDescription?: InputMaybe<Scalars['JSON']['input']>;
   /** List of subject IDs a teacher is specialized in for teaching. */
   teacherSpecialties?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
@@ -175,7 +177,7 @@ export type Course = {
   /** The denomination of this course. */
   denomination: Scalars['String']['output'];
   /** The description of this course. */
-  description: Scalars['String']['output'];
+  description: Scalars['JSON']['output'];
   /** The end date of the course */
   end_date?: Maybe<Scalars['Date']['output']>;
   /** A link to an external resource. */
@@ -227,7 +229,7 @@ export type CourseInfoInput = {
   /** The denomination of this course. */
   denomination: Scalars['String']['input'];
   /** The description of this course. */
-  description: Scalars['String']['input'];
+  description: Scalars['JSON']['input'];
   /** The end date of the course. */
   end_date?: InputMaybe<Scalars['Date']['input']>;
   /** A link to an external resource. */
@@ -798,7 +800,7 @@ export type ProfileDetailsInput = {
   /** The short bio about the teacher. */
   teacherBio?: InputMaybe<Scalars['String']['input']>;
   /** The short description about the teacher. */
-  teacherDescription?: InputMaybe<Scalars['String']['input']>;
+  teacherDescription?: InputMaybe<Scalars['JSON']['input']>;
   /** List of subject IDs a teacher is specialized in for teaching. */
   teacherSpecialties?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
@@ -827,7 +829,7 @@ export type Program = {
   /** The denomination of this program. */
   denomination: Scalars['String']['output'];
   /** The description of this program. */
-  description: Scalars['String']['output'];
+  description: Scalars['JSON']['output'];
   /** The version the owning teacher should edit. Returns the current draft if one exists, otherwise the latest published version. */
   editableVersion: ProgramVersion;
   /** Number of learners currently enrolled in this program. */
@@ -865,7 +867,7 @@ export type ProgramInfoInput = {
   /** The denomination of this program. */
   denomination: Scalars['String']['input'];
   /** The description of this program. */
-  description: Scalars['String']['input'];
+  description: Scalars['JSON']['input'];
   /** The image of this program. */
   image?: InputMaybe<Scalars['String']['input']>;
   /** A flag to indicate whether this program is published or not. */
@@ -1133,7 +1135,7 @@ export type Teacher = {
   /** List of courses created by the teacher */
   courses: Array<Course>;
   /** A detailed description of the teacher */
-  description?: Maybe<Scalars['String']['output']>;
+  description?: Maybe<Scalars['JSON']['output']>;
   /** The first name of the teacher */
   first_name?: Maybe<Scalars['String']['output']>;
   /** A unique id of this account */
@@ -1158,7 +1160,7 @@ export type TextContent = {
   /** The id of the component this text content belongs to. */
   component_id: Scalars['ID']['output'];
   /** The text content. */
-  content: Scalars['String']['output'];
+  content: Scalars['JSON']['output'];
   /** The denomination of the component. */
   denomination: Scalars['String']['output'];
   /** A unique id of this text content component. */
@@ -1177,7 +1179,7 @@ export type TextContent = {
 
 export type TextContentInput = {
   /** The text content. */
-  content: Scalars['String']['input'];
+  content: Scalars['JSON']['input'];
 };
 
 export type UpdateContentComponentBaseInput = {
@@ -1214,7 +1216,7 @@ export type UpdateCourseInfoInput = {
   /** The denomination of this course */
   denomination?: InputMaybe<Scalars['String']['input']>;
   /** The description of this course */
-  description?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['JSON']['input']>;
   /** The end date of the course */
   end_date?: InputMaybe<Scalars['Date']['input']>;
   /** A link to an external resource. */
@@ -1308,7 +1310,7 @@ export type UpdateProgramInfoInput = {
   /** The denomination of this program */
   denomination?: InputMaybe<Scalars['String']['input']>;
   /** The description of this program */
-  description?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['JSON']['input']>;
   /** The ID of this program */
   id: Scalars['ID']['input'];
   /** The image of this program */
@@ -1406,7 +1408,7 @@ export type YouTubeContent = {
   /** The denomination of the component. */
   denomination: Scalars['String']['output'];
   /** The description of the YouTube. */
-  description?: Maybe<Scalars['String']['output']>;
+  description?: Maybe<Scalars['JSON']['output']>;
   /** A unique id of this video content component. */
   id: Scalars['ID']['output'];
   /** A flag indicating whether the component is published */
@@ -1425,7 +1427,7 @@ export type YouTubeContent = {
 
 export type YouTubeContentInput = {
   /** The description of the YouTube. */
-  description?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['JSON']['input']>;
   /** The video ID of the YouTube video. */
   videoId: Scalars['String']['input'];
 };

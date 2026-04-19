@@ -8,7 +8,6 @@ import {
 } from '../../../types/schema-types';
 import { ContextType } from '../../../types/types';
 import { ErrorType } from '../../../utils/ErrorType';
-import { sanitizeText } from '../../../utils/sanitizeText';
 import { authenticated } from '../../utils/auth';
 import { hasTeacherRole } from '../../utils/hasTeacherRole';
 import ContentComponentBaseInput from '../inputs/ContentComponentBase';
@@ -107,7 +106,7 @@ export const createContentComponent: GraphQLFieldConfig<null, ContextType> = {
 
               await transaction('text_content').insert({
                 component_id: component.id,
-                content: sanitizeText(textContent.content),
+                content: textContent.content,
               });
               break;
 

@@ -7,7 +7,6 @@ import {
 } from '../../../types/schema-types';
 import { ContextType } from '../../../types/types';
 import { ErrorType } from '../../../utils/ErrorType';
-import { sanitizeText } from '../../../utils/sanitizeText';
 import { authenticated } from '../../utils/auth';
 import { hasTeacherRole } from '../../utils/hasTeacherRole';
 import { isValidSlug } from '../../utils/isValidSlug';
@@ -86,7 +85,7 @@ const createProgram: GraphQLFieldConfig<null, ContextType> = {
         const filteredProgramInfo = {
           denomination,
           slug: lowercaseSlug,
-          description: sanitizeText(description),
+          description,
           subtitle,
           level,
           is_published,
