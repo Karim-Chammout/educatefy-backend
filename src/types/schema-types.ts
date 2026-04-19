@@ -1150,6 +1150,8 @@ export type Teacher = {
   name?: Maybe<Scalars['String']['output']>;
   /** The nickname of the teacher */
   nickname?: Maybe<Scalars['String']['output']>;
+  /** The number of followers this teacher has */
+  numberOfFollowers: Scalars['Int']['output'];
   /** List of programs created by the teacher */
   programs: Array<Program>;
 };
