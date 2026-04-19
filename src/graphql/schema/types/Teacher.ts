@@ -1,6 +1,7 @@
 import {
   GraphQLBoolean,
   GraphQLID,
+  GraphQLInt,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
@@ -77,6 +78,15 @@ export const Teacher = new GraphQLObjectType<AccountType, ContextType>({
 
         // Prevent teachers from self-follow
         return user.id !== parent.id;
+      },
+    },
+    numberOfFollowers: {
+      type: new GraphQLNonNull(GraphQLInt),
+      description: 'The number of followers this teacher has',
+      resolve: async (parent, _, { loaders }) => {
+        const followersCount = await loaders.StudentTeacherFollow.loadByTeacherId(parent.id);
+
+        return followersCount.length || 0;
       },
     },
     courses: {
