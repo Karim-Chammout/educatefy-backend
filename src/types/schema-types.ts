@@ -1138,6 +1138,8 @@ export type Teacher = {
   description?: Maybe<Scalars['JSON']['output']>;
   /** The first name of the teacher */
   first_name?: Maybe<Scalars['String']['output']>;
+  /** The number of followers this teacher has */
+  followersCount: Scalars['Int']['output'];
   /** A unique id of this account */
   id: Scalars['ID']['output'];
   /** Checks if the current user can follow this teacher (blocks self-follow). */
@@ -1150,8 +1152,6 @@ export type Teacher = {
   name?: Maybe<Scalars['String']['output']>;
   /** The nickname of the teacher */
   nickname?: Maybe<Scalars['String']['output']>;
-  /** The number of followers this teacher has */
-  numberOfFollowers: Scalars['Int']['output'];
   /** List of programs created by the teacher */
   programs: Array<Program>;
 };
