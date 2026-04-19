@@ -84,9 +84,11 @@ export const Teacher = new GraphQLObjectType<AccountType, ContextType>({
       type: new GraphQLNonNull(GraphQLInt),
       description: 'The number of followers this teacher has',
       resolve: async (parent, _, { loaders }) => {
-        const followersCount = await loaders.StudentTeacherFollow.loadByTeacherId(parent.id);
+        const followers = await loaders.StudentTeacherFollow.loadByTeacherId(parent.id);
 
-        return followersCount.length || 0;
+        const filteredFollowers = followers.filter((follower) => follower.is_following);
+
+        return filteredFollowers.length || 0;
       },
     },
     courses: {
