@@ -528,6 +528,9 @@ type Teacher {
   """
   isAllowedToFollow: Boolean!
 
+  """The number of followers this teacher has"""
+  numberOfFollowers: Int!
+
   """List of courses created by the teacher"""
   courses: [Course!]!
 
