@@ -7,8 +7,8 @@ const config: CodegenConfig = {
       plugins: ['typescript'],
       config: {
         scalars: {
-          Date: 'string | Date',
-          JSON: 'Record<string, unknown>',
+          Date: 'any',
+          JSON: 'any',
         },
         strictScalars: true,
       },
