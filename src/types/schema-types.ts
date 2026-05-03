@@ -8,9 +8,9 @@ export type Scalars = {
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
   /** Date custom scalar type */
-  Date: { input: string | Date; output: string | Date; }
+  Date: { input: any; output: any; }
   /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
-  JSON: { input: Record<string, unknown>; output: Record<string, unknown>; }
+  JSON: { input: any; output: any; }
 };
 
 /** The properties of the account */
