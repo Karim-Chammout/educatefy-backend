@@ -1,5 +1,5 @@
 import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
-import * as lodash from 'lodash';
+import lodash from 'lodash';
 
 import {
   CourseLevel,
