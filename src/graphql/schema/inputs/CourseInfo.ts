@@ -6,10 +6,10 @@ import {
   GraphQLNonNull,
   GraphQLString,
 } from 'graphql';
-import GraphQLJSON from 'graphql-type-json';
+import { GraphQLJSON } from 'graphql-type-json';
 
-import GraphQLDate from '../Scalars/Date';
-import CourseLevel from '../types/enum/CourseLevel';
+import GraphQLDate from '../Scalars/Date.js';
+import CourseLevel from '../types/enum/CourseLevel.js';
 
 const CourseInfoInput = new GraphQLInputObjectType({
   name: 'CourseInfoInput',

@@ -1,9 +1,9 @@
 import { GraphQLObjectType } from 'graphql';
 
-import { ProgramVersion as ProgramVersionType } from '../../../types/db-generated-types';
-import { authenticated } from '../../utils/auth';
-import { defaultMutationFields } from './MutationResult';
-import { ProgramVersion } from './ProgramVersion';
+import { ProgramVersion as ProgramVersionType } from '../../../types/db-generated-types.js';
+import { authenticated } from '../../utils/auth.js';
+import { defaultMutationFields } from './MutationResult.js';
+import { ProgramVersion } from './ProgramVersion.js';
 
 type CreateProgramVersionResultType =
   | {

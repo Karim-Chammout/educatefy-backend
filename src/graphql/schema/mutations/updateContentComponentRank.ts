@@ -1,12 +1,12 @@
 import { GraphQLFieldConfig, GraphQLList, GraphQLNonNull } from 'graphql';
 
-import { UpdateContentComponentRankInput as UpdateContentComponentRankInputType } from '../../../types/schema-types';
-import { ContextType } from '../../../types/types';
-import { ErrorType } from '../../../utils/ErrorType';
-import { authenticated } from '../../utils/auth';
-import { hasTeacherRole } from '../../utils/hasTeacherRole';
-import UpdateContentComponentRankInput from '../inputs/UpdateContentComponentRank';
-import MutationResult from '../types/MutationResult';
+import { UpdateContentComponentRankInput as UpdateContentComponentRankInputType } from '../../../types/schema-types.js';
+import { ContextType } from '../../../types/types.js';
+import { ErrorType } from '../../../utils/ErrorType.js';
+import { authenticated } from '../../utils/auth.js';
+import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
+import UpdateContentComponentRankInput from '../inputs/UpdateContentComponentRank.js';
+import MutationResult from '../types/MutationResult.js';
 
 const updateContentComponentRanks: GraphQLFieldConfig<null, ContextType> = {
   type: MutationResult,

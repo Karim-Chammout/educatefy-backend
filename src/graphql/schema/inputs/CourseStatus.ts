@@ -1,6 +1,6 @@
 import { GraphQLID, GraphQLInputObjectType, GraphQLNonNull, GraphQLString } from 'graphql';
 
-import CourseStatus from '../types/enum/CourseStatus';
+import CourseStatus from '../types/enum/CourseStatus.js';
 
 const CourseStatusInput = new GraphQLInputObjectType({
   name: 'CourseStatusInput',

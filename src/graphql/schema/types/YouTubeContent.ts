@@ -1,9 +1,9 @@
 import { GraphQLID, GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql';
-import GraphQLJSON from 'graphql-type-json';
+import { GraphQLJSON } from 'graphql-type-json';
 
-import { YoutubeContent as YouTubeContentType } from '../../../types/db-generated-types';
-import { ContextType } from '../../../types/types';
-import { defaultContentComponentFields } from './ContentComponent';
+import { YoutubeContent as YouTubeContentType } from '../../../types/db-generated-types.js';
+import { ContextType } from '../../../types/types.js';
+import { defaultContentComponentFields } from './ContentComponent.js';
 
 export const YouTubeContent = new GraphQLObjectType<YouTubeContentType, ContextType>({
   name: 'YouTubeContent',

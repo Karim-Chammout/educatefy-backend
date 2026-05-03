@@ -1,7 +1,7 @@
 import DataLoader from 'dataloader';
 
-import { Subject as SubjectType } from '../../../../types/db-generated-types';
-import { SubjectBase } from './Subject.generated';
+import { Subject as SubjectType } from '../../../../types/db-generated-types.js';
+import { SubjectBase } from './Subject.generated.js';
 
 export class SubjectReader extends SubjectBase {
   private byCourseIdLoader: DataLoader<number, ReadonlyArray<SubjectType>>;

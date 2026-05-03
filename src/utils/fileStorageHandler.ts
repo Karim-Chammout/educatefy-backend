@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 
-import config from '../config';
+import config from '../config.js';
 import { FileOptions } from '@supabase/storage-js';
 
 const bucketName = config.S3_BUCKET_NAME;

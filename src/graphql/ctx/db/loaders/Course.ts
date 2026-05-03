@@ -1,7 +1,7 @@
 import DataLoader from 'dataloader';
 
-import { Course as CourseType } from '../../../../types/db-generated-types';
-import { CourseBase } from './Course.generated';
+import { Course as CourseType } from '../../../../types/db-generated-types.js';
+import { CourseBase } from './Course.generated.js';
 
 export class CourseReader extends CourseBase {
   private bySubjectIdLoader: DataLoader<number, ReadonlyArray<CourseType>>;

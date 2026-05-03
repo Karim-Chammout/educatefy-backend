@@ -1,9 +1,9 @@
 import { GraphQLObjectType } from 'graphql';
 
-import { Program as ProgramType } from '../../../types/db-generated-types';
-import { authenticated } from '../../utils/auth';
-import { defaultMutationFields } from './MutationResult';
-import { Program } from './Program';
+import { Program as ProgramType } from '../../../types/db-generated-types.js';
+import { authenticated } from '../../utils/auth.js';
+import { defaultMutationFields } from './MutationResult.js';
+import { Program } from './Program.js';
 
 type UpgradeToLatestProgramVersionResultType =
   | {

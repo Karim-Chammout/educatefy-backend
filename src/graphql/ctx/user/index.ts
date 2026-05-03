@@ -1,8 +1,8 @@
 import { JwtPayload } from 'jsonwebtoken';
 
-import { db } from '../../../db';
-import { UserContext } from '../../../types/types';
-import { userIdFromToken } from '../../../utils/jwt';
+import { db } from '../../../db/index.js';
+import { UserContext } from '../../../types/types.js';
+import { userIdFromToken } from '../../../utils/jwt.js';
 
 export async function createUserContext(
   userAgent: string,

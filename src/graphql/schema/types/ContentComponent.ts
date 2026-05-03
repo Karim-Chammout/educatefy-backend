@@ -6,10 +6,10 @@ import {
   GraphQLString,
 } from 'graphql';
 
-import { ContentComponent as ContentComponentType } from '../../../types/db-generated-types';
-import { ContextType } from '../../../types/types';
-import { ContentComponentProgress } from './ContentComponentProgress';
-import { ComponentType } from './enum/ContentComponent';
+import { ContentComponent as ContentComponentType } from '../../../types/db-generated-types.js';
+import { ContextType } from '../../../types/types.js';
+import { ContentComponentProgress } from './ContentComponentProgress.js';
+import { ComponentType } from './enum/ContentComponent.js';
 
 export const defaultContentComponentFields: GraphQLFieldConfigMap<
   ContentComponentType & { component_id: number },

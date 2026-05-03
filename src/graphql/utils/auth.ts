@@ -1,7 +1,7 @@
 import { GraphQLError, GraphQLFieldResolver } from 'graphql';
 
-import { AuthenticatedCtxType, ContextType } from '../../types/types';
-import { ErrorType } from '../../utils/ErrorType';
+import { AuthenticatedCtxType, ContextType } from '../../types/types.js';
+import { ErrorType } from '../../utils/ErrorType.js';
 
 /**
  * This resolver function can wrap a normal resolver function. It makes sure that there is a user

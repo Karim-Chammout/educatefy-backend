@@ -1,40 +1,40 @@
 // ⚠️  This file is auto-generated. Do NOT edit it manually.
 // Re-run `npm run generate-loaders` to regenerate it.
 
-import { Knex } from 'knex';
+import type { Knex } from 'knex';
 
-import { AccountBase as AccountReader } from './loaders/Account.generated';
-import { AccountProgramReader } from './loaders/AccountProgram';
-import { AccountRoleBase as AccountRoleReader } from './loaders/AccountRole.generated';
-import { AccountSubjectBase as AccountSubjectReader } from './loaders/AccountSubject.generated';
-import { ContentComponentReader } from './loaders/ContentComponent';
-import { ContentComponentProgressReader } from './loaders/ContentComponentProgress';
-import { CountryBase as CountryReader } from './loaders/Country.generated';
-import { CourseReader } from './loaders/Course';
-import { CourseObjectiveBase as CourseObjectiveReader } from './loaders/CourseObjective.generated';
-import { CourseProgramVersionBase as CourseProgramVersionReader } from './loaders/CourseProgramVersion.generated';
-import { CourseRatingReader } from './loaders/CourseRating';
-import { CourseRequirementBase as CourseRequirementReader } from './loaders/CourseRequirement.generated';
-import { CourseSectionBase as CourseSectionReader } from './loaders/CourseSection.generated';
-import { CourseSectionItemBase as CourseSectionItemReader } from './loaders/CourseSectionItem.generated';
-import { CourseSubjectBase as CourseSubjectReader } from './loaders/CourseSubject.generated';
-import { EnrollmentReader } from './loaders/Enrollment';
-import { EnrollmentHistoryBase as EnrollmentHistoryReader } from './loaders/EnrollmentHistory.generated';
-import { FileReader } from './loaders/File';
-import { LanguageBase as LanguageReader } from './loaders/Language.generated';
-import { LessonBase as LessonReader } from './loaders/Lesson.generated';
-import { OpenidClientBase as OpenidClientReader } from './loaders/OpenidClient.generated';
-import { ProgramReader } from './loaders/Program';
-import { ProgramObjectiveBase as ProgramObjectiveReader } from './loaders/ProgramObjective.generated';
-import { ProgramRequirementBase as ProgramRequirementReader } from './loaders/ProgramRequirement.generated';
-import { ProgramSubjectBase as ProgramSubjectReader } from './loaders/ProgramSubject.generated';
-import { ProgramVersionBase as ProgramVersionReader } from './loaders/ProgramVersion.generated';
-import { RefreshTokenBase as RefreshTokenReader } from './loaders/RefreshToken.generated';
-import { StudentTeacherFollowReader } from './loaders/StudentTeacherFollow';
-import { SubjectReader } from './loaders/Subject';
-import { TextContentBase as TextContentReader } from './loaders/TextContent.generated';
-import { VideoContentBase as VideoContentReader } from './loaders/VideoContent.generated';
-import { YoutubeContentBase as YoutubeContentReader } from './loaders/YoutubeContent.generated';
+import { AccountBase as AccountReader } from './loaders/Account.generated.js';
+import { AccountProgramReader } from './loaders/AccountProgram.js';
+import { AccountRoleBase as AccountRoleReader } from './loaders/AccountRole.generated.js';
+import { AccountSubjectBase as AccountSubjectReader } from './loaders/AccountSubject.generated.js';
+import { ContentComponentReader } from './loaders/ContentComponent.js';
+import { ContentComponentProgressReader } from './loaders/ContentComponentProgress.js';
+import { CountryBase as CountryReader } from './loaders/Country.generated.js';
+import { CourseReader } from './loaders/Course.js';
+import { CourseObjectiveBase as CourseObjectiveReader } from './loaders/CourseObjective.generated.js';
+import { CourseProgramVersionBase as CourseProgramVersionReader } from './loaders/CourseProgramVersion.generated.js';
+import { CourseRatingReader } from './loaders/CourseRating.js';
+import { CourseRequirementBase as CourseRequirementReader } from './loaders/CourseRequirement.generated.js';
+import { CourseSectionBase as CourseSectionReader } from './loaders/CourseSection.generated.js';
+import { CourseSectionItemBase as CourseSectionItemReader } from './loaders/CourseSectionItem.generated.js';
+import { CourseSubjectBase as CourseSubjectReader } from './loaders/CourseSubject.generated.js';
+import { EnrollmentReader } from './loaders/Enrollment.js';
+import { EnrollmentHistoryBase as EnrollmentHistoryReader } from './loaders/EnrollmentHistory.generated.js';
+import { FileReader } from './loaders/File.js';
+import { LanguageBase as LanguageReader } from './loaders/Language.generated.js';
+import { LessonBase as LessonReader } from './loaders/Lesson.generated.js';
+import { OpenidClientBase as OpenidClientReader } from './loaders/OpenidClient.generated.js';
+import { ProgramReader } from './loaders/Program.js';
+import { ProgramObjectiveBase as ProgramObjectiveReader } from './loaders/ProgramObjective.generated.js';
+import { ProgramRequirementBase as ProgramRequirementReader } from './loaders/ProgramRequirement.generated.js';
+import { ProgramSubjectBase as ProgramSubjectReader } from './loaders/ProgramSubject.generated.js';
+import { ProgramVersionBase as ProgramVersionReader } from './loaders/ProgramVersion.generated.js';
+import { RefreshTokenBase as RefreshTokenReader } from './loaders/RefreshToken.generated.js';
+import { StudentTeacherFollowReader } from './loaders/StudentTeacherFollow.js';
+import { SubjectReader } from './loaders/Subject.js';
+import { TextContentBase as TextContentReader } from './loaders/TextContent.generated.js';
+import { VideoContentBase as VideoContentReader } from './loaders/VideoContent.generated.js';
+import { YoutubeContentBase as YoutubeContentReader } from './loaders/YoutubeContent.generated.js';
 
 export type ReadersType = {
   Account: AccountReader;

@@ -14,6 +14,7 @@ module.exports = {
     'import/extensions': 0,
     'import/no-extraneous-dependencies': 0,
     '@typescript-eslint/naming-convention': 0,
+    '@typescript-eslint/no-throw-literal': 0,
     'prettier/prettier': [
       'error',
       {

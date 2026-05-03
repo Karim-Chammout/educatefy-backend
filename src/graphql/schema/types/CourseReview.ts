@@ -7,10 +7,10 @@ import {
   GraphQLString,
 } from 'graphql';
 
-import { CourseRating as CourseReviewType } from '../../../types/db-generated-types';
-import { ContextType } from '../../../types/types';
-import GraphQLDate from '../Scalars/Date';
-import { PublicAccount } from './PublicAccount';
+import { CourseRating as CourseReviewType } from '../../../types/db-generated-types.js';
+import { ContextType } from '../../../types/types.js';
+import GraphQLDate from '../Scalars/Date.js';
+import { PublicAccount } from './PublicAccount.js';
 
 export const CourseReview = new GraphQLObjectType<CourseReviewType, ContextType>({
   name: 'CourseReview',

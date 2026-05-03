@@ -1,12 +1,12 @@
 import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
 
-import { CourseSectionInfoInput as CourseSectionInfoInputType } from '../../../types/schema-types';
-import { ContextType } from '../../../types/types';
-import { ErrorType } from '../../../utils/ErrorType';
-import { authenticated } from '../../utils/auth';
-import { hasTeacherRole } from '../../utils/hasTeacherRole';
-import CourseSectionInfoInput from '../inputs/CourseSectionInfo';
-import { CreateOrUpdateCourseSectionResult } from '../types/CreateOrUpdateCourseSectionResult';
+import { CourseSectionInfoInput as CourseSectionInfoInputType } from '../../../types/schema-types.js';
+import { ContextType } from '../../../types/types.js';
+import { ErrorType } from '../../../utils/ErrorType.js';
+import { authenticated } from '../../utils/auth.js';
+import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
+import CourseSectionInfoInput from '../inputs/CourseSectionInfo.js';
+import { CreateOrUpdateCourseSectionResult } from '../types/CreateOrUpdateCourseSectionResult.js';
 
 const createCourseSection: GraphQLFieldConfig<null, ContextType> = {
   type: CreateOrUpdateCourseSectionResult,

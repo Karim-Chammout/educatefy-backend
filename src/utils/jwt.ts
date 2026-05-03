@@ -1,11 +1,11 @@
 import { addDays } from 'date-fns';
 import { Request } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { Knex } from 'knex';
+import type { Knex } from 'knex';
 import * as n from 'nanoid';
 
-import config from '../config';
-import { formatDateTZ } from './formatDateWithTZ';
+import config from '../config.js';
+import { formatDateTZ } from './formatDateWithTZ.js';
 
 export class TokenInvalidError extends Error {
   constructor() {

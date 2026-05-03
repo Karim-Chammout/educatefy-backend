@@ -1,6 +1,6 @@
 import { GraphQLBoolean, GraphQLObjectType } from 'graphql';
 
-import { defaultMutationFields } from './MutationResult';
+import { defaultMutationFields } from './MutationResult.js';
 
 export const FollowTeacherResult = new GraphQLObjectType({
   name: 'FollowTeacherResult',

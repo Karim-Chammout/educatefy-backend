@@ -4,10 +4,10 @@
 // Re-run `npm run generate-loaders` to refresh this file.
 
 import DataLoader from 'dataloader';
-import { Knex } from 'knex';
+import type { Knex } from 'knex';
 
-import { AccountSubject as AccountSubjectType } from '../../../../types/db-generated-types';
-import { mapTo, mapToMany } from './map';
+import { AccountSubject as AccountSubjectType } from '../../../../types/db-generated-types.js';
+import { mapTo, mapToMany } from './map.js';
 
 export class AccountSubjectBase {
   private byIdLoader: DataLoader<number, AccountSubjectType>;

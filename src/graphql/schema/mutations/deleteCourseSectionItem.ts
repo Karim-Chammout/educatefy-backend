@@ -1,10 +1,10 @@
 import { GraphQLFieldConfig, GraphQLID, GraphQLNonNull } from 'graphql';
 
-import { ContextType } from '../../../types/types';
-import { ErrorType } from '../../../utils/ErrorType';
-import { authenticated } from '../../utils/auth';
-import { hasTeacherRole } from '../../utils/hasTeacherRole';
-import MutationResult from '../types/MutationResult';
+import { ContextType } from '../../../types/types.js';
+import { ErrorType } from '../../../utils/ErrorType.js';
+import { authenticated } from '../../utils/auth.js';
+import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
+import MutationResult from '../types/MutationResult.js';
 
 const deleteCourseSectionItem: GraphQLFieldConfig<null, ContextType> = {
   type: MutationResult,

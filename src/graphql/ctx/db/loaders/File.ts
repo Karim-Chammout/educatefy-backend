@@ -1,7 +1,7 @@
 import DataLoader from 'dataloader';
 
-import { File as FileType } from '../../../../types/db-generated-types';
-import { FileBase } from './File.generated';
+import { File as FileType } from '../../../../types/db-generated-types.js';
+import { FileBase } from './File.generated.js';
 
 export class FileReader extends FileBase {
   private byAccountIdAndFileTypeLoader: DataLoader<

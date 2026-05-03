@@ -1,10 +1,10 @@
 import { GraphQLFieldConfig } from 'graphql';
 
-import { FileType } from '../../../enum/fileType';
-import { ContextType } from '../../../types/types';
-import { ErrorType } from '../../../utils/ErrorType';
-import { authenticated } from '../../utils/auth';
-import ChangeProfilePictureResult from '../types/ChangeProfilePictureResult';
+import { FileType } from '../../../enum/fileType.js';
+import { ContextType } from '../../../types/types.js';
+import { ErrorType } from '../../../utils/ErrorType.js';
+import { authenticated } from '../../utils/auth.js';
+import ChangeProfilePictureResult from '../types/ChangeProfilePictureResult.js';
 
 const removeProfilePicture: GraphQLFieldConfig<null, ContextType> = {
   type: ChangeProfilePictureResult,

@@ -1,11 +1,11 @@
 import express from 'express';
 import { createYoga } from 'graphql-yoga';
 
-import { db } from '../db';
-import { createLoaders } from './ctx/db';
-import { createFsContext } from './ctx/fs';
-import { createUserContext } from './ctx/user';
-import Schema from './schema/Schema';
+import { db } from '../db/index.js';
+import { createLoaders } from './ctx/db/index.js';
+import { createFsContext } from './ctx/fs/index.js';
+import { createUserContext } from './ctx/user/index.js';
+import Schema from './schema/Schema.js';
 
 export const yoga = createYoga({
   schema: Schema,

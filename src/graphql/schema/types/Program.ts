@@ -8,25 +8,25 @@ import {
   GraphQLObjectType,
   GraphQLString,
 } from 'graphql';
-import GraphQLJSON from 'graphql-type-json';
+import { GraphQLJSON } from 'graphql-type-json';
 
 import {
   EnrollmentStatusType,
   Program as ProgramType,
   ProgramVersionStatusType,
-} from '../../../types/db-generated-types';
-import { ContextType } from '../../../types/types';
-import { ErrorType } from '../../../utils/ErrorType';
-import { getImageURL } from '../../../utils/getImageURL';
-import { authenticated } from '../../utils/auth';
-import GraphQLDate from '../Scalars/Date';
-import ProgramLevel from './enum/ProgramLevel';
-import ProgramStatus, { ProgramStatusEnum } from './enum/ProgramStatus';
-import { ProgramObjective } from './ProgramObjective';
-import { ProgramRequirement } from './ProgramRequirement';
-import { ProgramVersion } from './ProgramVersion';
-import { Subject } from './Subject';
-import { Teacher } from './Teacher';
+} from '../../../types/db-generated-types.js';
+import { ContextType } from '../../../types/types.js';
+import { ErrorType } from '../../../utils/ErrorType.js';
+import { getImageURL } from '../../../utils/getImageURL.js';
+import { authenticated } from '../../utils/auth.js';
+import GraphQLDate from '../Scalars/Date.js';
+import ProgramLevel from './enum/ProgramLevel.js';
+import ProgramStatus, { ProgramStatusEnum } from './enum/ProgramStatus.js';
+import { ProgramObjective } from './ProgramObjective.js';
+import { ProgramRequirement } from './ProgramRequirement.js';
+import { ProgramVersion } from './ProgramVersion.js';
+import { Subject } from './Subject.js';
+import { Teacher } from './Teacher.js';
 
 export const Program: GraphQLObjectType = new GraphQLObjectType<ProgramType, ContextType>({
   name: 'Program',

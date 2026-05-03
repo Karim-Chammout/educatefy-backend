@@ -1,17 +1,17 @@
 import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
-import { isEqual } from 'lodash';
+import * as lodash from 'lodash';
 
 import {
   CourseLevel,
   UpdateCourseInfoInput as UpdateCourseInfoInputType,
-} from '../../../types/schema-types';
-import { ContextType } from '../../../types/types';
-import { ErrorType } from '../../../utils/ErrorType';
-import { authenticated } from '../../utils/auth';
-import { getSelectedLanguageId } from '../../utils/getSelectedLanguageId';
-import { isValidSlug } from '../../utils/isValidSlug';
-import UpdateCourseInfoInput from '../inputs/UpdateCourseInfo';
-import { CreateOrUpdateCourseResult } from '../types/CreateOrUpdateCourseResult';
+} from '../../../types/schema-types.js';
+import { ContextType } from '../../../types/types.js';
+import { ErrorType } from '../../../utils/ErrorType.js';
+import { authenticated } from '../../utils/auth.js';
+import { getSelectedLanguageId } from '../../utils/getSelectedLanguageId.js';
+import { isValidSlug } from '../../utils/isValidSlug.js';
+import UpdateCourseInfoInput from '../inputs/UpdateCourseInfo.js';
+import { CreateOrUpdateCourseResult } from '../types/CreateOrUpdateCourseResult.js';
 
 const updateCourse: GraphQLFieldConfig<null, ContextType> = {
   type: CreateOrUpdateCourseResult,
@@ -142,7 +142,7 @@ const updateCourse: GraphQLFieldConfig<null, ContextType> = {
             // Only update the "course__subject" table if the subject IDs have changed
             const existingSubjects = await loaders.Subject.loadByCourseId(course.id);
             const existingSubjectIds = existingSubjects.map((subject) => String(subject.id));
-            if (!isEqual(subjectIds, existingSubjectIds)) {
+            if (!lodash.isEqual(subjectIds, existingSubjectIds)) {
               await transaction('course__subject').where('course_id', course.id).del();
 
               for (const subjectId of subjectIds) {
@@ -162,7 +162,7 @@ const updateCourse: GraphQLFieldConfig<null, ContextType> = {
             );
             const newObjectiveIds = objectives.map((objective) => objective.id);
 
-            if (!isEqual(existingObjectiveIds, newObjectiveIds)) {
+            if (!lodash.isEqual(existingObjectiveIds, newObjectiveIds)) {
               await transaction('course_objective').where('course_id', course.id).del();
 
               for (const objectiveItem of objectives) {
@@ -182,7 +182,7 @@ const updateCourse: GraphQLFieldConfig<null, ContextType> = {
             );
             const newRequirementIds = requirements.map((requirement) => requirement.id);
 
-            if (!isEqual(existingRequirementIds, newRequirementIds)) {
+            if (!lodash.isEqual(existingRequirementIds, newRequirementIds)) {
               await transaction('course_requirement').where('course_id', course.id).del();
 
               for (const requirementItem of requirements) {

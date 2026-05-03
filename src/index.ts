@@ -3,13 +3,13 @@ import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
 
-import config from './config';
-import GraphQL from './graphql';
-import { attachToken } from './middleware/attachToken';
-import { accessLog, errorLog } from './middleware/logging';
-import { renewToken } from './middleware/renewToken';
-import api from './routes';
-import { corsOptions } from './utils/corsOptions';
+import config from './config.js';
+import GraphQL from './graphql/index.js';
+import { attachToken } from './middleware/attachToken.js';
+import { accessLog, errorLog } from './middleware/logging.js';
+import { renewToken } from './middleware/renewToken.js';
+import api from './routes/index.js';
+import { corsOptions } from './utils/corsOptions.js';
 
 const app = express();
 

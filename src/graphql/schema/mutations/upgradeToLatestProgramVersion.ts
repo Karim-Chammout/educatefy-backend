@@ -1,10 +1,10 @@
 import { GraphQLFieldConfig, GraphQLID, GraphQLNonNull } from 'graphql';
 
-import { ProgramVersionStatusType } from '../../../types/db-generated-types';
-import { ContextType } from '../../../types/types';
-import { ErrorType } from '../../../utils/ErrorType';
-import { authenticated } from '../../utils/auth';
-import { UpgradeToLatestProgramVersionResult } from '../types/UpgradeToLatestProgramVersionResult';
+import { ProgramVersionStatusType } from '../../../types/db-generated-types.js';
+import { ContextType } from '../../../types/types.js';
+import { ErrorType } from '../../../utils/ErrorType.js';
+import { authenticated } from '../../utils/auth.js';
+import { UpgradeToLatestProgramVersionResult } from '../types/UpgradeToLatestProgramVersionResult.js';
 
 const upgradeToLatestProgramVersion: GraphQLFieldConfig<null, ContextType> = {
   type: UpgradeToLatestProgramVersionResult,

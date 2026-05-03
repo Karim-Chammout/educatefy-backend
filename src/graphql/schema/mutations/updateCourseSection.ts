@@ -1,11 +1,11 @@
 import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
 
-import { UpdateCourseSectionInfo as UpdateCourseSectionInfoInputType } from '../../../types/schema-types';
-import { ContextType } from '../../../types/types';
-import { ErrorType } from '../../../utils/ErrorType';
-import { authenticated } from '../../utils/auth';
-import UpdateCourseSectionInfo from '../inputs/UpdateCourseSectionInfo';
-import { CreateOrUpdateCourseSectionResult } from '../types/CreateOrUpdateCourseSectionResult';
+import { UpdateCourseSectionInfo as UpdateCourseSectionInfoInputType } from '../../../types/schema-types.js';
+import { ContextType } from '../../../types/types.js';
+import { ErrorType } from '../../../utils/ErrorType.js';
+import { authenticated } from '../../utils/auth.js';
+import UpdateCourseSectionInfo from '../inputs/UpdateCourseSectionInfo.js';
+import { CreateOrUpdateCourseSectionResult } from '../types/CreateOrUpdateCourseSectionResult.js';
 
 const updateCourseSection: GraphQLFieldConfig<null, ContextType> = {
   type: CreateOrUpdateCourseSectionResult,

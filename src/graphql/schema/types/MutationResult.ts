@@ -6,8 +6,8 @@ import {
   GraphQLObjectType,
 } from 'graphql';
 
-import { ContextType } from '../../../types/types';
-import Error from './Error';
+import { ContextType } from '../../../types/types.js';
+import Error from './Error.js';
 
 type MutationResultType =
   | {

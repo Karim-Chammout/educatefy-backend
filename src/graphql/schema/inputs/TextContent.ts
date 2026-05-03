@@ -1,5 +1,5 @@
 import { GraphQLInputObjectType, GraphQLNonNull } from 'graphql';
-import GraphQLJSON from 'graphql-type-json';
+import { GraphQLJSON } from 'graphql-type-json';
 
 const TextContentInput = new GraphQLInputObjectType({
   name: 'TextContentInput',

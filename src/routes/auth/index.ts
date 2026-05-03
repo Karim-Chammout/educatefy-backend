@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { handleCallback, redirectToProvider } from './authController';
+import { handleCallback, redirectToProvider } from './authController.js';
 
 const authRouter = express.Router();
 

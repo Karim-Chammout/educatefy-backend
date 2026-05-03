@@ -1,7 +1,7 @@
 import DataLoader from 'dataloader';
 
-import { CourseRating as CourseRatingType } from '../../../../types/db-generated-types';
-import { CourseRatingBase } from './CourseRating.generated';
+import { CourseRating as CourseRatingType } from '../../../../types/db-generated-types.js';
+import { CourseRatingBase } from './CourseRating.generated.js';
 
 export class CourseRatingReader extends CourseRatingBase {
   private byAccountIdAndCourseIdLoader: DataLoader<

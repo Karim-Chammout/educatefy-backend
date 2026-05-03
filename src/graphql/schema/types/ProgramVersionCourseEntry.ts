@@ -1,6 +1,6 @@
 import { GraphQLID, GraphQLInt, GraphQLNonNull, GraphQLObjectType } from 'graphql';
 
-import { Course } from './Course';
+import { Course } from './Course.js';
 
 export const ProgramVersionCourseEntry = new GraphQLObjectType({
   name: 'ProgramVersionCourseEntry',

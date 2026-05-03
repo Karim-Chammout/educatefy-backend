@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 
-import { verifyJWT } from '../utils/jwt';
+import { verifyJWT } from '../utils/jwt.js';
 
 export const tokenToRequest = async (token: string, req: Request) => {
   if (token) {

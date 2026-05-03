@@ -8,11 +8,11 @@ import {
   GraphQLString,
 } from 'graphql';
 
-import { Lesson as LessonType } from '../../../types/db-generated-types';
-import { ContextType } from '../../../types/types';
-import { loadComponents } from '../../utils/contentComponentLoader';
-import { hasTeacherRole } from '../../utils/hasTeacherRole';
-import { ContentComponent } from './union/ContentComponent';
+import { Lesson as LessonType } from '../../../types/db-generated-types.js';
+import { ContextType } from '../../../types/types.js';
+import { loadComponents } from '../../utils/contentComponentLoader.js';
+import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
+import { ContentComponent } from './union/ContentComponent.js';
 
 export const Lesson = new GraphQLObjectType<LessonType, ContextType>({
   name: 'Lesson',

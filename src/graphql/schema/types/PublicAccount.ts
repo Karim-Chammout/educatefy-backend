@@ -1,8 +1,8 @@
 import { GraphQLID, GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql';
 
-import { Account as AccountType } from '../../../types/db-generated-types';
-import { ContextType } from '../../../types/types';
-import { getImageURL } from '../../../utils/getImageURL';
+import { Account as AccountType } from '../../../types/db-generated-types.js';
+import { ContextType } from '../../../types/types.js';
+import { getImageURL } from '../../../utils/getImageURL.js';
 
 export const PublicAccount = new GraphQLObjectType<AccountType, ContextType>({
   name: 'PublicAccount',

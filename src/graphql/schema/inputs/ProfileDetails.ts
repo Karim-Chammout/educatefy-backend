@@ -5,10 +5,10 @@ import {
   GraphQLNonNull,
   GraphQLString,
 } from 'graphql';
-import GraphQLJSON from 'graphql-type-json';
+import { GraphQLJSON } from 'graphql-type-json';
 
-import Date from '../Scalars/Date';
-import Gender from '../types/enum/Gender';
+import Date from '../Scalars/Date.js';
+import Gender from '../types/enum/Gender.js';
 
 const ProfileDetailsInput = new GraphQLInputObjectType({
   name: 'ProfileDetailsInput',

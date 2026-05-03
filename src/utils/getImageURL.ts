@@ -1,4 +1,4 @@
-import config from '../config';
+import config from '../config.js';
 
 export const getImageURL = (key: string) => {
   const bucketName = config.S3_BUCKET_NAME;

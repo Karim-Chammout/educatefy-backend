@@ -1,12 +1,12 @@
 import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
 
-import { FileType } from '../../../enum/fileType';
-import { ProfilePictureDetailsInput as ProfilePictureDetailsInputType } from '../../../types/schema-types';
-import { ContextType } from '../../../types/types';
-import { ErrorType } from '../../../utils/ErrorType';
-import { authenticated } from '../../utils/auth';
-import ProfilePictureDetailsInput from '../inputs/ProfilePictureDetails';
-import ChangeProfilePictureResult from '../types/ChangeProfilePictureResult';
+import { FileType } from '../../../enum/fileType.js';
+import { ProfilePictureDetailsInput as ProfilePictureDetailsInputType } from '../../../types/schema-types.js';
+import { ContextType } from '../../../types/types.js';
+import { ErrorType } from '../../../utils/ErrorType.js';
+import { authenticated } from '../../utils/auth.js';
+import ProfilePictureDetailsInput from '../inputs/ProfilePictureDetails.js';
+import ChangeProfilePictureResult from '../types/ChangeProfilePictureResult.js';
 
 const changeProfilePicture: GraphQLFieldConfig<null, ContextType> = {
   type: ChangeProfilePictureResult,

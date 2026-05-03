@@ -1,9 +1,9 @@
 import { GraphQLUnionType } from 'graphql';
 
-import { ContentComponentTypeEnumType } from '../../../../types/db-generated-types';
-import { TextContent } from '../TextContent';
-import { VideoContent } from '../VideoContent';
-import { YouTubeContent } from '../YouTubeContent';
+import { ContentComponentTypeEnumType } from '../../../../types/db-generated-types.js';
+import { TextContent } from '../TextContent.js';
+import { VideoContent } from '../VideoContent.js';
+import { YouTubeContent } from '../YouTubeContent.js';
 
 export const ContentComponent = new GraphQLUnionType({
   name: 'ContentComponent',

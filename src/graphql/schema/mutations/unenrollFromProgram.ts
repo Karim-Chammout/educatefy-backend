@@ -1,9 +1,9 @@
 import { GraphQLFieldConfig, GraphQLID, GraphQLNonNull } from 'graphql';
 
-import { ContextType } from '../../../types/types';
-import { ErrorType } from '../../../utils/ErrorType';
-import { authenticated } from '../../utils/auth';
-import { UpdateProgramStatusResult } from '../types/UpdateProgramStatusResult';
+import { ContextType } from '../../../types/types.js';
+import { ErrorType } from '../../../utils/ErrorType.js';
+import { authenticated } from '../../utils/auth.js';
+import { UpdateProgramStatusResult } from '../types/UpdateProgramStatusResult.js';
 
 const unenrollFromProgram: GraphQLFieldConfig<null, ContextType> = {
   type: UpdateProgramStatusResult,

@@ -4,10 +4,10 @@
 // Re-run `npm run generate-loaders` to refresh this file.
 
 import DataLoader from 'dataloader';
-import { Knex } from 'knex';
+import type { Knex } from 'knex';
 
-import { CourseRequirement as CourseRequirementType } from '../../../../types/db-generated-types';
-import { mapTo, mapToMany } from './map';
+import { CourseRequirement as CourseRequirementType } from '../../../../types/db-generated-types.js';
+import { mapTo, mapToMany } from './map.js';
 
 export class CourseRequirementBase {
   private byIdLoader: DataLoader<number, CourseRequirementType>;

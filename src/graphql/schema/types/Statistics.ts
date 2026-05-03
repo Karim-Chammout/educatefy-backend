@@ -1,6 +1,6 @@
 import { GraphQLInt, GraphQLNonNull, GraphQLObjectType } from 'graphql';
 
-import { ContextType } from '../../../types/types';
+import { ContextType } from '../../../types/types.js';
 
 export const Statistics = new GraphQLObjectType<any, ContextType>({
   name: 'Statistics',

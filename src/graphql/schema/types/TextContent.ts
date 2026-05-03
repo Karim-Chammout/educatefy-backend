@@ -1,7 +1,7 @@
 import { GraphQLID, GraphQLNonNull, GraphQLObjectType } from 'graphql';
-import GraphQLJSON from 'graphql-type-json';
+import { GraphQLJSON } from 'graphql-type-json';
 
-import { defaultContentComponentFields } from './ContentComponent';
+import { defaultContentComponentFields } from './ContentComponent.js';
 
 export const TextContent = new GraphQLObjectType({
   name: 'TextContent',

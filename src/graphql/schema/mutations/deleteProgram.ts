@@ -1,9 +1,9 @@
 import { GraphQLFieldConfig, GraphQLID, GraphQLNonNull } from 'graphql';
 
-import { ContextType } from '../../../types/types';
-import { ErrorType } from '../../../utils/ErrorType';
-import { authenticated } from '../../utils/auth';
-import MutationResult from '../types/MutationResult';
+import { ContextType } from '../../../types/types.js';
+import { ErrorType } from '../../../utils/ErrorType.js';
+import { authenticated } from '../../utils/auth.js';
+import MutationResult from '../types/MutationResult.js';
 
 const deleteProgram: GraphQLFieldConfig<null, ContextType> = {
   type: MutationResult,

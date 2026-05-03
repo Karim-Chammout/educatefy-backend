@@ -21,14 +21,17 @@
  *   updated to import the new custom file instead of the generated base.
  */
 
-import path from 'path';
-import fs from 'fs/promises';
 import { execSync } from 'child_process';
+import fs from 'fs/promises';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import path from 'path';
 
 // ---------------------------------------------------------------------------
 // Paths
 // ---------------------------------------------------------------------------
-
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 const LOADERS_DIR = path.join(__dirname, '..', 'graphql', 'ctx', 'db', 'loaders');
 
 // ---------------------------------------------------------------------------
@@ -54,8 +57,8 @@ function toPascalCase(tableName: string): string {
 function buildStarterTemplate(className: string): string {
   return `import DataLoader from 'dataloader';
 
-import { ${className} as ${className}Type } from '../../../../types/db-generated-types';
-import { ${className}Base } from './${className}.generated';
+import { ${className} as ${className}Type } from '../../../../types/db-generated-types.js';
+import { ${className}Base } from './${className}.generated.js';
 
 export class ${className}Reader extends ${className}Base {
   // Example of a custom loader that joins across a linking table to fetch related records.

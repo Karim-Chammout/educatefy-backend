@@ -1,7 +1,7 @@
 import DataLoader from 'dataloader';
 
-import { ContentComponentProgress as ContentComponentProgressType } from '../../../../types/db-generated-types';
-import { ContentComponentProgressBase } from './ContentComponentProgress.generated';
+import { ContentComponentProgress as ContentComponentProgressType } from '../../../../types/db-generated-types.js';
+import { ContentComponentProgressBase } from './ContentComponentProgress.generated.js';
 
 export class ContentComponentProgressReader extends ContentComponentProgressBase {
   private byAccountIdAndComponentIdLoader: DataLoader<

@@ -6,7 +6,7 @@ import {
   GraphQLString,
 } from 'graphql';
 
-import { ComponentParentType, ComponentType } from '../types/enum/ContentComponent';
+import { ComponentParentType, ComponentType } from '../types/enum/ContentComponent.js';
 
 const ContentComponentBaseInput = new GraphQLInputObjectType({
   name: 'ContentComponentBaseInput',

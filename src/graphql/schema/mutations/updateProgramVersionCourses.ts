@@ -1,12 +1,15 @@
 import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
 
-import { Course as CourseType, ProgramVersionStatusType } from '../../../types/db-generated-types';
-import { UpdateProgramVersionCoursesInput as UpdateProgramVersionCoursesInputType } from '../../../types/schema-types';
-import { ContextType } from '../../../types/types';
-import { ErrorType } from '../../../utils/ErrorType';
-import { authenticated } from '../../utils/auth';
-import UpdateProgramVersionCoursesInput from '../inputs/UpdateProgramVersionCourses';
-import { UpdateProgramVersionCoursesResult } from '../types/UpdateProgramVersionCoursesResult';
+import {
+  Course as CourseType,
+  ProgramVersionStatusType,
+} from '../../../types/db-generated-types.js';
+import { UpdateProgramVersionCoursesInput as UpdateProgramVersionCoursesInputType } from '../../../types/schema-types.js';
+import { ContextType } from '../../../types/types.js';
+import { ErrorType } from '../../../utils/ErrorType.js';
+import { authenticated } from '../../utils/auth.js';
+import UpdateProgramVersionCoursesInput from '../inputs/UpdateProgramVersionCourses.js';
+import { UpdateProgramVersionCoursesResult } from '../types/UpdateProgramVersionCoursesResult.js';
 
 const updateProgramVersionCourses: GraphQLFieldConfig<null, ContextType> = {
   type: UpdateProgramVersionCoursesResult,

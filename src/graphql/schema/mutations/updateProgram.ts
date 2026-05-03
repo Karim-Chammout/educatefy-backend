@@ -1,16 +1,16 @@
 import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
-import { isEqual } from 'lodash';
+import * as lodash from 'lodash';
 
 import {
   ProgramLevel,
   UpdateProgramInfoInput as UpdateProgramInfoInputType,
-} from '../../../types/schema-types';
-import { ContextType } from '../../../types/types';
-import { ErrorType } from '../../../utils/ErrorType';
-import { authenticated } from '../../utils/auth';
-import { isValidSlug } from '../../utils/isValidSlug';
-import UpdateProgramInfoInput from '../inputs/UpdateProgramInfo';
-import { CreateOrUpdateProgramResult } from '../types/CreateOrUpdateProgramResult';
+} from '../../../types/schema-types.js';
+import { ContextType } from '../../../types/types.js';
+import { ErrorType } from '../../../utils/ErrorType.js';
+import { authenticated } from '../../utils/auth.js';
+import { isValidSlug } from '../../utils/isValidSlug.js';
+import UpdateProgramInfoInput from '../inputs/UpdateProgramInfo.js';
+import { CreateOrUpdateProgramResult } from '../types/CreateOrUpdateProgramResult.js';
 
 const updateProgram: GraphQLFieldConfig<null, ContextType> = {
   type: CreateOrUpdateProgramResult,
@@ -127,7 +127,7 @@ const updateProgram: GraphQLFieldConfig<null, ContextType> = {
             // Only update the "program__subject" table if the subject IDs have changed
             const existingSubjects = await loaders.Subject.loadByProgramId(program.id);
             const existingSubjectIds = existingSubjects.map((subject) => String(subject.id));
-            if (!isEqual(subjectIds, existingSubjectIds)) {
+            if (!lodash.isEqual(subjectIds, existingSubjectIds)) {
               await transaction('program__subject').where('program_id', program.id).del();
               for (const subjectId of subjectIds) {
                 await transaction('program__subject').insert({
@@ -146,7 +146,7 @@ const updateProgram: GraphQLFieldConfig<null, ContextType> = {
             );
             const newObjectiveIds = objectives.map((objective) => objective.id);
 
-            if (!isEqual(existingObjectiveIds, newObjectiveIds)) {
+            if (!lodash.isEqual(existingObjectiveIds, newObjectiveIds)) {
               await transaction('program_objective').where('program_id', program.id).del();
 
               for (const objectiveItem of objectives) {
@@ -168,7 +168,7 @@ const updateProgram: GraphQLFieldConfig<null, ContextType> = {
             );
             const newRequirementIds = requirements.map((requirement) => requirement.id);
 
-            if (!isEqual(existingRequirementIds, newRequirementIds)) {
+            if (!lodash.isEqual(existingRequirementIds, newRequirementIds)) {
               await transaction('program_requirement').where('program_id', program.id).del();
 
               for (const requirementItem of requirements) {

@@ -1,4 +1,4 @@
-import { deleteFile, getFile, getFileUrl, uploadFile } from '../../../utils/fileStorageHandler';
+import { deleteFile, getFile, getFileUrl, uploadFile } from '../../../utils/fileStorageHandler.js';
 
 export type FsContext = {
   getFile: typeof getFile;

@@ -1,13 +1,13 @@
 import { GraphQLID, GraphQLInt, GraphQLList, GraphQLNonNull, GraphQLObjectType } from 'graphql';
 
-import { ProgramVersion as ProgramVersionType } from '../../../types/db-generated-types';
-import { ContextType } from '../../../types/types';
-import { filterError } from '../../utils/filterError';
-import { filterPublishedContent } from '../../utils/filterPublishedContent';
-import GraphQLDate from '../Scalars/Date';
-import { Course } from './Course';
-import ProgramVersionStatus from './enum/ProgramVersionStatus';
-import { ProgramVersionCourseEntry } from './ProgramVersionCourseEntry';
+import { ProgramVersion as ProgramVersionType } from '../../../types/db-generated-types.js';
+import { ContextType } from '../../../types/types.js';
+import { filterError } from '../../utils/filterError.js';
+import { filterPublishedContent } from '../../utils/filterPublishedContent.js';
+import GraphQLDate from '../Scalars/Date.js';
+import { Course } from './Course.js';
+import ProgramVersionStatus from './enum/ProgramVersionStatus.js';
+import { ProgramVersionCourseEntry } from './ProgramVersionCourseEntry.js';
 
 export const ProgramVersion: GraphQLObjectType = new GraphQLObjectType<
   ProgramVersionType,

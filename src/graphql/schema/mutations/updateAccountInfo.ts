@@ -1,13 +1,13 @@
 import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
 
-import { AccountInfoInput as AccountInfoType, Gender } from '../../../types/schema-types';
-import { ContextType } from '../../../types/types';
-import { ErrorType } from '../../../utils/ErrorType';
-import { authenticated } from '../../utils/auth';
-import { getSelectedLanguageId } from '../../utils/getSelectedLanguageId';
-import AccountInfoInput from '../inputs/AccountInfo';
-import MutationResult from '../types/MutationResult';
-import { AccountRoleEnum } from '../types/enum/AccountRole';
+import { AccountInfoInput as AccountInfoType, Gender } from '../../../types/schema-types.js';
+import { ContextType } from '../../../types/types.js';
+import { ErrorType } from '../../../utils/ErrorType.js';
+import { authenticated } from '../../utils/auth.js';
+import { getSelectedLanguageId } from '../../utils/getSelectedLanguageId.js';
+import AccountInfoInput from '../inputs/AccountInfo.js';
+import MutationResult from '../types/MutationResult.js';
+import { AccountRoleEnum } from '../types/enum/AccountRole.js';
 
 const updateAccountInfo: GraphQLFieldConfig<null, ContextType> = {
   type: MutationResult,

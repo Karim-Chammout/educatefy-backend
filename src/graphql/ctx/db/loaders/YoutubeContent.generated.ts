@@ -4,10 +4,10 @@
 // Re-run `npm run generate-loaders` to refresh this file.
 
 import DataLoader from 'dataloader';
-import { Knex } from 'knex';
+import type { Knex } from 'knex';
 
-import { YoutubeContent as YoutubeContentType } from '../../../../types/db-generated-types';
-import { mapTo, mapToMany } from './map';
+import { YoutubeContent as YoutubeContentType } from '../../../../types/db-generated-types.js';
+import { mapTo, mapToMany } from './map.js';
 
 export class YoutubeContentBase {
   private byIdLoader: DataLoader<number, YoutubeContentType>;

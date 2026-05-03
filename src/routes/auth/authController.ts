@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
 import * as client from 'openid-client';
 
-import { db } from '../../db';
-import { ErrorType } from '../../utils/ErrorType';
-import { generateAccessToken, generateRefreshToken } from '../../utils/jwt';
-import createOrUpdateAccount from './createOrUpdateAccount';
-import { getOidcConfig, providers } from './oidc';
+import { db } from '../../db/index.js';
+import { ErrorType } from '../../utils/ErrorType.js';
+import { generateAccessToken, generateRefreshToken } from '../../utils/jwt.js';
+import createOrUpdateAccount from './createOrUpdateAccount.js';
+import { getOidcConfig, providers } from './oidc.js';
 
 export const redirectToProvider = async (req: Request, res: Response) => {
   try {

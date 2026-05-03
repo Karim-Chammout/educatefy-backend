@@ -792,7 +792,7 @@ type Mutation {
     """The ID of the content component to delete."""
     componentId: ID!
 
-    """The ID of the content component to delete."""
+    """The type of the content component to delete."""
     componentType: ComponentType!
   ): MutationResult
 

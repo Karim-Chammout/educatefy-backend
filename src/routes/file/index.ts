@@ -1,8 +1,8 @@
 import express from 'express';
 import multer from 'multer';
 
-import { authenticated } from '../../middleware/authenticated';
-import { fileUploadHandler } from './fileUploadController';
+import { authenticated } from '../../middleware/authenticated.js';
+import { fileUploadHandler } from './fileUploadController.js';
 
 const fileRouter = express.Router();
 

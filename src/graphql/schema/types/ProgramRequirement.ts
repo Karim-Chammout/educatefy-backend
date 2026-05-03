@@ -1,7 +1,7 @@
 import { GraphQLID, GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql';
 
-import { ProgramRequirement as ProgramRequirementType } from '../../../types/db-generated-types';
-import { ContextType } from '../../../types/types';
+import { ProgramRequirement as ProgramRequirementType } from '../../../types/db-generated-types.js';
+import { ContextType } from '../../../types/types.js';
 
 export const ProgramRequirement = new GraphQLObjectType<ProgramRequirementType, ContextType>({
   name: 'ProgramRequirement',

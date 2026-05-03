@@ -1,9 +1,9 @@
 import { GraphQLObjectType } from 'graphql';
 
-import { CourseSection as CourseSectionType } from '../../../types/db-generated-types';
-import { authenticated } from '../../utils/auth';
-import { CourseSection } from './CourseSection';
-import { defaultMutationFields } from './MutationResult';
+import { CourseSection as CourseSectionType } from '../../../types/db-generated-types.js';
+import { authenticated } from '../../utils/auth.js';
+import { CourseSection } from './CourseSection.js';
+import { defaultMutationFields } from './MutationResult.js';
 
 type MutationResultType =
   | {

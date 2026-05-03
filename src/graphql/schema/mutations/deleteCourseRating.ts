@@ -1,11 +1,11 @@
 import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
 
-import { DeleteCourseRatingInput as DeleteCourseRatingType } from '../../../types/schema-types';
-import { ContextType } from '../../../types/types';
-import { ErrorType } from '../../../utils/ErrorType';
-import { authenticated } from '../../utils/auth';
-import DeleteCourseRatingInput from '../inputs/DeleteCourseRating';
-import MutationResult from '../types/MutationResult';
+import { DeleteCourseRatingInput as DeleteCourseRatingType } from '../../../types/schema-types.js';
+import { ContextType } from '../../../types/types.js';
+import { ErrorType } from '../../../utils/ErrorType.js';
+import { authenticated } from '../../utils/auth.js';
+import DeleteCourseRatingInput from '../inputs/DeleteCourseRating.js';
+import MutationResult from '../types/MutationResult.js';
 
 const deleteCourseRating: GraphQLFieldConfig<null, ContextType> = {
   type: MutationResult,
