@@ -1,12 +1,12 @@
 import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
 
-import { FollowTeacherInput as FollowTeacherInputType } from '../../../types/schema-types';
-import { ContextType } from '../../../types/types';
-import { ErrorType } from '../../../utils/ErrorType';
-import { authenticated } from '../../utils/auth';
-import { hasTeacherRole } from '../../utils/hasTeacherRole';
-import FollowTeacherInput from '../inputs/FollowTeacherInput';
-import { FollowTeacherResult } from '../types/FollowTeacherResult';
+import { FollowTeacherInput as FollowTeacherInputType } from '../../../types/schema-types.js';
+import { ContextType } from '../../../types/types.js';
+import { ErrorType } from '../../../utils/ErrorType.js';
+import { authenticated } from '../../utils/auth.js';
+import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
+import FollowTeacherInput from '../inputs/FollowTeacherInput.js';
+import { FollowTeacherResult } from '../types/FollowTeacherResult.js';
 
 const followTeacher: GraphQLFieldConfig<null, ContextType> = {
   type: FollowTeacherResult,

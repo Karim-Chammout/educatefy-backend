@@ -1,14 +1,17 @@
 import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
 
-import { CourseInfoInput as CourseInfoInputType, CourseLevel } from '../../../types/schema-types';
-import { ContextType } from '../../../types/types';
-import { ErrorType } from '../../../utils/ErrorType';
-import { authenticated } from '../../utils/auth';
-import { getSelectedLanguageId } from '../../utils/getSelectedLanguageId';
-import { hasTeacherRole } from '../../utils/hasTeacherRole';
-import { isValidSlug } from '../../utils/isValidSlug';
-import CourseInfoInput from '../inputs/CourseInfo';
-import { CreateOrUpdateCourseResult } from '../types/CreateOrUpdateCourseResult';
+import {
+  CourseInfoInput as CourseInfoInputType,
+  CourseLevel,
+} from '../../../types/schema-types.js';
+import { ContextType } from '../../../types/types.js';
+import { ErrorType } from '../../../utils/ErrorType.js';
+import { authenticated } from '../../utils/auth.js';
+import { getSelectedLanguageId } from '../../utils/getSelectedLanguageId.js';
+import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
+import { isValidSlug } from '../../utils/isValidSlug.js';
+import CourseInfoInput from '../inputs/CourseInfo.js';
+import { CreateOrUpdateCourseResult } from '../types/CreateOrUpdateCourseResult.js';
 
 const createCourse: GraphQLFieldConfig<null, ContextType> = {
   type: CreateOrUpdateCourseResult,

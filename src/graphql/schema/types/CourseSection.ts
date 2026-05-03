@@ -11,10 +11,10 @@ import {
 import {
   CourseSectionItemContentTypeEnumType,
   CourseSection as CourseSectionType,
-} from '../../../types/db-generated-types';
-import { ContextType } from '../../../types/types';
-import { hasTeacherRole } from '../../utils/hasTeacherRole';
-import { CourseSectionItem } from './union/CourseSectionItem';
+} from '../../../types/db-generated-types.js';
+import { ContextType } from '../../../types/types.js';
+import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
+import { CourseSectionItem } from './union/CourseSectionItem.js';
 
 export const CourseSection = new GraphQLObjectType<CourseSectionType, ContextType>({
   name: 'CourseSection',

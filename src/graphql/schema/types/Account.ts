@@ -1,17 +1,20 @@
 import { GraphQLID, GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql';
-import GraphQLJSON from 'graphql-type-json';
+import { GraphQLJSON } from 'graphql-type-json';
 
-import { Account as AccountType, Country as CountryType } from '../../../types/db-generated-types';
-import { CourseStatus } from '../../../types/schema-types';
-import { ContextType } from '../../../types/types';
-import { getImageURL } from '../../../utils/getImageURL';
-import { authenticated } from '../../utils/auth';
-import GraphQLDate from '../Scalars/Date';
-import { Country } from './Country';
-import AccountRole from './enum/AccountRole';
-import Gender from './enum/Gender';
-import { Statistics } from './Statistics';
-import { Subject } from './Subject';
+import {
+  Account as AccountType,
+  Country as CountryType,
+} from '../../../types/db-generated-types.js';
+import { CourseStatus } from '../../../types/schema-types.js';
+import { ContextType } from '../../../types/types.js';
+import { getImageURL } from '../../../utils/getImageURL.js';
+import { authenticated } from '../../utils/auth.js';
+import GraphQLDate from '../Scalars/Date.js';
+import { Country } from './Country.js';
+import AccountRole from './enum/AccountRole.js';
+import Gender from './enum/Gender.js';
+import { Statistics } from './Statistics.js';
+import { Subject } from './Subject.js';
 
 export const Account = new GraphQLObjectType<AccountType, ContextType>({
   name: 'Account',

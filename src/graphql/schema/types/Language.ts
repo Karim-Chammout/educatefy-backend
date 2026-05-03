@@ -1,6 +1,6 @@
 import { GraphQLID, GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql';
 
-import { ContextType } from '../../../types/types';
+import { ContextType } from '../../../types/types.js';
 
 export const Language = new GraphQLObjectType<any, ContextType>({
   name: 'Language',

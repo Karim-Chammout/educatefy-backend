@@ -1,17 +1,17 @@
 import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
 
-import { ProgramVersionStatusType } from '../../../types/db-generated-types';
+import { ProgramVersionStatusType } from '../../../types/db-generated-types.js';
 import {
   ProgramInfoInput as ProgramInfoInputType,
   ProgramLevel,
-} from '../../../types/schema-types';
-import { ContextType } from '../../../types/types';
-import { ErrorType } from '../../../utils/ErrorType';
-import { authenticated } from '../../utils/auth';
-import { hasTeacherRole } from '../../utils/hasTeacherRole';
-import { isValidSlug } from '../../utils/isValidSlug';
-import ProgramInfoInput from '../inputs/ProgramInfo';
-import { CreateOrUpdateProgramResult } from '../types/CreateOrUpdateProgramResult';
+} from '../../../types/schema-types.js';
+import { ContextType } from '../../../types/types.js';
+import { ErrorType } from '../../../utils/ErrorType.js';
+import { authenticated } from '../../utils/auth.js';
+import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
+import { isValidSlug } from '../../utils/isValidSlug.js';
+import ProgramInfoInput from '../inputs/ProgramInfo.js';
+import { CreateOrUpdateProgramResult } from '../types/CreateOrUpdateProgramResult.js';
 
 const createProgram: GraphQLFieldConfig<null, ContextType> = {
   type: CreateOrUpdateProgramResult,

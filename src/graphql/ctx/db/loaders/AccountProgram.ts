@@ -1,7 +1,7 @@
 import DataLoader from 'dataloader';
 
-import { AccountProgram as AccountProgramType } from '../../../../types/db-generated-types';
-import { AccountProgramBase } from './AccountProgram.generated';
+import { AccountProgram as AccountProgramType } from '../../../../types/db-generated-types.js';
+import { AccountProgramBase } from './AccountProgram.generated.js';
 
 export class AccountProgramReader extends AccountProgramBase {
   private byAccountIdAndProgramIdLoader: DataLoader<

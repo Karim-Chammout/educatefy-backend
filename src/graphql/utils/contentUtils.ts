@@ -1,7 +1,7 @@
 import { Knex } from 'knex';
 
-import { Program, ProgramVersionStatusType } from '../../types/db-generated-types';
-import { ContextType } from '../../types/types';
+import { Program, ProgramVersionStatusType } from '../../types/db-generated-types.js';
+import { ContextType } from '../../types/types.js';
 
 export const attachProgramToEnrollment = async (
   transaction: Knex.Transaction,

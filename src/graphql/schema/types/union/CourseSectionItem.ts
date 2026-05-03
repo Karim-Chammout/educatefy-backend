@@ -1,7 +1,7 @@
 import { GraphQLUnionType } from 'graphql';
 
-import { CourseSectionItemContentTypeEnumType } from '../../../../types/db-generated-types';
-import { Lesson } from '../Lesson';
+import { CourseSectionItemContentTypeEnumType } from '../../../../types/db-generated-types.js';
+import { Lesson } from '../Lesson.js';
 
 export const CourseSectionItem = new GraphQLUnionType({
   name: 'CourseSectionItem',

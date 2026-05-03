@@ -1,11 +1,11 @@
 import { GraphQLID, GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql';
 
-import { Subject as SubjectType } from '../../../types/db-generated-types';
-import { ContextType } from '../../../types/types';
-import { filterProgramsWithValidVersions } from '../../utils/contentUtils';
-import { filterPublishedContent } from '../../utils/filterPublishedContent';
-import { Course } from './Course';
-import { Program } from './Program';
+import { Subject as SubjectType } from '../../../types/db-generated-types.js';
+import { ContextType } from '../../../types/types.js';
+import { filterProgramsWithValidVersions } from '../../utils/contentUtils.js';
+import { filterPublishedContent } from '../../utils/filterPublishedContent.js';
+import { Course } from './Course.js';
+import { Program } from './Program.js';
 
 export const Subject = new GraphQLObjectType<SubjectType, ContextType>({
   name: 'Subject',

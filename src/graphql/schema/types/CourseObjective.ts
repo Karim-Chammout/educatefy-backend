@@ -1,7 +1,7 @@
 import { GraphQLID, GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql';
 
-import { CourseObjective as CourseObjectiveType } from '../../../types/db-generated-types';
-import { ContextType } from '../../../types/types';
+import { CourseObjective as CourseObjectiveType } from '../../../types/db-generated-types.js';
+import { ContextType } from '../../../types/types.js';
 
 export const CourseObjective = new GraphQLObjectType<CourseObjectiveType, ContextType>({
   name: 'CourseObjective',

@@ -1,7 +1,7 @@
 import express from 'express';
 
-import authRouter from './auth';
-import fileRouter from './file';
+import authRouter from './auth/index.js';
+import fileRouter from './file/index.js';
 
 const api = express.Router();
 

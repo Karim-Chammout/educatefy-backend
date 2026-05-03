@@ -7,15 +7,15 @@ import {
   GraphQLObjectType,
   GraphQLString,
 } from 'graphql';
-import GraphQLJSON from 'graphql-type-json';
+import { GraphQLJSON } from 'graphql-type-json';
 
-import { Account as AccountType } from '../../../types/db-generated-types';
-import { ContextType } from '../../../types/types';
-import { getImageURL } from '../../../utils/getImageURL';
-import { filterProgramsWithValidVersions } from '../../utils/contentUtils';
-import { filterPublishedContent } from '../../utils/filterPublishedContent';
-import { Course } from './Course';
-import { Program } from './Program';
+import { Account as AccountType } from '../../../types/db-generated-types.js';
+import { ContextType } from '../../../types/types.js';
+import { getImageURL } from '../../../utils/getImageURL.js';
+import { filterProgramsWithValidVersions } from '../../utils/contentUtils.js';
+import { filterPublishedContent } from '../../utils/filterPublishedContent.js';
+import { Course } from './Course.js';
+import { Program } from './Program.js';
 
 export const Teacher = new GraphQLObjectType<AccountType, ContextType>({
   name: 'Teacher',

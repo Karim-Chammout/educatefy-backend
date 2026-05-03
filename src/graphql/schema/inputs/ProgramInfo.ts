@@ -6,9 +6,9 @@ import {
   GraphQLNonNull,
   GraphQLString,
 } from 'graphql';
-import GraphQLJSON from 'graphql-type-json';
+import { GraphQLJSON } from 'graphql-type-json';
 
-import ProgramLevel from '../types/enum/ProgramLevel';
+import ProgramLevel from '../types/enum/ProgramLevel.js';
 
 const ProgramInfoInput = new GraphQLInputObjectType({
   name: 'ProgramInfoInput',

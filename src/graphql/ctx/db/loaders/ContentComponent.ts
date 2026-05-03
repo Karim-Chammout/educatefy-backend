@@ -1,7 +1,7 @@
 import DataLoader from 'dataloader';
 
-import { ContentComponent as ContentComponentType } from '../../../../types/db-generated-types';
-import { ContentComponentBase } from './ContentComponent.generated';
+import { ContentComponent as ContentComponentType } from '../../../../types/db-generated-types.js';
+import { ContentComponentBase } from './ContentComponent.generated.js';
 
 type ParentType = 'lesson' | 'course';
 

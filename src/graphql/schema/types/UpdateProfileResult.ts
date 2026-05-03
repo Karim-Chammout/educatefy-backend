@@ -1,9 +1,9 @@
 import { GraphQLObjectType } from 'graphql';
 
-import { Account as AccountType } from '../../../types/db-generated-types';
-import { authenticated } from '../../utils/auth';
-import { Account } from './Account';
-import { defaultMutationFields } from './MutationResult';
+import { Account as AccountType } from '../../../types/db-generated-types.js';
+import { authenticated } from '../../utils/auth.js';
+import { Account } from './Account.js';
+import { defaultMutationFields } from './MutationResult.js';
 
 type MutationResultType =
   | {

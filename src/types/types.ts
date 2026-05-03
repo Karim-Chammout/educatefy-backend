@@ -1,8 +1,8 @@
 import { JwtPayload } from 'jsonwebtoken';
-import { Knex } from 'knex';
+import type { Knex } from 'knex';
 
-import { ReadersType } from '../graphql/ctx/db';
-import { FsContext } from '../graphql/ctx/fs';
+import { ReadersType } from '../graphql/ctx/db/index.js';
+import { FsContext } from '../graphql/ctx/fs/index.js';
 
 declare global {
   namespace Express {

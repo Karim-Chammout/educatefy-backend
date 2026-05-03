@@ -1,5 +1,5 @@
-import { ContentComponent, ContentComponentTypeEnumType } from '../../types/db-generated-types';
-import { ContextType } from '../../types/types';
+import { ContentComponent, ContentComponentTypeEnumType } from '../../types/db-generated-types.js';
+import { ContextType } from '../../types/types.js';
 
 const componentLoaders = {
   [ContentComponentTypeEnumType.Text]: (loaders: ContextType['loaders'], id: number) =>

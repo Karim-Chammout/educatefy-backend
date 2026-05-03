@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-import { db } from '../../db';
-import { ErrorType } from '../../utils/ErrorType';
-import { uploadFile } from '../../utils/fileStorageHandler';
+import { db } from '../../db/index.js';
+import { ErrorType } from '../../utils/ErrorType.js';
+import { uploadFile } from '../../utils/fileStorageHandler.js';
 
 type AccountInfo = {
   sub: string;
@@ -18,6 +18,11 @@ const uploadPhoto = async (googlePhotoUrl: string, userId: string) => {
   try {
     const response = await axios.get(googlePhotoUrl, { responseType: 'arraybuffer' });
     const contentType = response.headers['content-type'];
+
+    if (!contentType || typeof contentType !== 'string') {
+      throw new Error(ErrorType.INVALID_URL);
+    }
+
     const extension = contentType.split('/')[1];
 
     if (!contentType.startsWith('image/')) {
@@ -35,6 +40,7 @@ const uploadPhoto = async (googlePhotoUrl: string, userId: string) => {
     return uploadedFile.path;
   } catch (error) {
     console.error('Error uploading photo: ', error);
+    return null;
   }
 };
 

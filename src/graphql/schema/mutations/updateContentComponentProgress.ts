@@ -1,11 +1,11 @@
 import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
 
-import { UpdateContentComponentProgressInput as UpdateContentComponentProgressInputType } from '../../../types/schema-types';
-import { ContextType } from '../../../types/types';
-import { ErrorType } from '../../../utils/ErrorType';
-import { authenticated } from '../../utils/auth';
-import { UpdateContentComponentProgressInput } from '../inputs/UpdateContentComponentProgress';
-import { ContentComponentProgressResult } from '../types/ContentComponentProgressResult';
+import { UpdateContentComponentProgressInput as UpdateContentComponentProgressInputType } from '../../../types/schema-types.js';
+import { ContextType } from '../../../types/types.js';
+import { ErrorType } from '../../../utils/ErrorType.js';
+import { authenticated } from '../../utils/auth.js';
+import { UpdateContentComponentProgressInput } from '../inputs/UpdateContentComponentProgress.js';
+import { ContentComponentProgressResult } from '../types/ContentComponentProgressResult.js';
 
 const updateContentComponentProgress: GraphQLFieldConfig<null, ContextType> = {
   type: ContentComponentProgressResult,

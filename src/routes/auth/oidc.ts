@@ -1,7 +1,7 @@
 import * as client from 'openid-client';
 
-import config from '../../config';
-import { ErrorType } from '../../utils/ErrorType';
+import config from '../../config.js';
+import { ErrorType } from '../../utils/ErrorType.js';
 
 type ProviderConfigType = {
   issuer: string;

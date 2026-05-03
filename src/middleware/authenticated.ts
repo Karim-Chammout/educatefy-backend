@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 
-import { ErrorType } from '../utils/ErrorType';
+import { ErrorType } from '../utils/ErrorType.js';
 
 export const authenticated = (req: Request, res: Response, next: NextFunction) => {
   const { token } = req;

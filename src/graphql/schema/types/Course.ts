@@ -8,21 +8,21 @@ import {
   GraphQLObjectType,
   GraphQLString,
 } from 'graphql';
-import GraphQLJSON from 'graphql-type-json';
+import { GraphQLJSON } from 'graphql-type-json';
 
-import { Course as CourseType, EnrollmentStatusType } from '../../../types/db-generated-types';
-import { ContextType } from '../../../types/types';
-import { getImageURL } from '../../../utils/getImageURL';
-import { hasTeacherRole } from '../../utils/hasTeacherRole';
-import GraphQLDate from '../Scalars/Date';
-import { CourseObjective } from './CourseObjective';
-import { CourseRequirement } from './CourseRequirement';
-import { CourseReview } from './CourseReview';
-import { CourseSection } from './CourseSection';
-import CourseLevel from './enum/CourseLevel';
-import CourseStatus from './enum/CourseStatus';
-import { Subject } from './Subject';
-import { Teacher } from './Teacher';
+import { Course as CourseType, EnrollmentStatusType } from '../../../types/db-generated-types.js';
+import { ContextType } from '../../../types/types.js';
+import { getImageURL } from '../../../utils/getImageURL.js';
+import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
+import GraphQLDate from '../Scalars/Date.js';
+import { CourseObjective } from './CourseObjective.js';
+import { CourseRequirement } from './CourseRequirement.js';
+import { CourseReview } from './CourseReview.js';
+import { CourseSection } from './CourseSection.js';
+import CourseLevel from './enum/CourseLevel.js';
+import CourseStatus from './enum/CourseStatus.js';
+import { Subject } from './Subject.js';
+import { Teacher } from './Teacher.js';
 
 export const Course: GraphQLObjectType = new GraphQLObjectType<CourseType, ContextType>({
   name: 'Course',

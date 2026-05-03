@@ -5,16 +5,16 @@ import {
   TextContentInput as TextContentInputType,
   VideoContentInput as VideoContentInputType,
   YouTubeContentInput as YouTubeContentInputType,
-} from '../../../types/schema-types';
-import { ContextType } from '../../../types/types';
-import { ErrorType } from '../../../utils/ErrorType';
-import { authenticated } from '../../utils/auth';
-import { hasTeacherRole } from '../../utils/hasTeacherRole';
-import ContentComponentBaseInput from '../inputs/ContentComponentBase';
-import TextContentInput from '../inputs/TextContent';
-import VideoContentInput from '../inputs/VideoContent';
-import YouTubeContentInput from '../inputs/YouTubeContent';
-import { CreateOrUpdateContentComponent } from '../types/CreateOrUpdateContentComponent';
+} from '../../../types/schema-types.js';
+import { ContextType } from '../../../types/types.js';
+import { ErrorType } from '../../../utils/ErrorType.js';
+import { authenticated } from '../../utils/auth.js';
+import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
+import ContentComponentBaseInput from '../inputs/ContentComponentBase.js';
+import TextContentInput from '../inputs/TextContent.js';
+import VideoContentInput from '../inputs/VideoContent.js';
+import YouTubeContentInput from '../inputs/YouTubeContent.js';
+import { CreateOrUpdateContentComponent } from '../types/CreateOrUpdateContentComponent.js';
 
 export const createContentComponent: GraphQLFieldConfig<null, ContextType> = {
   type: CreateOrUpdateContentComponent,

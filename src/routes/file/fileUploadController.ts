@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 
-import { ErrorType } from '../../utils/ErrorType';
-import { uploadFile } from '../../utils/fileStorageHandler';
-import { sanitizeFileName } from '../../utils/sanitizeFileName';
+import { ErrorType } from '../../utils/ErrorType.js';
+import { uploadFile } from '../../utils/fileStorageHandler.js';
+import { sanitizeFileName } from '../../utils/sanitizeFileName.js';
 
 export const fileUploadHandler = async (req: Request, res: Response) => {
   if (!req.file) {

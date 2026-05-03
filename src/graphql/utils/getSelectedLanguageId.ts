@@ -1,4 +1,4 @@
-import { ContextType } from '../../types/types';
+import { ContextType } from '../../types/types.js';
 
 export const getSelectedLanguageId = async (
   loaders: ContextType['loaders'],

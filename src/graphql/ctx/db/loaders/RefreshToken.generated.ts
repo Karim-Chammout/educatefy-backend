@@ -4,10 +4,10 @@
 // Re-run `npm run generate-loaders` to refresh this file.
 
 import DataLoader from 'dataloader';
-import { Knex } from 'knex';
+import type { Knex } from 'knex';
 
-import { RefreshToken as RefreshTokenType } from '../../../../types/db-generated-types';
-import { mapTo, mapToMany } from './map';
+import { RefreshToken as RefreshTokenType } from '../../../../types/db-generated-types.js';
+import { mapTo, mapToMany } from './map.js';
 
 export class RefreshTokenBase {
   private byIdLoader: DataLoader<number, RefreshTokenType>;

@@ -2,11 +2,11 @@ import { isPast } from 'date-fns';
 import { NextFunction, Request, Response } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
-import config from '../config';
-import { db } from '../db';
-import { formatDateTZ } from '../utils/formatDateWithTZ';
-import { verifyJWT } from '../utils/jwt';
-import { tokenToRequest } from './attachToken';
+import config from '../config.js';
+import { db } from '../db/index.js';
+import { formatDateTZ } from '../utils/formatDateWithTZ.js';
+import { verifyJWT } from '../utils/jwt.js';
+import { tokenToRequest } from './attachToken.js';
 
 export const generateAndSetNewToken = async (payload: JwtPayload, req: Request, res: Response) => {
   const now = Math.floor(Date.now() / 1000);

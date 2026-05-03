@@ -1,9 +1,9 @@
 import { GraphQLObjectType } from 'graphql';
 
-import { defaultMutationFields } from './MutationResult';
-import { ContentComponentProgress } from './ContentComponentProgress';
-import { authenticated } from '../../utils/auth';
-import { ContentComponentProgress as ContentComponentProgressType } from '../../../types/db-generated-types';
+import { defaultMutationFields } from './MutationResult.js';
+import { ContentComponentProgress } from './ContentComponentProgress.js';
+import { authenticated } from '../../utils/auth.js';
+import { ContentComponentProgress as ContentComponentProgressType } from '../../../types/db-generated-types.js';
 
 type MutationResultType =
   | {

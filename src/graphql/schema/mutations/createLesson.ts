@@ -1,12 +1,12 @@
 import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
 
-import { LessonInfoInput as LessonInfoInputType } from '../../../types/schema-types';
-import { ContextType } from '../../../types/types';
-import { ErrorType } from '../../../utils/ErrorType';
-import { authenticated } from '../../utils/auth';
-import { hasTeacherRole } from '../../utils/hasTeacherRole';
-import LessonInfoInput from '../inputs/LessonInfo';
-import { CreateOrUpdateLessonResult } from '../types/CreateOrUpdateLessonResult';
+import { LessonInfoInput as LessonInfoInputType } from '../../../types/schema-types.js';
+import { ContextType } from '../../../types/types.js';
+import { ErrorType } from '../../../utils/ErrorType.js';
+import { authenticated } from '../../utils/auth.js';
+import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
+import LessonInfoInput from '../inputs/LessonInfo.js';
+import { CreateOrUpdateLessonResult } from '../types/CreateOrUpdateLessonResult.js';
 
 const createLesson: GraphQLFieldConfig<null, ContextType> = {
   type: CreateOrUpdateLessonResult,

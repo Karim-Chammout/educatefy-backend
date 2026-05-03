@@ -1,7 +1,7 @@
 import DataLoader from 'dataloader';
 
-import { Program as ProgramType } from '../../../../types/db-generated-types';
-import { ProgramBase } from './Program.generated';
+import { Program as ProgramType } from '../../../../types/db-generated-types.js';
+import { ProgramBase } from './Program.generated.js';
 
 export class ProgramReader extends ProgramBase {
   private bySubjectIdLoader: DataLoader<number, ReadonlyArray<ProgramType>>;

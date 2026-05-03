@@ -1,4 +1,4 @@
-import { Course, Program } from '../../types/db-generated-types';
+import { Course, Program } from '../../types/db-generated-types.js';
 
 export const filterPublishedContent = (contents: ReadonlyArray<Course | Program>) => {
   if (!contents || contents.length === 0) {

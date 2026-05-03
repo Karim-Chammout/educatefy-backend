@@ -1,7 +1,7 @@
 import { GraphQLBoolean, GraphQLID, GraphQLInt, GraphQLNonNull, GraphQLObjectType } from 'graphql';
 
-import { ContextType } from '../../../types/types';
-import GraphQLDate from '../Scalars/Date';
+import { ContextType } from '../../../types/types.js';
+import GraphQLDate from '../Scalars/Date.js';
 
 export const ContentComponentProgress = new GraphQLObjectType<any, ContextType>({
   name: 'ContentComponentProgress',

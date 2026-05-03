@@ -1,4 +1,6 @@
 import maxmind, { CountryResponse } from 'maxmind';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import path from 'path';
 
 export async function getCountryFromIp(ip: string): Promise<string | null> {
@@ -6,6 +8,9 @@ export async function getCountryFromIp(ip: string): Promise<string | null> {
   if (!ip || ip === '127.0.0.1' || ip === '::1') {
     return null;
   }
+
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
 
   const countryDbPath = path.join(__dirname, 'GeoLite2-Country.mmdb');
   const lookup = await maxmind.open<CountryResponse>(countryDbPath);

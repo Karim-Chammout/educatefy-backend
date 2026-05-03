@@ -1,12 +1,12 @@
 import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
 
-import { RateCourse as RateCourseType } from '../../../types/schema-types';
-import { ContextType } from '../../../types/types';
-import { ErrorType } from '../../../utils/ErrorType';
-import { sanitizeText } from '../../../utils/sanitizeText';
-import { authenticated } from '../../utils/auth';
-import RateCourse from '../inputs/RateCourse';
-import { RateCourseResult } from '../types/RateCourseResult';
+import { RateCourse as RateCourseType } from '../../../types/schema-types.js';
+import { ContextType } from '../../../types/types.js';
+import { ErrorType } from '../../../utils/ErrorType.js';
+import { sanitizeText } from '../../../utils/sanitizeText.js';
+import { authenticated } from '../../utils/auth.js';
+import RateCourse from '../inputs/RateCourse.js';
+import { RateCourseResult } from '../types/RateCourseResult.js';
 
 const rateCourse: GraphQLFieldConfig<null, ContextType> = {
   type: RateCourseResult,

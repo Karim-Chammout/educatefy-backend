@@ -1,13 +1,13 @@
 import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
 
-import { ProfileDetailsInput as ProfileDetailsType } from '../../../types/schema-types';
-import { ContextType } from '../../../types/types';
-import { ErrorType } from '../../../utils/ErrorType';
-import { authenticated } from '../../utils/auth';
-import { getSelectedLanguageId } from '../../utils/getSelectedLanguageId';
-import ProfileDetailsInput from '../inputs/ProfileDetails';
-import UpdateProfileResult from '../types/UpdateProfileResult';
-import { AccountRoleEnum } from '../types/enum/AccountRole';
+import { ProfileDetailsInput as ProfileDetailsType } from '../../../types/schema-types.js';
+import { ContextType } from '../../../types/types.js';
+import { ErrorType } from '../../../utils/ErrorType.js';
+import { authenticated } from '../../utils/auth.js';
+import { getSelectedLanguageId } from '../../utils/getSelectedLanguageId.js';
+import ProfileDetailsInput from '../inputs/ProfileDetails.js';
+import UpdateProfileResult from '../types/UpdateProfileResult.js';
+import { AccountRoleEnum } from '../types/enum/AccountRole.js';
 
 const updateProfile: GraphQLFieldConfig<null, ContextType> = {
   type: UpdateProfileResult,

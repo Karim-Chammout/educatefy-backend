@@ -1,7 +1,7 @@
 import { GraphQLID, GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql';
 
-import { ProgramObjective as ProgramObjectiveType } from '../../../types/db-generated-types';
-import { ContextType } from '../../../types/types';
+import { ProgramObjective as ProgramObjectiveType } from '../../../types/db-generated-types.js';
+import { ContextType } from '../../../types/types.js';
 
 export const ProgramObjective = new GraphQLObjectType<ProgramObjectiveType, ContextType>({
   name: 'ProgramObjective',

@@ -5,16 +5,16 @@ import {
   UpdateContentComponentBaseInput as UpdateContentComponentBaseInputType,
   VideoContentInput as VideoContentInputType,
   YouTubeContentInput as YouTubeContentInputType,
-} from '../../../types/schema-types';
-import { ContextType } from '../../../types/types';
-import { ErrorType } from '../../../utils/ErrorType';
-import { authenticated } from '../../utils/auth';
-import { hasTeacherRole } from '../../utils/hasTeacherRole';
-import TextContentInput from '../inputs/TextContent';
-import UpdateContentComponentBaseInput from '../inputs/UpdateContentComponentBase';
-import VideoContentInput from '../inputs/VideoContent';
-import YouTubeContentInput from '../inputs/YouTubeContent';
-import { CreateOrUpdateContentComponent } from '../types/CreateOrUpdateContentComponent';
+} from '../../../types/schema-types.js';
+import { ContextType } from '../../../types/types.js';
+import { ErrorType } from '../../../utils/ErrorType.js';
+import { authenticated } from '../../utils/auth.js';
+import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
+import TextContentInput from '../inputs/TextContent.js';
+import UpdateContentComponentBaseInput from '../inputs/UpdateContentComponentBase.js';
+import VideoContentInput from '../inputs/VideoContent.js';
+import YouTubeContentInput from '../inputs/YouTubeContent.js';
+import { CreateOrUpdateContentComponent } from '../types/CreateOrUpdateContentComponent.js';
 
 const updateContentComponent: GraphQLFieldConfig<null, ContextType> = {
   type: CreateOrUpdateContentComponent,
@@ -112,11 +112,7 @@ const updateContentComponent: GraphQLFieldConfig<null, ContextType> = {
           switch (type) {
             case 'text':
               if (!textContent) {
-                return {
-                  success: false,
-                  errors: [new Error(ErrorType.INVALID_INPUT)],
-                  component: null,
-                };
+                throw new Error(ErrorType.INVALID_INPUT);
               }
 
               await transaction('text_content').where('component_id', id).update({
@@ -127,11 +123,7 @@ const updateContentComponent: GraphQLFieldConfig<null, ContextType> = {
 
             case 'video':
               if (!videoContent) {
-                return {
-                  success: false,
-                  errors: [new Error(ErrorType.INVALID_INPUT)],
-                  component: null,
-                };
+                throw new Error(ErrorType.INVALID_INPUT);
               }
 
               await transaction('video_content').where('component_id', id).update({
@@ -142,11 +134,7 @@ const updateContentComponent: GraphQLFieldConfig<null, ContextType> = {
 
             case 'youtube':
               if (!youtubeContent) {
-                return {
-                  success: false,
-                  errors: [new Error(ErrorType.INVALID_INPUT)],
-                  component: null,
-                };
+                throw new Error(ErrorType.INVALID_INPUT);
               }
 
               await transaction('youtube_content')
@@ -168,6 +156,14 @@ const updateContentComponent: GraphQLFieldConfig<null, ContextType> = {
           component: contentComponent,
         };
       } catch (error) {
+        if (error instanceof Error && error.message === ErrorType.INVALID_INPUT) {
+          return {
+            success: false,
+            errors: [new Error(ErrorType.INVALID_INPUT)],
+            component: null,
+          };
+        }
+
         console.log('Failed to update content component: ', error);
         return {
           success: false,

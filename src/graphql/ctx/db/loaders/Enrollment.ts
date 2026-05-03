@@ -1,7 +1,7 @@
 import DataLoader from 'dataloader';
 
-import { Enrollment as EnrollmentType } from '../../../../types/db-generated-types';
-import { EnrollmentBase } from './Enrollment.generated';
+import { Enrollment as EnrollmentType } from '../../../../types/db-generated-types.js';
+import { EnrollmentBase } from './Enrollment.generated.js';
 
 export class EnrollmentReader extends EnrollmentBase {
   private byAccountIdAndCourseIdLoader: DataLoader<

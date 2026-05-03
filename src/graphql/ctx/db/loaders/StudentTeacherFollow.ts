@@ -1,7 +1,7 @@
 import DataLoader from 'dataloader';
 
-import { StudentTeacherFollow as StudentTeacherFollowType } from '../../../../types/db-generated-types';
-import { StudentTeacherFollowBase } from './StudentTeacherFollow.generated';
+import { StudentTeacherFollow as StudentTeacherFollowType } from '../../../../types/db-generated-types.js';
+import { StudentTeacherFollowBase } from './StudentTeacherFollow.generated.js';
 
 export class StudentTeacherFollowReader extends StudentTeacherFollowBase {
   private byStudentIdAndTeacherIdLoader: DataLoader<

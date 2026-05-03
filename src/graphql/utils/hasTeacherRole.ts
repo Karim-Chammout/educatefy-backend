@@ -1,5 +1,5 @@
-import { ContextType } from '../../types/types';
-import { AccountRoleEnum } from '../schema/types/enum/AccountRole';
+import { ContextType } from '../../types/types.js';
+import { AccountRoleEnum } from '../schema/types/enum/AccountRole.js';
 
 export const hasTeacherRole = async (loaders: ContextType['loaders'], roleId: number) => {
   const accountRole = await loaders.AccountRole.loadById(roleId);

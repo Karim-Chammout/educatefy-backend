@@ -4,10 +4,10 @@
 // Re-run `npm run generate-loaders` to refresh this file.
 
 import DataLoader from 'dataloader';
-import { Knex } from 'knex';
+import type { Knex } from 'knex';
 
-import { Language as LanguageType } from '../../../../types/db-generated-types';
-import { mapTo } from './map';
+import { Language as LanguageType } from '../../../../types/db-generated-types.js';
+import { mapTo } from './map.js';
 
 export class LanguageBase {
   private byIdLoader: DataLoader<number, LanguageType>;

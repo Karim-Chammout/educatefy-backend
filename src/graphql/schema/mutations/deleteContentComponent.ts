@@ -1,13 +1,13 @@
 import { GraphQLFieldConfig, GraphQLID, GraphQLNonNull } from 'graphql';
 
-import { ComponentType } from '../../../types/schema-types';
-import { ContextType } from '../../../types/types';
-import { ErrorType } from '../../../utils/ErrorType';
-import { deleteFile } from '../../../utils/fileStorageHandler';
-import { authenticated } from '../../utils/auth';
-import { hasTeacherRole } from '../../utils/hasTeacherRole';
-import { ComponentType as ComponentEnumType } from '../types/enum/ContentComponent';
-import MutationResult from '../types/MutationResult';
+import { ComponentType } from '../../../types/schema-types.js';
+import { ContextType } from '../../../types/types.js';
+import { ErrorType } from '../../../utils/ErrorType.js';
+import { deleteFile } from '../../../utils/fileStorageHandler.js';
+import { authenticated } from '../../utils/auth.js';
+import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
+import { ComponentType as ComponentEnumType } from '../types/enum/ContentComponent.js';
+import MutationResult from '../types/MutationResult.js';
 
 export const deleteContentComponent: GraphQLFieldConfig<null, ContextType> = {
   type: MutationResult,
@@ -19,7 +19,7 @@ export const deleteContentComponent: GraphQLFieldConfig<null, ContextType> = {
     },
     componentType: {
       type: new GraphQLNonNull(ComponentEnumType),
-      description: 'The ID of the content component to delete.',
+      description: 'The type of the content component to delete.',
     },
   },
   resolve: authenticated(

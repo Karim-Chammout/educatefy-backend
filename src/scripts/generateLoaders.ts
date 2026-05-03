@@ -30,17 +30,21 @@
  * imported by every generated file that needs them.
  */
 
-import 'dotenv/config';
-import path from 'path';
-import fs from 'fs/promises';
 import { execSync } from 'child_process';
+import 'dotenv/config';
+import fs from 'fs/promises';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import path from 'path';
 
-import { db } from '../db/index';
+import { db } from '../db/index.js';
 
 // ---------------------------------------------------------------------------
 // Paths
 // ---------------------------------------------------------------------------
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 const LOADERS_DIR = path.join(__dirname, '..', 'graphql', 'ctx', 'db', 'loaders');
 const DB_INDEX_PATH = path.join(__dirname, '..', 'graphql', 'ctx', 'db', 'index.ts');
 
@@ -297,10 +301,10 @@ function buildGeneratedFile(
 // Re-run \`npm run generate-loaders\` to refresh this file.
 
 import DataLoader from 'dataloader';
-import { Knex } from 'knex';
+import type { Knex } from 'knex';
 
-import { ${className} as ${className}Type } from '../../../../types/db-generated-types';
-import { ${mapImports} } from './map';
+import { ${className} as ${className}Type } from '../../../../types/db-generated-types.js';
+import { ${mapImports} } from './map.js';
 
 export class ${className}Base {
   private byIdLoader: DataLoader<number, ${className}Type>;
@@ -373,9 +377,9 @@ function buildDbIndex(entries: ReaderEntry[]): string {
   const imports = sorted
     .map(({ className, hasCustomFile }) => {
       if (hasCustomFile) {
-        return `import { ${className}Reader } from './loaders/${className}';`;
+        return `import { ${className}Reader } from './loaders/${className}.js';`;
       }
-      return `import { ${className}Base as ${className}Reader } from './loaders/${className}.generated';`;
+      return `import { ${className}Base as ${className}Reader } from './loaders/${className}.generated.js';`;
     })
     .join('\n');
 
@@ -388,7 +392,7 @@ function buildDbIndex(entries: ReaderEntry[]): string {
   return `// ⚠️  This file is auto-generated. Do NOT edit it manually.
 // Re-run \`npm run generate-loaders\` to regenerate it.
 
-import { Knex } from 'knex';
+import type { Knex } from 'knex';
 
 ${imports}
 

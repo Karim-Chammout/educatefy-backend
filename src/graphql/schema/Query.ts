@@ -7,20 +7,20 @@ import {
   GraphQLString,
 } from 'graphql';
 
-import { CourseStatus } from '../../types/schema-types';
-import { ContextType } from '../../types/types';
-import { ErrorType } from '../../utils/ErrorType';
-import { authenticated } from '../utils/auth';
-import { hasValidProgramVersion } from '../utils/contentUtils';
-import { hasTeacherRole } from '../utils/hasTeacherRole';
-import { Account } from './types/Account';
-import { Country } from './types/Country';
-import { Course } from './types/Course';
-import { Language } from './types/Language';
-import { OpenidClient } from './types/OpenidClient';
-import { Program } from './types/Program';
-import { Subject } from './types/Subject';
-import { Teacher } from './types/Teacher';
+import { CourseStatus } from '../../types/schema-types.js';
+import { ContextType } from '../../types/types.js';
+import { ErrorType } from '../../utils/ErrorType.js';
+import { authenticated } from '../utils/auth.js';
+import { hasValidProgramVersion } from '../utils/contentUtils.js';
+import { hasTeacherRole } from '../utils/hasTeacherRole.js';
+import { Account } from './types/Account.js';
+import { Country } from './types/Country.js';
+import { Course } from './types/Course.js';
+import { Language } from './types/Language.js';
+import { OpenidClient } from './types/OpenidClient.js';
+import { Program } from './types/Program.js';
+import { Subject } from './types/Subject.js';
+import { Teacher } from './types/Teacher.js';
 
 const Query = new GraphQLObjectType<any, ContextType>({
   name: 'Query',

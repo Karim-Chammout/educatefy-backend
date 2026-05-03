@@ -3,13 +3,13 @@ import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
 import {
   CourseStatus,
   CourseStatusInput as CourseStatusInputType,
-} from '../../../types/schema-types';
-import { ContextType } from '../../../types/types';
-import { ErrorType } from '../../../utils/ErrorType';
-import { authenticated } from '../../utils/auth';
-import { attachProgramToEnrollment } from '../../utils/contentUtils';
-import CourseStatusInput from '../inputs/CourseStatus';
-import { UpdateCourseStatusResult } from '../types/UpdateCourseStatusResult';
+} from '../../../types/schema-types.js';
+import { ContextType } from '../../../types/types.js';
+import { ErrorType } from '../../../utils/ErrorType.js';
+import { authenticated } from '../../utils/auth.js';
+import { attachProgramToEnrollment } from '../../utils/contentUtils.js';
+import CourseStatusInput from '../inputs/CourseStatus.js';
+import { UpdateCourseStatusResult } from '../types/UpdateCourseStatusResult.js';
 
 const updateCourseStatus: GraphQLFieldConfig<null, ContextType> = {
   type: UpdateCourseStatusResult,
