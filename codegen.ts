@@ -5,6 +5,13 @@ const config: CodegenConfig = {
   generates: {
     './src/types/schema-types.ts': {
       plugins: ['typescript'],
+      config: {
+        scalars: {
+          Date: 'string | Date',
+          JSON: 'Record<string, unknown>',
+        },
+        strictScalars: true,
+      },
     },
   },
 };
