@@ -5,6 +5,7 @@ module.exports = {
   },
   extends: ['airbnb-typescript/base', 'prettier'],
   plugins: ['prettier'],
+  ignorePatterns: ['dist/', 'node_modules/', '*.config.js', '*.config.cjs'],
   parserOptions: {
     project: './tsconfig.json',
     ecmaVersion: 'latest',
