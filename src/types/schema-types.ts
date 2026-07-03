@@ -82,6 +82,20 @@ export enum AccountRole {
   Teacher = 'teacher'
 }
 
+export type AudienceDemographics = {
+  __typename?: 'AudienceDemographics';
+  /** Breakdown of students by age range. */
+  ageBreakdown: Array<DemographicBucket>;
+  /** Number of enrolled students for which age data is available. */
+  ageDataCoverage: Scalars['Int']['output'];
+  /** Breakdown of students by country. */
+  countryBreakdown: Array<DemographicBucket>;
+  /** Breakdown of students by language. */
+  languageBreakdown: Array<DemographicBucket>;
+  /** Breakdown of students by nationality. */
+  nationalityBreakdown: Array<DemographicBucket>;
+};
+
 /** The result of the changeProfilePicture mutation. */
 export type ChangeProfilePictureResult = {
   __typename?: 'ChangeProfilePictureResult';
@@ -219,6 +233,54 @@ export type Course = {
   viewerReview?: Maybe<CourseReview>;
 };
 
+export type CourseAnalytics = {
+  __typename?: 'CourseAnalytics';
+  averageRating: Scalars['Float']['output'];
+  completedCount: Scalars['Int']['output'];
+  completionRate: Scalars['Float']['output'];
+  courseId: Scalars['ID']['output'];
+  denomination: Scalars['String']['output'];
+  enrolledCount: Scalars['Int']['output'];
+  isPublished: Scalars['Boolean']['output'];
+  ratingsCount: Scalars['Int']['output'];
+};
+
+/** Detailed analytics for a single course. */
+export type CourseDetailAnalytics = {
+  __typename?: 'CourseDetailAnalytics';
+  audienceDemographics: AudienceDemographics;
+  /** Average days from enrollment to completion. Null if no completions yet. */
+  avgDaysToCompletion?: Maybe<Scalars['Float']['output']>;
+  /** Number of students whose current enrollment status is completed. */
+  completionTransitionCount: Scalars['Int']['output'];
+  /** Number of students whose current enrollment status is unenrolled. */
+  dropOffCount: Scalars['Int']['output'];
+  enrolledStudents: EnrolledStudentsPage;
+  enrollmentBreakdown: Array<EnrollmentStatusCount>;
+  meta: CourseDetailMeta;
+  ratingDistribution: Array<RatingBucket>;
+  recentReviews: Array<CourseReviewDetail>;
+  sectionCompletionStats: Array<SectionCompletionStat>;
+};
+
+
+/** Detailed analytics for a single course. */
+export type CourseDetailAnalyticsEnrolledStudentsArgs = {
+  limit?: Scalars['Int']['input'];
+  offset?: Scalars['Int']['input'];
+};
+
+export type CourseDetailMeta = {
+  __typename?: 'CourseDetailMeta';
+  createdAt: Scalars['Date']['output'];
+  denomination: Scalars['String']['output'];
+  endDate?: Maybe<Scalars['Date']['output']>;
+  isPublished: Scalars['Boolean']['output'];
+  language: Scalars['String']['output'];
+  level: Scalars['String']['output'];
+  startDate?: Maybe<Scalars['Date']['output']>;
+};
+
 /** Input for creating a course record. */
 export type CourseInfoInput = {
   /** The denomination of this course. */
@@ -307,6 +369,17 @@ export type CourseReview = {
   review?: Maybe<Scalars['String']['output']>;
   /** The reviewer who wrote the review */
   reviewer: PublicAccount;
+};
+
+export type CourseReviewDetail = {
+  __typename?: 'CourseReviewDetail';
+  createdAt: Scalars['Date']['output'];
+  rating: Scalars['Float']['output'];
+  review?: Maybe<Scalars['String']['output']>;
+  reviewId: Scalars['ID']['output'];
+  reviewerAvatarUrl?: Maybe<Scalars['String']['output']>;
+  reviewerFirstName: Scalars['String']['output'];
+  reviewerNickname?: Maybe<Scalars['String']['output']>;
 };
 
 /** The course section info */
@@ -431,6 +504,52 @@ export type DeleteCourseRatingInput = {
   courseId: Scalars['ID']['input'];
   /** The ID of the course rating to delete. */
   courseRateId: Scalars['ID']['input'];
+};
+
+export type DemographicBucket = {
+  __typename?: 'DemographicBucket';
+  /** Number of students in this demographic bucket. */
+  count: Scalars['Int']['output'];
+  /** Label for the demographic bucket (e.g. country name, age range, etc.) */
+  label: Scalars['String']['output'];
+};
+
+export type EnrolledStudent = {
+  __typename?: 'EnrolledStudent';
+  accountId: Scalars['ID']['output'];
+  age?: Maybe<Scalars['Int']['output']>;
+  avatarUrl?: Maybe<Scalars['String']['output']>;
+  country?: Maybe<Scalars['String']['output']>;
+  /** Date when the student enrolled in the course. */
+  enrolledAt: Scalars['Date']['output'];
+  firstName: Scalars['String']['output'];
+  nationality?: Maybe<Scalars['String']['output']>;
+  nickname?: Maybe<Scalars['String']['output']>;
+  /** Current enrollment status of the student. */
+  status: Scalars['String']['output'];
+};
+
+export type EnrolledStudentsPage = {
+  __typename?: 'EnrolledStudentsPage';
+  /** List of enrolled students for the current page. */
+  students: Array<EnrolledStudent>;
+  /** Total number of enrolled students in the course. */
+  total: Scalars['Int']['output'];
+};
+
+export type EnrollmentStatusCount = {
+  __typename?: 'EnrollmentStatusCount';
+  /** Number of students with this enrollment status. */
+  count: Scalars['Int']['output'];
+  /** Current enrollment status. */
+  status: Scalars['String']['output'];
+};
+
+export type EnrollmentTrendPoint = {
+  __typename?: 'EnrollmentTrendPoint';
+  count: Scalars['Int']['output'];
+  /** ISO date string e.g. 2025-04-01 */
+  date: Scalars['String']['output'];
 };
 
 /** An object type that wraps an error */
@@ -1019,6 +1138,8 @@ export type Query = {
   countries: Array<Country>;
   /** Retrieve a course by its slug */
   course?: Maybe<Course>;
+  /** Detailed analytics for a single course owned by the authenticated teacher. */
+  courseDetailAnalytics?: Maybe<CourseDetailAnalytics>;
   /** Retrieve a course to be edited by the teacher. */
   editableCourse?: Maybe<Course>;
   /** Retrieve a program to be edited by the teacher. */
@@ -1041,6 +1162,8 @@ export type Query = {
   subjects: Array<Subject>;
   /** List of subjects that have content associated with them */
   subjectsWithLinkedContent: Array<Subject>;
+  /** Aggregated analytics for the authenticated teacher. */
+  teacherAnalytics: TeacherAnalytics;
   /** List of courses created by the teacher */
   teacherCourses: Array<Course>;
   /** List of programs created by the teacher */
@@ -1050,6 +1173,11 @@ export type Query = {
 
 export type QueryCourseArgs = {
   slug: Scalars['String']['input'];
+};
+
+
+export type QueryCourseDetailAnalyticsArgs = {
+  courseId: Scalars['ID']['input'];
 };
 
 
@@ -1096,6 +1224,22 @@ export type RateCourseResult = {
   errors: Array<Error>;
   /** Indicates if the mutation was successful. */
   success: Scalars['Boolean']['output'];
+};
+
+export type RatingBucket = {
+  __typename?: 'RatingBucket';
+  count: Scalars['Int']['output'];
+  stars: Scalars['Int']['output'];
+};
+
+export type SectionCompletionStat = {
+  __typename?: 'SectionCompletionStat';
+  completedCount: Scalars['Int']['output'];
+  completionRate: Scalars['Float']['output'];
+  denomination: Scalars['String']['output'];
+  rank: Scalars['Int']['output'];
+  sectionId: Scalars['ID']['output'];
+  totalEnrolled: Scalars['Int']['output'];
 };
 
 /** Statistics info for the current user. */
@@ -1149,6 +1293,39 @@ export type Teacher = {
   nickname?: Maybe<Scalars['String']['output']>;
   /** List of programs created by the teacher */
   programs: Array<Program>;
+};
+
+/** Aggregated analytics data for a teacher. */
+export type TeacherAnalytics = {
+  __typename?: 'TeacherAnalytics';
+  /** Analytics data for each course by the teacher. */
+  courseStats: Array<CourseAnalytics>;
+  /** Number of courses in draft state (not published) by the teacher. */
+  draftCoursesCount: Scalars['Int']['output'];
+  /** Number of programs in draft state (not published) by the teacher. */
+  draftProgramsCount: Scalars['Int']['output'];
+  /** Number of new enrollments per day for the teacher's courses over the last 30 days. */
+  enrollmentTrend: Array<EnrollmentTrendPoint>;
+  /** Number of new followers in the last 30 days. */
+  newFollowersLastMonth: Scalars['Int']['output'];
+  /** Average rating across all courses by the teacher. */
+  overallAverageRating: Scalars['Float']['output'];
+  /** Overall completion rate across all courses by the teacher. */
+  overallCompletionRate: Scalars['Float']['output'];
+  /** Number of published courses by the teacher. */
+  publishedCoursesCount: Scalars['Int']['output'];
+  /** Number of published programs by the teacher. */
+  publishedProgramsCount: Scalars['Int']['output'];
+  /** Total number of completed enrollments across all courses by the teacher. */
+  totalCompletions: Scalars['Int']['output'];
+  /** Total number of enrollments across all courses by the teacher. */
+  totalEnrollments: Scalars['Int']['output'];
+  /** Total number of enrollments across all programs taught by the teacher. */
+  totalProgramEnrollments: Scalars['Int']['output'];
+  /** Total number of course reviews for the teacher. */
+  totalReviewsCount: Scalars['Int']['output'];
+  /** Total number of unique students enrolled in any course by the teacher. */
+  totalUniqueStudents: Scalars['Int']['output'];
 };
 
 /** A text content component. */
