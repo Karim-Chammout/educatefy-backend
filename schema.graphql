@@ -64,6 +64,17 @@ type Query {
 
   """List of courses the user has completed."""
   completedCourses: [Course!]!
+
+  """Aggregated analytics for the authenticated teacher."""
+  teacherAnalytics: TeacherAnalytics!
+
+  """
+  Detailed analytics for a single course owned by the authenticated teacher.
+  """
+  courseDetailAnalytics(
+    """The id of the course."""
+    courseId: ID!
+  ): CourseDetailAnalytics
 }
 
 """The properties of the account"""
@@ -731,6 +742,185 @@ type Language {
 
   """The code of this language"""
   code: String!
+}
+
+"""Aggregated analytics data for a teacher."""
+type TeacherAnalytics {
+  """Total number of enrollments across all courses by the teacher."""
+  totalEnrollments: Int!
+
+  """
+  Total number of completed enrollments across all courses by the teacher.
+  """
+  totalCompletions: Int!
+
+  """Overall completion rate across all courses by the teacher."""
+  overallCompletionRate: Float!
+
+  """Average rating across all courses by the teacher."""
+  overallAverageRating: Float!
+
+  """Total number of course reviews for the teacher."""
+  totalReviewsCount: Int!
+
+  """Number of published courses by the teacher."""
+  publishedCoursesCount: Int!
+
+  """Number of courses in draft state (not published) by the teacher."""
+  draftCoursesCount: Int!
+
+  """Number of published programs by the teacher."""
+  publishedProgramsCount: Int!
+
+  """Number of programs in draft state (not published) by the teacher."""
+  draftProgramsCount: Int!
+
+  """Total number of unique students enrolled in any course by the teacher."""
+  totalUniqueStudents: Int!
+
+  """Total number of enrollments across all programs taught by the teacher."""
+  totalProgramEnrollments: Int!
+
+  """Number of new followers in the last 30 days."""
+  newFollowersLastMonth: Int!
+
+  """Analytics data for each course by the teacher."""
+  courseStats: [CourseAnalytics!]!
+
+  """
+  Number of new enrollments per day for the teacher's courses over the last 30 days.
+  """
+  enrollmentTrend: [EnrollmentTrendPoint!]!
+}
+
+type CourseAnalytics {
+  courseId: ID!
+  denomination: String!
+  isPublished: Boolean!
+  enrolledCount: Int!
+  completedCount: Int!
+  completionRate: Float!
+  averageRating: Float!
+  ratingsCount: Int!
+}
+
+type EnrollmentTrendPoint {
+  """ISO date string e.g. 2025-04-01"""
+  date: String!
+  count: Int!
+}
+
+"""Detailed analytics for a single course."""
+type CourseDetailAnalytics {
+  meta: CourseDetailMeta!
+  enrollmentBreakdown: [EnrollmentStatusCount!]!
+
+  """Number of students whose current enrollment status is unenrolled."""
+  dropOffCount: Int!
+
+  """Number of students whose current enrollment status is completed."""
+  completionTransitionCount: Int!
+
+  """
+  Average days from enrollment to completion. Null if no completions yet.
+  """
+  avgDaysToCompletion: Float
+  ratingDistribution: [RatingBucket!]!
+  recentReviews: [CourseReviewDetail!]!
+  sectionCompletionStats: [SectionCompletionStat!]!
+  audienceDemographics: AudienceDemographics!
+  enrolledStudents(limit: Int! = 20, offset: Int! = 0): EnrolledStudentsPage!
+}
+
+type CourseDetailMeta {
+  denomination: String!
+  isPublished: Boolean!
+  level: String!
+  language: String!
+  startDate: Date
+  endDate: Date
+  createdAt: Date!
+}
+
+type EnrollmentStatusCount {
+  """Current enrollment status."""
+  status: String!
+
+  """Number of students with this enrollment status."""
+  count: Int!
+}
+
+type RatingBucket {
+  stars: Int!
+  count: Int!
+}
+
+type CourseReviewDetail {
+  reviewId: ID!
+  rating: Float!
+  review: String
+  createdAt: Date!
+  reviewerFirstName: String!
+  reviewerNickname: String
+  reviewerAvatarUrl: String
+}
+
+type SectionCompletionStat {
+  sectionId: ID!
+  denomination: String!
+  rank: Int!
+  completedCount: Int!
+  totalEnrolled: Int!
+  completionRate: Float!
+}
+
+type AudienceDemographics {
+  """Breakdown of students by country."""
+  countryBreakdown: [DemographicBucket!]!
+
+  """Breakdown of students by nationality."""
+  nationalityBreakdown: [DemographicBucket!]!
+
+  """Breakdown of students by language."""
+  languageBreakdown: [DemographicBucket!]!
+
+  """Breakdown of students by age range."""
+  ageBreakdown: [DemographicBucket!]!
+
+  """Number of enrolled students for which age data is available."""
+  ageDataCoverage: Int!
+}
+
+type DemographicBucket {
+  """Label for the demographic bucket (e.g. country name, age range, etc.)"""
+  label: String!
+
+  """Number of students in this demographic bucket."""
+  count: Int!
+}
+
+type EnrolledStudentsPage {
+  """Total number of enrolled students in the course."""
+  total: Int!
+
+  """List of enrolled students for the current page."""
+  students: [EnrolledStudent!]!
+}
+
+type EnrolledStudent {
+  accountId: ID!
+  firstName: String!
+  nickname: String
+  avatarUrl: String
+  country: String
+  nationality: String
+  age: Int
+
+  """Date when the student enrolled in the course."""
+  enrolledAt: Date!
+
+  """Current enrollment status of the student."""
+  status: String!
 }
 
 type Mutation {
