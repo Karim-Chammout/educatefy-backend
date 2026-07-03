@@ -16,11 +16,13 @@ import { hasTeacherRole } from '../utils/hasTeacherRole.js';
 import { Account } from './types/Account.js';
 import { Country } from './types/Country.js';
 import { Course } from './types/Course.js';
+import { CourseDetailAnalytics } from './types/CourseDetailAnalytics.js';
 import { Language } from './types/Language.js';
 import { OpenidClient } from './types/OpenidClient.js';
 import { Program } from './types/Program.js';
 import { Subject } from './types/Subject.js';
 import { Teacher } from './types/Teacher.js';
+import { TeacherAnalytics } from './types/TeacherAnalytics.js';
 
 const Query = new GraphQLObjectType<any, ContextType>({
   name: 'Query',
@@ -332,6 +334,47 @@ const Query = new GraphQLObjectType<any, ContextType>({
 
         return courses;
       },
+    },
+    teacherAnalytics: {
+      type: new GraphQLNonNull(TeacherAnalytics),
+      description: 'Aggregated analytics for the authenticated teacher.',
+      resolve: authenticated(async (_, __, { user, loaders }) => {
+        const isTeacher = await hasTeacherRole(loaders, user.roleId);
+
+        if (!isTeacher) {
+          throw new GraphQLError(ErrorType.FORBIDDEN);
+        }
+
+        return { teacherId: user.id };
+      }),
+    },
+    courseDetailAnalytics: {
+      type: CourseDetailAnalytics,
+      description: 'Detailed analytics for a single course owned by the authenticated teacher.',
+      args: {
+        courseId: {
+          type: new GraphQLNonNull(GraphQLID),
+          description: 'The id of the course.',
+        },
+      },
+      resolve: authenticated(
+        async (_, { courseId }: { courseId: string }, { user, db, loaders }) => {
+          const isTeacher = await hasTeacherRole(loaders, user.roleId);
+
+          if (!isTeacher) {
+            throw new GraphQLError(ErrorType.FORBIDDEN);
+          }
+
+          const id = parseInt(courseId, 10);
+          const course = await db('course').where('id', id).first();
+
+          if (!course || course.teacher_id !== user.id) {
+            throw new GraphQLError(ErrorType.FORBIDDEN);
+          }
+
+          return { courseId: id };
+        },
+      ),
     },
   },
 });
