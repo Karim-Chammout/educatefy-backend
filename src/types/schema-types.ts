@@ -665,6 +665,12 @@ export type Mutation = {
   rateCourse?: Maybe<RateCourseResult>;
   /** Remove the profile picture of a user. */
   removeProfilePicture?: Maybe<ChangeProfilePictureResult>;
+  /** Revokes all sessions except the current one. */
+  revokeAllSessions?: Maybe<MutationResult>;
+  /** Revokes all sessions on a specific device (by raw browser User-Agent string). */
+  revokeDeviceSessions?: Maybe<MutationResult>;
+  /** Revokes a specific session (refresh token) by ID. */
+  revokeSession?: Maybe<MutationResult>;
   /** Unenrolls an account from a program. */
   unenrollFromProgram?: Maybe<UpdateProgramStatusResult>;
   /** Updates a user account information. */
@@ -789,6 +795,16 @@ export type MutationPublishProgramVersionArgs = {
 
 export type MutationRateCourseArgs = {
   ratingInfo: RateCourse;
+};
+
+
+export type MutationRevokeDeviceSessionsArgs = {
+  deviceBrowser: Scalars['String']['input'];
+};
+
+
+export type MutationRevokeSessionArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -1156,6 +1172,8 @@ export type Query = {
   openIdClients: Array<OpenidClient>;
   /** Retrieve a program by its slug */
   program?: Maybe<Program>;
+  /** Active sessions grouped by device/browser. */
+  sessionDevices: Array<SessionDevice>;
   /** Retrieve a subject by its id */
   subject?: Maybe<Subject>;
   /** List of subjects */
@@ -1240,6 +1258,17 @@ export type SectionCompletionStat = {
   rank: Scalars['Int']['output'];
   sectionId: Scalars['ID']['output'];
   totalEnrolled: Scalars['Int']['output'];
+};
+
+/** A grouped set of active sessions from the same device/browser. */
+export type SessionDevice = {
+  __typename?: 'SessionDevice';
+  browser: Scalars['String']['output'];
+  device: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  isCurrentDevice: Scalars['Boolean']['output'];
+  last_active: Scalars['Date']['output'];
+  os: Scalars['String']['output'];
 };
 
 /** Statistics info for the current user. */

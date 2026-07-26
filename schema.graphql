@@ -75,6 +75,9 @@ type Query {
     """The id of the course."""
     courseId: ID!
   ): CourseDetailAnalytics
+
+  """Active sessions grouped by device/browser."""
+  sessionDevices: [SessionDevice!]!
 }
 
 """The properties of the account"""
@@ -923,6 +926,16 @@ type EnrolledStudent {
   status: String!
 }
 
+"""A grouped set of active sessions from the same device/browser."""
+type SessionDevice {
+  id: ID!
+  browser: String!
+  os: String!
+  device: String!
+  isCurrentDevice: Boolean!
+  last_active: Date!
+}
+
 type Mutation {
   """Change the profile picture of a user."""
   changeProfilePicture(
@@ -1048,6 +1061,17 @@ type Mutation {
 
   """Remove the profile picture of a user."""
   removeProfilePicture: ChangeProfilePictureResult
+
+  """Revokes all sessions except the current one."""
+  revokeAllSessions: MutationResult
+
+  """
+  Revokes all sessions on a specific device (by raw browser User-Agent string).
+  """
+  revokeDeviceSessions(
+    """The raw browser User-Agent string identifying the device."""
+    deviceBrowser: String!
+  ): MutationResult
 
   """Unenrolls an account from a program."""
   unenrollFromProgram(

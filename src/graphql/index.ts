@@ -15,7 +15,12 @@ export const yoga = createYoga({
     // @ts-ignore FIXME
     const { headers, tokenPayload, ip } = ctx.req;
 
-    const user = await createUserContext(headers['user-agent'], tokenPayload, ip);
+    const user = await createUserContext(
+      headers['user-agent'],
+      tokenPayload,
+      ip,
+      headers.refreshtoken,
+    );
 
     return {
       user,

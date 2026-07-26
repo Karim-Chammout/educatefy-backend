@@ -407,6 +407,10 @@ export type RefreshToken = {
   last_used_at: Date;
   created_at: Date;
   updated_at: Date;
+  revoked_at: Date | null;
+  ip: string | null;
+  device: string | null;
+  country: string | null;
 };
 
 export type StudentTeacherFollow = {

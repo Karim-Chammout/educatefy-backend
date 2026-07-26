@@ -8,6 +8,7 @@ export async function createUserContext(
   userAgent: string,
   tokenPayload?: JwtPayload | null,
   ip?: string,
+  currentRefreshToken?: string,
 ): Promise<UserContext> {
   if (tokenPayload) {
     const id = userIdFromToken(tokenPayload);
@@ -16,18 +17,11 @@ export async function createUserContext(
       const userData: {
         roleId: number;
         countryId?: number;
-      } = await db
-        .raw(
-          `
-          SELECT
-            account.country_id as "countryId",
-            account.role_id as "roleId"
-          FROM account
-          JOIN account_role ON account_role.id = account.role_id
-          WHERE account.id = ${id}
-        `,
-        )
-        .then((res) => res.rows[0]);
+      } = await db('account')
+        .join('account_role', 'account_role.id', 'account.role_id')
+        .select('account.country_id as countryId', 'account.role_id as roleId')
+        .where('account.id', id)
+        .first();
 
       return {
         authenticated: true,
@@ -36,6 +30,7 @@ export async function createUserContext(
         userAgent,
         roleId: userData.roleId,
         countryId: userData.countryId,
+        currentRefreshToken,
       };
     }
   }
@@ -44,5 +39,6 @@ export async function createUserContext(
     authenticated: false,
     ip: ip || '',
     userAgent,
+    currentRefreshToken,
   };
 }
