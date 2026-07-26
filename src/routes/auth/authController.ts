@@ -3,7 +3,6 @@ import * as client from 'openid-client';
 
 import config from '../../config.js';
 import { db } from '../../db/index.js';
-import { formatDateTZ } from '../../utils/formatDateWithTZ.js';
 import { ErrorType } from '../../utils/ErrorType.js';
 import { generateAccessToken, generateRefreshToken } from '../../utils/jwt.js';
 import createOrUpdateAccount from './createOrUpdateAccount.js';
@@ -141,9 +140,7 @@ export const logout = async (req: Request, res: Response) => {
   const refreshToken = req.headers.refreshtoken as string | undefined;
 
   if (refreshToken) {
-    await db('refresh_token')
-      .where('token', refreshToken)
-      .update({ revoked_at: formatDateTZ(new Date()) });
+    await db('refresh_token').where('token', refreshToken).update({ revoked_at: db.fn.now() });
   }
 
   const isProduction = config.APP_ENV === 'production';
