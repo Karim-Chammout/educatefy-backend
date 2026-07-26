@@ -6,7 +6,7 @@ import * as n from 'nanoid';
 import { UAParser } from 'ua-parser-js';
 
 import config from '../config.js';
-import { getCountryFromIp } from '../graphql/utils/getCountryFromIp.js';
+import { getCountryFromIp } from './getCountryFromIp.js';
 import { formatDateTZ } from './formatDateWithTZ.js';
 
 const storeRefreshToken = async (
