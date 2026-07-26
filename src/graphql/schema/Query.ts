@@ -20,6 +20,7 @@ import { CourseDetailAnalytics } from './types/CourseDetailAnalytics.js';
 import { Language } from './types/Language.js';
 import { OpenidClient } from './types/OpenidClient.js';
 import { Program } from './types/Program.js';
+import { SessionDevice } from './types/SessionDevice.js';
 import { Subject } from './types/Subject.js';
 import { Teacher } from './types/Teacher.js';
 import { TeacherAnalytics } from './types/TeacherAnalytics.js';
@@ -375,6 +376,26 @@ const Query = new GraphQLObjectType<any, ContextType>({
           return { courseId: id };
         },
       ),
+    },
+    sessionDevices: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(SessionDevice))),
+      description: 'Active sessions grouped by device/browser.',
+      resolve: authenticated(async (_, __, ctx) => {
+        const rows = await ctx
+          .db('refresh_token')
+          .where('account_id', ctx.user.id)
+          .whereNull('revoked_at')
+          .andWhere('expires_at', '>', new Date())
+          .select(
+            'browser as browser_raw',
+            ctx.db.raw('max(coalesce(last_used_at, created_at)) as last_active'),
+            ctx.db.raw('array_agg(token) as tokens'),
+          )
+          .groupBy('browser')
+          .orderBy('last_active', 'desc');
+
+        return rows;
+      }),
     },
   },
 });

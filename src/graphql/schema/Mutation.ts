@@ -19,6 +19,8 @@ import followTeacher from './mutations/followTeacher.js';
 import publishProgramVersion from './mutations/publishProgramVersion.js';
 import rateCourse from './mutations/rateCourse.js';
 import removeProfilePicture from './mutations/removeProfilePicture.js';
+import revokeAllSessions from './mutations/revokeAllSessions.js';
+import revokeDeviceSessions from './mutations/revokeDeviceSessions.js';
 import unenrollFromProgram from './mutations/unenrollFromProgram.js';
 import updateAccountInfo from './mutations/updateAccountInfo.js';
 import updateContentComponent from './mutations/updateContentComponent.js';
@@ -57,6 +59,8 @@ const Mutation = new GraphQLObjectType({
     publishProgramVersion,
     rateCourse,
     removeProfilePicture,
+    revokeAllSessions,
+    revokeDeviceSessions,
     unenrollFromProgram,
     updateAccountInfo,
     updateContentComponent,
