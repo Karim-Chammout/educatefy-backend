@@ -28,6 +28,10 @@ export async function attachToken(req: Request, _res: Response, next: NextFuncti
   }
 
   if (!token) {
+    token = req.cookies?.jwt ?? null;
+  }
+
+  if (!token) {
     return next();
   }
 

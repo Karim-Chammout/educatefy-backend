@@ -16,6 +16,7 @@ declare global {
 type BaseUserContext = {
   ip: string;
   userAgent: string;
+  currentRefreshToken?: string;
 };
 
 export type AuthenticatedUserContext = BaseUserContext & {
