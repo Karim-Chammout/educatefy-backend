@@ -18,6 +18,14 @@ export const authRedirectLimiter = rateLimit({
   message: { message: ErrorType.TOO_MANY_REQUESTS },
 });
 
+export const authStatusLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: ErrorType.TOO_MANY_REQUESTS },
+});
+
 export const fileUploadLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: 20,
