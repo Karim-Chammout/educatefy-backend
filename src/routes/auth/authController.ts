@@ -4,6 +4,7 @@ import * as client from 'openid-client';
 import config from '../../config.js';
 import { db } from '../../db/index.js';
 import { ErrorType } from '../../utils/ErrorType.js';
+import { getClientIp } from '../../utils/getClientIp.js';
 import { generateAccessToken, generateRefreshToken } from '../../utils/jwt.js';
 import createOrUpdateAccount from './createOrUpdateAccount.js';
 import { getOidcConfig, providers } from './oidc.js';
@@ -103,7 +104,12 @@ export const handleCallback = async (req: Request, res: Response) => {
       if (account) {
         try {
           const accessToken = generateAccessToken(account.id);
-          const refreshToken = await generateRefreshToken(account.id, db, req.headers, req.ip);
+          const refreshToken = await generateRefreshToken(
+            account.id,
+            db,
+            req.headers,
+            getClientIp(req),
+          );
 
           const isProduction = config.APP_ENV === 'production';
           res.cookie('jwt', accessToken, {

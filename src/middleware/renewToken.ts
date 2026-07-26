@@ -6,6 +6,7 @@ import * as n from 'nanoid';
 import config from '../config.js';
 import { db } from '../db/index.js';
 import { formatDateTZ } from '../utils/formatDateWithTZ.js';
+import { getClientIp } from '../utils/getClientIp.js';
 import { tokenToRequest } from './attachToken.js';
 
 const EXPIRING_SOON_SECONDS = 5 * 60; // 5 minutes
@@ -159,7 +160,7 @@ const processRefreshToken = async (
       mobile: refreshToken.mobile,
       device: refreshToken.device,
       browser: refreshToken.browser,
-      ip: req.ip || '',
+      ip: getClientIp(req),
       country: refreshToken.country,
       expires_at: expiresAt,
     });
