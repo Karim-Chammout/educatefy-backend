@@ -74,12 +74,18 @@ const processRefreshToken = async (
   }
 
   if (refreshToken.revoked_at) {
+    // Security cascade: if a revoked token is reused after 30 seconds, revoke
+    // ALL tokens for this account. The 30-second grace window prevents a race
+    // condition where a legitimate request and the revocation request cross
+    // paths — e.g. the user logs out on device A while device B already has an
+    // in-flight request that arrives just after the revocation.
     const revokedSecondsAgo = (Date.now() - new Date(refreshToken.revoked_at).getTime()) / 1000;
 
     if (revokedSecondsAgo >= 30) {
       try {
         await db('refresh_token')
           .where('account_id', refreshToken.account_id)
+          .whereNull('revoked_at')
           .update({ revoked_at: db.fn.now() });
       } catch (error) {
         console.error('Failed to revoke all tokens (transient):', error);
@@ -109,15 +115,40 @@ const processRefreshToken = async (
     return next();
   }
 
-  // Refresh token is valid — rotate it
+  // Refresh token is valid — rotate it atomically.
+  // The WHERE ... AND revoked_at IS NULL guard ensures that if two concurrent
+  // requests race to rotate the same token, only one succeeds. The other falls
+  // back to the token that was already created.
   try {
     const currentDate = formatDateTZ(new Date());
 
-    await db('refresh_token').where('id', refreshToken.id).update({
-      revoked_at: currentDate,
-      updated_at: currentDate,
-      last_used_at: currentDate,
-    });
+    const rotated = await db('refresh_token')
+      .where('id', refreshToken.id)
+      .whereNull('revoked_at')
+      .update({
+        revoked_at: db.fn.now(),
+        updated_at: currentDate,
+        last_used_at: currentDate,
+      });
+
+    if (rotated === 0) {
+      // Another request already rotated this token. Find the replacement.
+      const replacement = await db('refresh_token')
+        .where('account_id', refreshToken.account_id)
+        .whereNull('revoked_at')
+        .orderBy('created_at', 'desc')
+        .first();
+
+      if (!replacement) {
+        req.tokenPayload = null;
+        req.token = null;
+        return next();
+      }
+
+      res.set('X-Renew-Refresh-Token', replacement.token);
+      await generateAndSetNewToken(payload, req, res);
+      return next();
+    }
 
     const newRefreshToken = n.nanoid();
     const expiresAt = formatDateTZ(addDays(new Date(), 7));
