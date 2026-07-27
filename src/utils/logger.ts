@@ -9,7 +9,7 @@ const logger = pino({
   base: isDevelopment
     ? undefined
     : {
-        service: 'educatefy-backend',
+        service: 'backend',
         env: config.APP_ENV,
       },
   transport: isDevelopment
