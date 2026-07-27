@@ -7,6 +7,7 @@ import config from '../config.js';
 import { db } from '../db/index.js';
 import { formatDateTZ } from '../utils/formatDateWithTZ.js';
 import { getClientIp } from '../utils/getClientIp.js';
+import logger from '../utils/logger.js';
 import { tokenToRequest } from './attachToken.js';
 
 const EXPIRING_SOON_SECONDS = 5 * 60; // 5 minutes
@@ -64,7 +65,7 @@ const processRefreshToken = async (
   try {
     refreshToken = await db('refresh_token').where('token', token).first();
   } catch (error) {
-    console.error('Failed to query refresh token (transient):', error);
+    logger.warn({ err: error }, 'Failed to query refresh token (transient)');
     return next();
   }
 
@@ -89,7 +90,7 @@ const processRefreshToken = async (
           .whereNull('revoked_at')
           .update({ revoked_at: db.fn.now() });
       } catch (error) {
-        console.error('Failed to revoke all tokens (transient):', error);
+        logger.warn({ err: error }, 'Failed to revoke all tokens (transient)');
       }
     }
 
@@ -171,7 +172,7 @@ const processRefreshToken = async (
 
     return next();
   } catch (error) {
-    console.error('Failed to rotate refresh token (transient):', error);
+    logger.warn({ err: error }, 'Failed to rotate refresh token (transient)');
     return next();
   }
 };

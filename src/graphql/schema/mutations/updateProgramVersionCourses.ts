@@ -10,6 +10,7 @@ import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
 import UpdateProgramVersionCoursesInput from '../inputs/UpdateProgramVersionCourses.js';
 import { UpdateProgramVersionCoursesResult } from '../types/UpdateProgramVersionCoursesResult.js';
+import logger from '../../../utils/logger.js';
 
 const updateProgramVersionCourses: GraphQLFieldConfig<null, ContextType> = {
   type: UpdateProgramVersionCoursesResult,
@@ -190,7 +191,7 @@ const updateProgramVersionCourses: GraphQLFieldConfig<null, ContextType> = {
           programVersion: updatedProgramVersion,
         };
       } catch (error) {
-        console.log('Failed to update program version courses: ', error);
+        logger.error({ err: error, userId: user.id }, 'Failed to update program version courses');
         return {
           success: false,
           errors: [new Error(ErrorType.INTERNAL_SERVER_ERROR)],

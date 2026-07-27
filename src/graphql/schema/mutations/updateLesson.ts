@@ -6,6 +6,7 @@ import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
 import UpdateLessonInfoInput from '../inputs/UpdateLessonInfo.js';
 import { CreateOrUpdateLessonResult } from '../types/CreateOrUpdateLessonResult.js';
+import logger from '../../../utils/logger.js';
 
 const updateLesson: GraphQLFieldConfig<null, ContextType> = {
   type: CreateOrUpdateLessonResult,
@@ -70,7 +71,7 @@ const updateLesson: GraphQLFieldConfig<null, ContextType> = {
           lesson: updatedLesson,
         };
       } catch (error) {
-        console.log('Failed to create lesson: ', error);
+        logger.error({ err: error, userId: user.id }, 'Failed to update lesson');
         return {
           success: false,
           errors: [new Error(ErrorType.INTERNAL_SERVER_ERROR)],

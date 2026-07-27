@@ -5,6 +5,7 @@ import { ContextType } from '../../../types/types.js';
 import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
 import ChangeProfilePictureResult from '../types/ChangeProfilePictureResult.js';
+import logger from '../../../utils/logger.js';
 
 const removeProfilePicture: GraphQLFieldConfig<null, ContextType> = {
   type: ChangeProfilePictureResult,
@@ -41,7 +42,7 @@ const removeProfilePicture: GraphQLFieldConfig<null, ContextType> = {
           user: account,
         };
       } catch (error) {
-        console.log('Failed to remove profile picture: ', error);
+        logger.error({ err: error, userId: user.id }, 'Failed to remove profile picture');
 
         return {
           success: false,

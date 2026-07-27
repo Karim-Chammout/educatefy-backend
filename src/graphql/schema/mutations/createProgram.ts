@@ -10,6 +10,7 @@ import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
 import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
 import { isValidSlug } from '../../utils/isValidSlug.js';
+import logger from '../../../utils/logger.js';
 import ProgramInfoInput from '../inputs/ProgramInfo.js';
 import { CreateOrUpdateProgramResult } from '../types/CreateOrUpdateProgramResult.js';
 
@@ -151,7 +152,7 @@ const createProgram: GraphQLFieldConfig<null, ContextType> = {
           program: createdProgram,
         };
       } catch (error) {
-        console.log('Failed to create program: ', error);
+        logger.error({ err: error, userId: user.id }, 'Failed to create program');
         return {
           success: false,
           errors: [new Error(ErrorType.INTERNAL_SERVER_ERROR)],

@@ -8,6 +8,7 @@ import { getSelectedLanguageId } from '../../utils/getSelectedLanguageId.js';
 import ProfileDetailsInput from '../inputs/ProfileDetails.js';
 import UpdateProfileResult from '../types/UpdateProfileResult.js';
 import { AccountRoleEnum } from '../types/enum/AccountRole.js';
+import logger from '../../../utils/logger.js';
 
 const updateProfile: GraphQLFieldConfig<null, ContextType> = {
   type: UpdateProfileResult,
@@ -101,7 +102,7 @@ const updateProfile: GraphQLFieldConfig<null, ContextType> = {
           user: account,
         };
       } catch (error) {
-        console.log('Failed to update profile details: ', error);
+        logger.error({ err: error, userId: user.id }, 'Failed to update profile details');
 
         return {
           success: false,

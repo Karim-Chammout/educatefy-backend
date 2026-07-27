@@ -6,6 +6,7 @@ import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
 import DeleteCourseRatingInput from '../inputs/DeleteCourseRating.js';
 import MutationResult from '../types/MutationResult.js';
+import logger from '../../../utils/logger.js';
 
 const deleteCourseRating: GraphQLFieldConfig<null, ContextType> = {
   type: MutationResult,
@@ -65,7 +66,7 @@ const deleteCourseRating: GraphQLFieldConfig<null, ContextType> = {
           errors: [],
         };
       } catch (error) {
-        console.log('Failed to delete course rating: ', error);
+        logger.error({ err: error, userId: user.id }, 'Failed to delete course rating');
         return {
           success: false,
           errors: [new Error(ErrorType.INTERNAL_SERVER_ERROR)],

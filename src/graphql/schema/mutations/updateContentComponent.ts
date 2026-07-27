@@ -11,6 +11,7 @@ import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
 import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
 import TextContentInput from '../inputs/TextContent.js';
+import logger from '../../../utils/logger.js';
 import UpdateContentComponentBaseInput from '../inputs/UpdateContentComponentBase.js';
 import VideoContentInput from '../inputs/VideoContent.js';
 import YouTubeContentInput from '../inputs/YouTubeContent.js';
@@ -164,7 +165,7 @@ const updateContentComponent: GraphQLFieldConfig<null, ContextType> = {
           };
         }
 
-        console.log('Failed to update content component: ', error);
+        logger.error({ err: error, userId: user.id }, 'Failed to update content component');
         return {
           success: false,
           errors: [new Error(ErrorType.INTERNAL_SERVER_ERROR)],

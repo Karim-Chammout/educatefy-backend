@@ -9,6 +9,7 @@ import { ContextType } from '../../../types/types.js';
 import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
 import { isValidSlug } from '../../utils/isValidSlug.js';
+import logger from '../../../utils/logger.js';
 import UpdateProgramInfoInput from '../inputs/UpdateProgramInfo.js';
 import { CreateOrUpdateProgramResult } from '../types/CreateOrUpdateProgramResult.js';
 
@@ -191,7 +192,7 @@ const updateProgram: GraphQLFieldConfig<null, ContextType> = {
           program: updatedProgram,
         };
       } catch (error) {
-        console.log('Failed to update a program: ', error);
+        logger.error({ err: error, userId: user.id }, 'Failed to update program');
         return {
           success: false,
           errors: [new Error(ErrorType.INTERNAL_SERVER_ERROR)],

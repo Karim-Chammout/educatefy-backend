@@ -5,6 +5,7 @@ import { ContextType } from '../../../types/types.js';
 import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
 import { PublishProgramVersionResult } from '../types/PublishProgramVersionResult.js';
+import logger from '../../../utils/logger.js';
 
 const publishProgramVersion: GraphQLFieldConfig<null, ContextType> = {
   type: PublishProgramVersionResult,
@@ -101,7 +102,7 @@ const publishProgramVersion: GraphQLFieldConfig<null, ContextType> = {
         programVersion: publishedProgramVersion,
       };
     } catch (error) {
-      console.log('Failed to publish program version: ', error);
+      logger.error({ err: error, userId: user.id }, 'Failed to publish program version');
       return {
         success: false,
         errors: [new Error(ErrorType.INTERNAL_SERVER_ERROR)],

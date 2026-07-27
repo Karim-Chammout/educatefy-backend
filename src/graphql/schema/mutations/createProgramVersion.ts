@@ -5,6 +5,7 @@ import { ContextType } from '../../../types/types.js';
 import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
 import { CreateProgramVersionResult } from '../types/CreateProgramVersionResult.js';
+import logger from '../../../utils/logger.js';
 
 const createProgramVersion: GraphQLFieldConfig<null, ContextType> = {
   type: CreateProgramVersionResult,
@@ -110,7 +111,7 @@ const createProgramVersion: GraphQLFieldConfig<null, ContextType> = {
         programVersion: newProgramVersion,
       };
     } catch (error) {
-      console.log('Failed to create program version: ', error);
+      logger.error({ err: error, userId: user.id }, 'Failed to create program version');
       return {
         success: false,
         errors: [new Error(ErrorType.INTERNAL_SERVER_ERROR)],

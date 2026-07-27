@@ -1,8 +1,10 @@
 import { GraphQLFieldConfig } from 'graphql';
 
 import { ContextType } from '../../../types/types.js';
+import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
 import MutationResult from '../types/MutationResult.js';
+import logger from '../../../utils/logger.js';
 
 const revokeAllSessions: GraphQLFieldConfig<null, ContextType> = {
   type: MutationResult,
@@ -17,19 +19,29 @@ const revokeAllSessions: GraphQLFieldConfig<null, ContextType> = {
       };
     }
 
-    await ctx
-      .db('refresh_token')
-      .where('account_id', ctx.user.id)
-      .whereNull('revoked_at')
-      .andWhere('token', '!=', currentToken)
-      .update({
-        revoked_at: ctx.db.fn.now(),
-      });
+    try {
+      await ctx
+        .db('refresh_token')
+        .where('account_id', ctx.user.id)
+        .whereNull('revoked_at')
+        .andWhere('token', '!=', currentToken)
+        .update({
+          revoked_at: ctx.db.fn.now(),
+        });
 
-    return {
-      success: true,
-      errors: [],
-    };
+      logger.info({ userId: ctx.user.id }, 'All sessions revoked');
+
+      return {
+        success: true,
+        errors: [],
+      };
+    } catch (error) {
+      logger.error({ err: error, userId: ctx.user.id }, 'Failed to revoke all sessions');
+      return {
+        success: false,
+        errors: [new Error(ErrorType.INTERNAL_SERVER_ERROR)],
+      };
+    }
   }),
 };
 

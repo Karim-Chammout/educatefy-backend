@@ -3,6 +3,7 @@ import { GraphQLFieldConfig, GraphQLID, GraphQLNonNull } from 'graphql';
 import { ContextType } from '../../../types/types.js';
 import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
+import logger from '../../../utils/logger.js';
 import MutationResult from '../types/MutationResult.js';
 
 const deleteProgram: GraphQLFieldConfig<null, ContextType> = {
@@ -53,7 +54,7 @@ const deleteProgram: GraphQLFieldConfig<null, ContextType> = {
         errors: [],
       };
     } catch (error) {
-      console.log('Failed to delete program: ', error);
+      logger.error({ err: error, userId: user.id }, 'Failed to delete program');
       return {
         success: false,
         errors: [new Error(ErrorType.INTERNAL_SERVER_ERROR)],

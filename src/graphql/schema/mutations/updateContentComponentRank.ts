@@ -7,6 +7,7 @@ import { authenticated } from '../../utils/auth.js';
 import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
 import UpdateContentComponentRankInput from '../inputs/UpdateContentComponentRank.js';
 import MutationResult from '../types/MutationResult.js';
+import logger from '../../../utils/logger.js';
 
 const updateContentComponentRanks: GraphQLFieldConfig<null, ContextType> = {
   type: MutationResult,
@@ -58,7 +59,7 @@ const updateContentComponentRanks: GraphQLFieldConfig<null, ContextType> = {
           errors: [],
         };
       } catch (error) {
-        console.log('Failed to update content component ranks: ', error);
+        logger.error({ err: error, userId: user.id }, 'Failed to update content component ranks');
         return {
           success: false,
           errors: [new Error(ErrorType.INTERNAL_SERVER_ERROR)],

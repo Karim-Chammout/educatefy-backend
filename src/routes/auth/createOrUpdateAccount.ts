@@ -3,6 +3,7 @@ import axios from 'axios';
 import { db } from '../../db/index.js';
 import { ErrorType } from '../../utils/ErrorType.js';
 import { uploadFile } from '../../utils/fileStorageHandler.js';
+import logger from '../../utils/logger.js';
 
 type AccountInfo = {
   sub: string;
@@ -39,7 +40,7 @@ const uploadPhoto = async (googlePhotoUrl: string, userId: string) => {
 
     return uploadedFile.path;
   } catch (error) {
-    console.error('Error uploading photo: ', error);
+    logger.error({ err: error }, 'Error uploading photo');
     return null;
   }
 };
@@ -92,7 +93,7 @@ const createOrUpdateAccount = async (
       return account;
     }
   } catch (error) {
-    console.error('An error occurred: ', error);
+    logger.error({ err: error }, 'An error occurred during account creation/update');
     throw error;
   }
 };

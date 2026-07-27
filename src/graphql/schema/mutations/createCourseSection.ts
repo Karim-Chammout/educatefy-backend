@@ -5,6 +5,7 @@ import { ContextType } from '../../../types/types.js';
 import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
 import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
+import logger from '../../../utils/logger.js';
 import CourseSectionInfoInput from '../inputs/CourseSectionInfo.js';
 import { CreateOrUpdateCourseSectionResult } from '../types/CreateOrUpdateCourseSectionResult.js';
 
@@ -69,7 +70,7 @@ const createCourseSection: GraphQLFieldConfig<null, ContextType> = {
           courseSection: createdCourseSection,
         };
       } catch (error) {
-        console.log('Failed to create course section: ', error);
+        logger.error({ err: error, userId: user.id }, 'Failed to create course section');
         return {
           success: false,
           errors: [new Error(ErrorType.INTERNAL_SERVER_ERROR)],

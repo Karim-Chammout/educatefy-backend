@@ -10,6 +10,7 @@ import { authenticated } from '../../utils/auth.js';
 import { getSelectedLanguageId } from '../../utils/getSelectedLanguageId.js';
 import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
 import { isValidSlug } from '../../utils/isValidSlug.js';
+import logger from '../../../utils/logger.js';
 import CourseInfoInput from '../inputs/CourseInfo.js';
 import { CreateOrUpdateCourseResult } from '../types/CreateOrUpdateCourseResult.js';
 
@@ -160,7 +161,7 @@ const createCourse: GraphQLFieldConfig<null, ContextType> = {
           course: createdCourse,
         };
       } catch (error) {
-        console.log('Failed to create course: ', error);
+        logger.error({ err: error, userId: user.id }, 'Failed to create course');
         return {
           success: false,
           errors: [new Error(ErrorType.INTERNAL_SERVER_ERROR)],

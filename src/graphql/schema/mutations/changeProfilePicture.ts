@@ -7,6 +7,7 @@ import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
 import ProfilePictureDetailsInput from '../inputs/ProfilePictureDetails.js';
 import ChangeProfilePictureResult from '../types/ChangeProfilePictureResult.js';
+import logger from '../../../utils/logger.js';
 
 const changeProfilePicture: GraphQLFieldConfig<null, ContextType> = {
   type: ChangeProfilePictureResult,
@@ -77,7 +78,7 @@ const changeProfilePicture: GraphQLFieldConfig<null, ContextType> = {
             user: account,
           };
         } catch (error) {
-          console.log('Failed to update profile picture: ', error);
+          logger.error({ err: error, userId: user.id }, 'Failed to update profile picture');
 
           return {
             success: false,

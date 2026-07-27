@@ -6,6 +6,7 @@ import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
 import { UpdateContentComponentProgressInput } from '../inputs/UpdateContentComponentProgress.js';
 import { ContentComponentProgressResult } from '../types/ContentComponentProgressResult.js';
+import logger from '../../../utils/logger.js';
 
 const updateContentComponentProgress: GraphQLFieldConfig<null, ContextType> = {
   type: ContentComponentProgressResult,
@@ -113,7 +114,10 @@ const updateContentComponentProgress: GraphQLFieldConfig<null, ContextType> = {
           contentComponentProgress: result,
         };
       } catch (error) {
-        console.log('Failed to update content component progress: ', error);
+        logger.error(
+          { err: error, userId: user.id },
+          'Failed to update content component progress',
+        );
         return {
           success: false,
           errors: [new Error(ErrorType.INTERNAL_SERVER_ERROR)],
