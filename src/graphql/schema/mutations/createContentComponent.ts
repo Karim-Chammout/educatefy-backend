@@ -11,6 +11,7 @@ import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
 import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
 import ContentComponentBaseInput from '../inputs/ContentComponentBase.js';
+import logger from '../../../utils/logger.js';
 import TextContentInput from '../inputs/TextContent.js';
 import VideoContentInput from '../inputs/VideoContent.js';
 import YouTubeContentInput from '../inputs/YouTubeContent.js';
@@ -151,7 +152,7 @@ export const createContentComponent: GraphQLFieldConfig<null, ContextType> = {
           component: createdComponent,
         };
       } catch (error) {
-        console.log('Failed to create content component: ', error);
+        logger.error({ err: error, userId: user.id }, 'Failed to create content component');
         return {
           success: false,
           errors: [new Error(ErrorType.INTERNAL_SERVER_ERROR)],

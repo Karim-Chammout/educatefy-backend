@@ -6,6 +6,7 @@ import { db } from '../../db/index.js';
 import { ErrorType } from '../../utils/ErrorType.js';
 import { getClientIp } from '../../utils/getClientIp.js';
 import { generateAccessToken, generateRefreshToken } from '../../utils/jwt.js';
+import logger from '../../utils/logger.js';
 import createOrUpdateAccount from './createOrUpdateAccount.js';
 import { getOidcConfig, providers } from './oidc.js';
 
@@ -41,7 +42,7 @@ export const redirectToProvider = async (req: Request, res: Response) => {
 
     res.redirect(redirectTo.href);
   } catch (error) {
-    console.error('OIDC client not initialized: ', error);
+    logger.error({ err: error }, 'OIDC client not initialized');
     res.status(500).json({ message: ErrorType.INTERNAL_SERVER_ERROR });
   }
 };
@@ -52,7 +53,7 @@ export const handleCallback = async (req: Request, res: Response) => {
     const { state } = req.body;
 
     if (!state) {
-      console.error('Invalid state parameter');
+      logger.warn('Invalid state parameter');
       res.status(400).json({ message: ErrorType.INVALID_STATE });
       return;
     }
@@ -63,7 +64,7 @@ export const handleCallback = async (req: Request, res: Response) => {
     const openidClientConfig = await db('openid_client').where('id', oidcID).first();
 
     if (!openidClientConfig) {
-      console.error('Invalid provider callback');
+      logger.warn('Invalid provider callback');
       res.status(400).json({ message: ErrorType.OIDC_INVALID_PROVIDER });
       return;
     }
@@ -121,9 +122,10 @@ export const handleCallback = async (req: Request, res: Response) => {
           });
 
           res.json({ refreshToken });
+          logger.info({ userId: account.id, provider }, 'User logged in successfully');
           return;
         } catch (error) {
-          console.error('Failed to generate tokens:', error);
+          logger.error({ err: error }, 'Failed to generate tokens');
           res.status(500).json({ message: ErrorType.INTERNAL_SERVER_ERROR });
           return;
         }
@@ -133,7 +135,7 @@ export const handleCallback = async (req: Request, res: Response) => {
       return;
     }
   } catch (error: any) {
-    console.error('Failed to handle OIDC callback => ', error);
+    logger.error({ err: error }, 'Failed to handle OIDC callback');
     let message = ErrorType.INTERNAL_SERVER_ERROR;
     if (error.message?.includes(ErrorType.SIGN_UP_FIRST)) {
       message = ErrorType.SIGN_UP_FIRST;
@@ -147,6 +149,7 @@ export const logout = async (req: Request, res: Response) => {
 
   if (refreshToken) {
     await db('refresh_token').where('token', refreshToken).update({ revoked_at: db.fn.now() });
+    logger.info('User logged out');
   }
 
   const isProduction = config.APP_ENV === 'production';

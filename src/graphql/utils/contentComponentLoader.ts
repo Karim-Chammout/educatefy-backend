@@ -1,5 +1,6 @@
 import { ContentComponent, ContentComponentTypeEnumType } from '../../types/db-generated-types.js';
 import { ContextType } from '../../types/types.js';
+import logger from '../../utils/logger.js';
 
 const componentLoaders = {
   [ContentComponentTypeEnumType.Text]: (loaders: ContextType['loaders'], id: number) =>
@@ -35,7 +36,7 @@ export const loadComponent = async (
 
     return content ? { ...content, ...componentValuesToInject } : null;
   } catch (error) {
-    console.error(`Error loading component ${id} of type ${type}: `, error);
+    logger.error({ err: error, componentId: id, type }, 'Error loading content component');
     return null;
   }
 };

@@ -5,6 +5,7 @@ import { ContextType } from '../../../types/types.js';
 import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
 import { UpdateProgramStatusResult } from '../types/UpdateProgramStatusResult.js';
+import logger from '../../../utils/logger.js';
 
 const enrollInProgram: GraphQLFieldConfig<null, ContextType> = {
   type: UpdateProgramStatusResult,
@@ -72,7 +73,7 @@ const enrollInProgram: GraphQLFieldConfig<null, ContextType> = {
         program: updatedProgram,
       };
     } catch (error) {
-      console.log('Failed to enroll in program: ', error);
+      logger.error({ err: error, userId: user.id }, 'Failed to enroll in program');
       return {
         success: false,
         errors: [new Error(ErrorType.INTERNAL_SERVER_ERROR)],

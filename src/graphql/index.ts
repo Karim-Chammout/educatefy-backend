@@ -5,12 +5,14 @@ import { db } from '../db/index.js';
 import { createLoaders } from './ctx/db/index.js';
 import { createFsContext } from './ctx/fs/index.js';
 import { createUserContext } from './ctx/user/index.js';
+import { useGraphQLLogger } from './plugins/useGraphQLLogger.js';
 import Schema from './schema/Schema.js';
 
 export const yoga = createYoga({
   schema: Schema,
   landingPage: false,
   graphqlEndpoint: '/',
+  plugins: [useGraphQLLogger],
   context: async (ctx) => {
     // @ts-ignore FIXME
     const { headers, tokenPayload, ip } = ctx.req;

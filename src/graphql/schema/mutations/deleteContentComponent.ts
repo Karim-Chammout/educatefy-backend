@@ -8,6 +8,7 @@ import { authenticated } from '../../utils/auth.js';
 import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
 import { ComponentType as ComponentEnumType } from '../types/enum/ContentComponent.js';
 import MutationResult from '../types/MutationResult.js';
+import logger from '../../../utils/logger.js';
 
 export const deleteContentComponent: GraphQLFieldConfig<null, ContextType> = {
   type: MutationResult,
@@ -66,10 +67,7 @@ export const deleteContentComponent: GraphQLFieldConfig<null, ContextType> = {
               try {
                 await deleteFile(deletedVideoContent.url);
               } catch (error) {
-                console.log(
-                  `Failed to delete video file. - key: ${deletedVideoContent.url} - Error: `,
-                  error,
-                );
+                logger.error({ err: error, userId: user.id }, 'Error deleting video file');
               }
               break;
           }
@@ -82,7 +80,7 @@ export const deleteContentComponent: GraphQLFieldConfig<null, ContextType> = {
           errors: [],
         };
       } catch (error) {
-        console.log('Failed to delete content component: ', error);
+        logger.error({ err: error, userId: user.id }, 'Failed to delete content component');
         return {
           success: false,
           errors: [new Error(ErrorType.INTERNAL_SERVER_ERROR)],

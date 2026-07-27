@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 
 import { ErrorType } from '../../utils/ErrorType.js';
 import { uploadFile } from '../../utils/fileStorageHandler.js';
+import logger from '../../utils/logger.js';
 import { sanitizeFileName } from '../../utils/sanitizeFileName.js';
 
 export const fileUploadHandler = async (req: Request, res: Response) => {
@@ -35,7 +36,7 @@ export const fileUploadHandler = async (req: Request, res: Response) => {
     });
     return;
   } catch (error) {
-    console.error('Error uploading file: ', error);
+    logger.error({ err: error }, 'Error uploading file');
     res.status(500).json({ success: false, message: ErrorType.UPLOADING_FILE_FAILED });
     return;
   }

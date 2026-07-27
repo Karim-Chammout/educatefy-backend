@@ -7,6 +7,7 @@ import { authenticated } from '../../utils/auth.js';
 import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
 import FollowTeacherInput from '../inputs/FollowTeacherInput.js';
 import { FollowTeacherResult } from '../types/FollowTeacherResult.js';
+import logger from '../../../utils/logger.js';
 
 const followTeacher: GraphQLFieldConfig<null, ContextType> = {
   type: FollowTeacherResult,
@@ -99,7 +100,7 @@ const followTeacher: GraphQLFieldConfig<null, ContextType> = {
           isFollowing,
         };
       } catch (error) {
-        console.log('Failed to follow/unfollow teacher: ', error);
+        logger.error({ err: error, userId: user.id }, 'Failed to follow/unfollow teacher');
         return {
           success: false,
           errors: [new Error(ErrorType.INTERNAL_SERVER_ERROR)],

@@ -8,6 +8,7 @@ import { getSelectedLanguageId } from '../../utils/getSelectedLanguageId.js';
 import AccountInfoInput from '../inputs/AccountInfo.js';
 import MutationResult from '../types/MutationResult.js';
 import { AccountRoleEnum } from '../types/enum/AccountRole.js';
+import logger from '../../../utils/logger.js';
 
 const updateAccountInfo: GraphQLFieldConfig<null, ContextType> = {
   type: MutationResult,
@@ -97,7 +98,7 @@ const updateAccountInfo: GraphQLFieldConfig<null, ContextType> = {
           errors: [],
         };
       } catch (error) {
-        console.log('Failed to update account information: ', error);
+        logger.error({ err: error, userId: user.id }, 'Failed to update account information');
 
         return {
           success: false,

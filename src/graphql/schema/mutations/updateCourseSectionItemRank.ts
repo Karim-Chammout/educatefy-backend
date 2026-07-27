@@ -6,6 +6,7 @@ import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
 import UpdateCourseSectionItemRankInput from '../inputs/UpdateCourseSectionItemRank.js';
 import MutationResult from '../types/MutationResult.js';
+import logger from '../../../utils/logger.js';
 
 const updateCourseSectionItemRanks: GraphQLFieldConfig<null, ContextType> = {
   type: MutationResult,
@@ -71,7 +72,7 @@ const updateCourseSectionItemRanks: GraphQLFieldConfig<null, ContextType> = {
           errors: [],
         };
       } catch (error) {
-        console.log('Failed to update course section item ranks: ', error);
+        logger.error({ err: error, userId: user.id }, 'Failed to update course section item ranks');
         return {
           success: false,
           errors: [new Error(ErrorType.INTERNAL_SERVER_ERROR)],

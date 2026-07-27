@@ -10,6 +10,7 @@ import { authenticated } from '../../utils/auth.js';
 import { attachProgramToEnrollment } from '../../utils/contentUtils.js';
 import CourseStatusInput from '../inputs/CourseStatus.js';
 import { UpdateCourseStatusResult } from '../types/UpdateCourseStatusResult.js';
+import logger from '../../../utils/logger.js';
 
 const updateCourseStatus: GraphQLFieldConfig<null, ContextType> = {
   type: UpdateCourseStatusResult,
@@ -137,7 +138,7 @@ const updateCourseStatus: GraphQLFieldConfig<null, ContextType> = {
 
         return result;
       } catch (error) {
-        console.log('Failed to update course status: ', error);
+        logger.error({ err: error, userId: user.id }, 'Failed to update course status');
 
         return {
           success: false,

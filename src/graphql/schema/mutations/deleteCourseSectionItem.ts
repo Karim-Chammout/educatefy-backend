@@ -5,6 +5,7 @@ import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
 import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
 import MutationResult from '../types/MutationResult.js';
+import logger from '../../../utils/logger.js';
 
 const deleteCourseSectionItem: GraphQLFieldConfig<null, ContextType> = {
   type: MutationResult,
@@ -68,7 +69,7 @@ const deleteCourseSectionItem: GraphQLFieldConfig<null, ContextType> = {
         errors: [],
       };
     } catch (error) {
-      console.log('Failed to delete course section: ', error);
+      logger.error({ err: error, userId: user.id }, 'Failed to delete course section item');
       return {
         success: false,
         errors: [new Error(ErrorType.INTERNAL_SERVER_ERROR)],

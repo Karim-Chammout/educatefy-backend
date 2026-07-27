@@ -4,6 +4,7 @@ import { ContextType } from '../../../types/types.js';
 import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
 import MutationResult from '../types/MutationResult.js';
+import logger from '../../../utils/logger.js';
 
 const deleteLesson: GraphQLFieldConfig<null, ContextType> = {
   type: MutationResult,
@@ -52,7 +53,7 @@ const deleteLesson: GraphQLFieldConfig<null, ContextType> = {
         errors: [],
       };
     } catch (error) {
-      console.log('Failed to delete lesson: ', error);
+      logger.error({ err: error, userId: user.id }, 'Failed to delete lesson');
       return {
         success: false,
         errors: [new Error(ErrorType.INTERNAL_SERVER_ERROR)],

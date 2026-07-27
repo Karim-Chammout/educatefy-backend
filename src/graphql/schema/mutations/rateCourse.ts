@@ -7,6 +7,7 @@ import { sanitizeText } from '../../../utils/sanitizeText.js';
 import { authenticated } from '../../utils/auth.js';
 import RateCourse from '../inputs/RateCourse.js';
 import { RateCourseResult } from '../types/RateCourseResult.js';
+import logger from '../../../utils/logger.js';
 
 const rateCourse: GraphQLFieldConfig<null, ContextType> = {
   type: RateCourseResult,
@@ -88,7 +89,7 @@ const rateCourse: GraphQLFieldConfig<null, ContextType> = {
           course,
         };
       } catch (error) {
-        console.log('Failed to rate course: ', error);
+        logger.error({ err: error, userId: user.id }, 'Failed to rate course');
         return {
           success: false,
           errors: [new Error(ErrorType.INTERNAL_SERVER_ERROR)],

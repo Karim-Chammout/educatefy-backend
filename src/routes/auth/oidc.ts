@@ -2,6 +2,7 @@ import * as client from 'openid-client';
 
 import config from '../../config.js';
 import { ErrorType } from '../../utils/ErrorType.js';
+import logger from '../../utils/logger.js';
 
 type ProviderConfigType = {
   issuer: string;
@@ -31,7 +32,7 @@ export const getOidcConfig = async (provider: string): Promise<client.Configurat
 
     return oidcConfig;
   } catch (error) {
-    console.error('Failed to discover OpenID issuer: ', error);
+    logger.error({ err: error }, 'Failed to discover OpenID issuer');
     throw new Error(ErrorType.OIDC_INITIALIZE_FAILED);
   }
 };

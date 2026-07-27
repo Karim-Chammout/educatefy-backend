@@ -1,32 +1,50 @@
-import { Request, Response, NextFunction } from 'express';
-import { performance } from 'perf_hooks';
+import { NextFunction, Request, Response } from 'express';
+import { pinoHttp } from 'pino-http';
 
-export function accessLog(req: Request, res: Response, next: NextFunction) {
-  const { hostname, method, path, ip, protocol, headers } = req;
-  const userAgent = headers['user-agent'] || 'Unknown User Agent';
-  const startTime = performance.now();
-  const requestTime = new Date().toISOString();
+import logger from '../utils/logger.js';
 
-  res.on('finish', () => {
-    const endTime = performance.now();
-    const responseTime = endTime - startTime;
-    const { statusCode } = res;
-    const logMessage = `${requestTime} - ${method} ${protocol}://${hostname}${path} - ${ip} - Status: ${statusCode} - Response Time: ${responseTime.toFixed(
-      2,
-    )}ms - User Agent: ${userAgent}`;
-    console.log(logMessage);
-  });
+export const httpLogger = pinoHttp({
+  logger,
+  genReqId: (req) => req.id ?? crypto.randomUUID(),
+  customLogLevel: (_req, res, err) => {
+    if (res.statusCode >= 500 || err) return 'error';
+    if (res.statusCode >= 400) return 'warn';
+    return 'info';
+  },
+  customSuccessMessage: (req, res) => {
+    return `${req.method} ${req.url} ${res.statusCode}`;
+  },
+  customErrorMessage: (_req, res, err) => {
+    return `request error: ${res.statusCode} - ${err.message}`;
+  },
+  customReceivedMessage: (req) => {
+    return `request received: ${req.method} ${req.url}`;
+  },
+  customAttributeKeys: {
+    req: 'request',
+    res: 'response',
+    err: 'error',
+    responseTime: 'responseTime',
+  },
+  serializers: {
+    req: (req) => ({
+      method: req.method,
+      url: req.url,
+      id: req.id,
+      remoteAddress: req.remoteAddress,
+    }),
+    res: (res) => ({
+      statusCode: res.statusCode,
+    }),
+    err: (err) => ({
+      type: err.name,
+      message: err.message,
+      stack: err.stack,
+    }),
+  },
+});
 
-  next();
-}
-
-export function errorLog(err: Error, req: Request, res: Response, _next: NextFunction) {
-  const { hostname, method, path, protocol, headers } = req;
-  const userAgent = headers['user-agent'] || 'Unknown User Agent';
-  const errorTime = new Date().toISOString();
-
-  const logMessage = `${errorTime} - ${method} ${protocol}://${hostname}${path} - ${err.message} - Stack: ${err.stack} - User Agent: ${userAgent}`;
-  console.log(logMessage);
-
+export function errorHandler(err: Error, req: Request, res: Response, _next: NextFunction) {
+  req.log.error({ err }, 'Unhandled error');
   res.status(500).send({ status: 'server-error', message: err.message });
 }

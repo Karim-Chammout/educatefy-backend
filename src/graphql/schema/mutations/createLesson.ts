@@ -7,6 +7,7 @@ import { authenticated } from '../../utils/auth.js';
 import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
 import LessonInfoInput from '../inputs/LessonInfo.js';
 import { CreateOrUpdateLessonResult } from '../types/CreateOrUpdateLessonResult.js';
+import logger from '../../../utils/logger.js';
 
 const createLesson: GraphQLFieldConfig<null, ContextType> = {
   type: CreateOrUpdateLessonResult,
@@ -77,7 +78,7 @@ const createLesson: GraphQLFieldConfig<null, ContextType> = {
           lesson: createdLesson,
         };
       } catch (error) {
-        console.log('Failed to create lesson: ', error);
+        logger.error({ err: error, userId: user.id }, 'Failed to create lesson');
         return {
           success: false,
           errors: [new Error(ErrorType.INTERNAL_SERVER_ERROR)],

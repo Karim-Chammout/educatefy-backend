@@ -10,6 +10,7 @@ import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
 import { getSelectedLanguageId } from '../../utils/getSelectedLanguageId.js';
 import { isValidSlug } from '../../utils/isValidSlug.js';
+import logger from '../../../utils/logger.js';
 import UpdateCourseInfoInput from '../inputs/UpdateCourseInfo.js';
 import { CreateOrUpdateCourseResult } from '../types/CreateOrUpdateCourseResult.js';
 
@@ -205,7 +206,7 @@ const updateCourse: GraphQLFieldConfig<null, ContextType> = {
           course: updatedCourse,
         };
       } catch (error) {
-        console.log('Faild to update a course: ', error);
+        logger.error({ err: error, userId: user.id }, 'Failed to update course');
         return {
           success: false,
           errors: [new Error(ErrorType.INTERNAL_SERVER_ERROR)],
