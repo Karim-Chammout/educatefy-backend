@@ -11,6 +11,7 @@ function getEnvVar(key: string) {
 const config = {
   APP_ENV: getEnvVar('APP_ENV'),
   PORT: getEnvVar('PORT'),
+  LOG_LEVEL: getEnvVar('LOG_LEVEL'),
   DATABASE_NAME: getEnvVar('DATABASE_NAME'),
   DATABASE_USER: getEnvVar('DATABASE_USER'),
   DATABASE_PASSWORD: getEnvVar('DATABASE_PASSWORD'),

@@ -1,5 +1,6 @@
 import { JwtPayload } from 'jsonwebtoken';
 import type { Knex } from 'knex';
+import type { Logger } from 'pino';
 
 import { ReadersType } from '../graphql/ctx/db/index.js';
 import { FsContext } from '../graphql/ctx/fs/index.js';
@@ -9,6 +10,8 @@ declare global {
     interface Request {
       tokenPayload: JwtPayload | null;
       token: string | null;
+      id: string;
+      log: Logger;
     }
   }
 }
