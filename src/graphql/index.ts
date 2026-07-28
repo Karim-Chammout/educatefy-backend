@@ -1,6 +1,9 @@
 import express from 'express';
 import { createYoga } from 'graphql-yoga';
+import { useDisableIntrospection } from '@envelop/disable-introspection';
+import { EnvelopArmorPlugin } from '@escape.tech/graphql-armor';
 
+import config from '../config.js';
 import { db } from '../db/index.js';
 import { createLoaders } from './ctx/db/index.js';
 import { createFsContext } from './ctx/fs/index.js';
@@ -12,7 +15,17 @@ export const yoga = createYoga({
   schema: Schema,
   landingPage: false,
   graphqlEndpoint: '/',
-  plugins: [useGraphQLLogger],
+  plugins: [
+    useGraphQLLogger,
+    EnvelopArmorPlugin({
+      maxDepth: {
+        n: 7,
+        flattenFragments: true,
+      },
+      costLimit: { enabled: false },
+    }),
+    ...(config.APP_ENV === 'production' ? [useDisableIntrospection()] : []),
+  ],
   context: async (ctx) => {
     // @ts-ignore FIXME
     const { headers, tokenPayload, ip } = ctx.req;
