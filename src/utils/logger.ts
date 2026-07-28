@@ -23,6 +23,13 @@ const logger = pino({
       }
     : undefined,
   timestamp: isDevelopment ? false : pino.stdTimeFunctions.isoTime,
+  formatters: {
+    level: (label) => {
+      return {
+        level: label,
+      };
+    },
+  },
   serializers: {
     err: pino.stdSerializers.err,
     error: pino.stdSerializers.err,
