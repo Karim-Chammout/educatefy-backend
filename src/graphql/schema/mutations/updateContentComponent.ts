@@ -9,6 +9,7 @@ import {
 import { ContextType } from '../../../types/types.js';
 import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
+import { getComponentConfig } from '../../utils/contentComponentRegistry.js';
 import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
 import TextContentInput from '../inputs/TextContent.js';
 import logger from '../../../utils/logger.js';
@@ -41,19 +42,16 @@ const updateContentComponent: GraphQLFieldConfig<null, ContextType> = {
   resolve: authenticated(
     async (
       _,
-      {
-        baseComponentInfo,
-        textContent,
-        videoContent,
-        youtubeContent,
-      }: {
+      args: {
         baseComponentInfo: UpdateContentComponentBaseInputType;
-        textContent: TextContentInputType;
-        videoContent: VideoContentInputType;
-        youtubeContent: YouTubeContentInputType;
+        textContent?: TextContentInputType;
+        videoContent?: VideoContentInputType;
+        youtubeContent?: YouTubeContentInputType;
       },
       { db, loaders, user },
     ) => {
+      const { baseComponentInfo } = args;
+
       if (!baseComponentInfo) {
         return {
           success: false,
@@ -75,7 +73,27 @@ const updateContentComponent: GraphQLFieldConfig<null, ContextType> = {
           };
         }
 
-        if ((baseComponentInfo.type as string) !== contentComponent.type) {
+        if (String(baseComponentInfo.type) !== contentComponent.type) {
+          return {
+            success: false,
+            errors: [new Error(ErrorType.INVALID_INPUT)],
+            component: null,
+          };
+        }
+
+        const config = getComponentConfig(baseComponentInfo.type);
+
+        if (!config) {
+          return {
+            success: false,
+            errors: [new Error(ErrorType.INVALID_INPUT)],
+            component: null,
+          };
+        }
+
+        const contentInput = args[config.inputArgName];
+
+        if (!contentInput) {
           return {
             success: false,
             errors: [new Error(ErrorType.INVALID_INPUT)],
@@ -94,7 +112,7 @@ const updateContentComponent: GraphQLFieldConfig<null, ContextType> = {
         }
 
         await db.transaction(async (transaction) => {
-          const { id, type, denomination, isPublished, isRequired } = baseComponentInfo;
+          const { id, denomination, isPublished, isRequired } = baseComponentInfo;
           const valuesToUpdate = {
             ...(denomination && { denomination }),
             ...(isPublished !== undefined && { is_published: isPublished }),
@@ -110,43 +128,12 @@ const updateContentComponent: GraphQLFieldConfig<null, ContextType> = {
             });
 
           // Update specific content based on type
-          switch (type) {
-            case 'text':
-              if (!textContent) {
-                throw new Error(ErrorType.INVALID_INPUT);
-              }
-
-              await transaction('text_content').where('component_id', id).update({
-                content: textContent.content,
-                updated_at: db.fn.now(),
-              });
-              break;
-
-            case 'video':
-              if (!videoContent) {
-                throw new Error(ErrorType.INVALID_INPUT);
-              }
-
-              await transaction('video_content').where('component_id', id).update({
-                url: videoContent.url,
-                updated_at: db.fn.now(),
-              });
-              break;
-
-            case 'youtube':
-              if (!youtubeContent) {
-                throw new Error(ErrorType.INVALID_INPUT);
-              }
-
-              await transaction('youtube_content')
-                .where('component_id', id)
-                .update({
-                  youtube_video_id: youtubeContent.videoId,
-                  description: youtubeContent.description || null,
-                  updated_at: db.fn.now(),
-                });
-              break;
-          }
+          await transaction(config.table)
+            .where('component_id', id)
+            .update({
+              ...config.updatePayload(contentInput),
+              updated_at: db.fn.now(),
+            });
 
           loaders.ContentComponent.loaders.byIdLoader.clear(parseInt(id, 10));
         });
@@ -157,14 +144,6 @@ const updateContentComponent: GraphQLFieldConfig<null, ContextType> = {
           component: contentComponent,
         };
       } catch (error) {
-        if (error instanceof Error && error.message === ErrorType.INVALID_INPUT) {
-          return {
-            success: false,
-            errors: [new Error(ErrorType.INVALID_INPUT)],
-            component: null,
-          };
-        }
-
         logger.error({ err: error, userId: user.id }, 'Failed to update content component');
         return {
           success: false,

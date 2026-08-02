@@ -9,6 +9,7 @@ import {
 import { ContextType } from '../../../types/types.js';
 import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
+import { getComponentConfig } from '../../utils/contentComponentRegistry.js';
 import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
 import ContentComponentBaseInput from '../inputs/ContentComponentBase.js';
 import logger from '../../../utils/logger.js';
@@ -41,19 +42,16 @@ export const createContentComponent: GraphQLFieldConfig<null, ContextType> = {
   resolve: authenticated(
     async (
       _,
-      {
-        baseComponentInfo,
-        textContent,
-        videoContent,
-        youtubeContent,
-      }: {
+      args: {
         baseComponentInfo: ContentComponentBaseInputType;
-        textContent: TextContentInputType;
-        videoContent: VideoContentInputType;
-        youtubeContent: YouTubeContentInputType;
+        textContent?: TextContentInputType;
+        videoContent?: VideoContentInputType;
+        youtubeContent?: YouTubeContentInputType;
       },
       { db, loaders, user },
     ) => {
+      const { baseComponentInfo } = args;
+
       if (!baseComponentInfo) {
         return {
           success: false,
@@ -62,10 +60,22 @@ export const createContentComponent: GraphQLFieldConfig<null, ContextType> = {
         };
       }
 
-      if (!textContent && !videoContent && !youtubeContent) {
+      const config = getComponentConfig(baseComponentInfo.type);
+
+      if (!config) {
         return {
           success: false,
-          errors: [new Error(ErrorType.MISSING_INPUT)],
+          errors: [new Error(ErrorType.INVALID_INPUT)],
+          component: null,
+        };
+      }
+
+      const contentInput = args[config.inputArgName];
+
+      if (!contentInput) {
+        return {
+          success: false,
+          errors: [new Error(ErrorType.INVALID_INPUT)],
           component: null,
         };
       }
@@ -82,7 +92,6 @@ export const createContentComponent: GraphQLFieldConfig<null, ContextType> = {
         }
 
         const createdComponent = await db.transaction(async (transaction) => {
-          // Insert base component
           const [component] = await transaction('content_component')
             .insert({
               parent_id: baseComponentInfo.parentId,
@@ -94,54 +103,10 @@ export const createContentComponent: GraphQLFieldConfig<null, ContextType> = {
             })
             .returning('id');
 
-          // Insert specific content based on type
-          switch (baseComponentInfo.type) {
-            case 'text':
-              if (!textContent) {
-                return {
-                  success: false,
-                  errors: [new Error(ErrorType.INVALID_INPUT)],
-                  component: null,
-                };
-              }
-
-              await transaction('text_content').insert({
-                component_id: component.id,
-                content: textContent.content,
-              });
-              break;
-
-            case 'video':
-              if (!videoContent) {
-                return {
-                  success: false,
-                  errors: [new Error(ErrorType.INVALID_INPUT)],
-                  component: null,
-                };
-              }
-
-              await transaction('video_content').insert({
-                component_id: component.id,
-                url: videoContent.url,
-              });
-              break;
-
-            case 'youtube':
-              if (!youtubeContent) {
-                return {
-                  success: false,
-                  errors: [new Error(ErrorType.INVALID_INPUT)],
-                  component: null,
-                };
-              }
-
-              await transaction('youtube_content').insert({
-                component_id: component.id,
-                youtube_video_id: youtubeContent.videoId,
-                description: youtubeContent.description || null,
-              });
-              break;
-          }
+          await transaction(config.table).insert({
+            component_id: component.id,
+            ...config.createPayload(contentInput),
+          });
 
           return component;
         });

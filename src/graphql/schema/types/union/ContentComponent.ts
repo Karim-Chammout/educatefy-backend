@@ -1,24 +1,21 @@
 import { GraphQLUnionType } from 'graphql';
 
-import { ContentComponentTypeEnumType } from '../../../../types/db-generated-types.js';
-import { TextContent } from '../TextContent.js';
-import { VideoContent } from '../VideoContent.js';
-import { YouTubeContent } from '../YouTubeContent.js';
+import {
+  CONTENT_COMPONENT_REGISTRY,
+  getComponentConfig,
+} from '../../../utils/contentComponentRegistry.js';
 
 export const ContentComponent = new GraphQLUnionType({
   name: 'ContentComponent',
   description: 'A content component which can be of various types.',
-  types: [TextContent, VideoContent, YouTubeContent],
+  types: Object.values(CONTENT_COMPONENT_REGISTRY).map((config) => config.graphqlType),
   resolveType(value) {
-    switch (value.type) {
-      case ContentComponentTypeEnumType.Text:
-        return 'TextContent';
-      case ContentComponentTypeEnumType.Video:
-        return 'VideoContent';
-      case ContentComponentTypeEnumType.Youtube:
-        return 'YouTubeContent';
-      default:
-        return 'UNKNOWN_CONTENT_TYPE';
+    const config = getComponentConfig(value.type);
+
+    if (!config) {
+      throw new Error(`Unknown content component type: ${value.type}`);
     }
+
+    return config.graphqlType.name;
   },
 });

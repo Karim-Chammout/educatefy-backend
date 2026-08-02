@@ -390,6 +390,7 @@ export const CourseDetailAnalytics = new GraphQLObjectType<{ courseId: number },
         const requiredComponents = contentIds.length
           ? await db('content_component')
               .whereIn('parent_id', contentIds)
+              .where('parent_table', 'lesson')
               .where('is_required', true)
               .select('id', 'parent_id')
           : [];

@@ -3,8 +3,8 @@ import { GraphQLFieldConfig, GraphQLID, GraphQLNonNull } from 'graphql';
 import { ComponentType } from '../../../types/schema-types.js';
 import { ContextType } from '../../../types/types.js';
 import { ErrorType } from '../../../utils/ErrorType.js';
-import { deleteFile } from '../../../utils/fileStorageHandler.js';
 import { authenticated } from '../../utils/auth.js';
+import { getComponentConfig } from '../../utils/contentComponentRegistry.js';
 import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
 import { ComponentType as ComponentEnumType } from '../types/enum/ContentComponent.js';
 import MutationResult from '../types/MutationResult.js';
@@ -42,6 +42,15 @@ export const deleteContentComponent: GraphQLFieldConfig<null, ContextType> = {
         };
       }
 
+      const config = getComponentConfig(componentType);
+
+      if (!config) {
+        return {
+          success: false,
+          errors: [new Error(ErrorType.INVALID_INPUT)],
+        };
+      }
+
       try {
         const isTeacher = await hasTeacherRole(loaders, user.roleId);
 
@@ -53,25 +62,9 @@ export const deleteContentComponent: GraphQLFieldConfig<null, ContextType> = {
         }
 
         await db.transaction(async (transaction) => {
-          switch (componentType) {
-            case 'text':
-              await transaction('text_content').where('component_id', componentId).del();
-              break;
+          await config.deleteFiles?.(transaction, parseInt(componentId, 10));
 
-            case 'video':
-              const [deletedVideoContent] = await transaction('video_content')
-                .where('component_id', componentId)
-                .del()
-                .returning('url');
-
-              try {
-                await deleteFile(deletedVideoContent.url);
-              } catch (error) {
-                logger.error({ err: error, userId: user.id }, 'Error deleting video file');
-              }
-              break;
-          }
-
+          // Deleting the base component cascades to the type-specific table.
           await transaction('content_component').where('id', componentId).del();
         });
 

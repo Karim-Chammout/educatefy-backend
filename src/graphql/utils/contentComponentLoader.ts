@@ -1,15 +1,7 @@
-import { ContentComponent, ContentComponentTypeEnumType } from '../../types/db-generated-types.js';
+import { ContentComponent } from '../../types/db-generated-types.js';
 import { ContextType } from '../../types/types.js';
 import logger from '../../utils/logger.js';
-
-const componentLoaders = {
-  [ContentComponentTypeEnumType.Text]: (loaders: ContextType['loaders'], id: number) =>
-    loaders.TextContent.loadByComponentId(id),
-  [ContentComponentTypeEnumType.Video]: (loaders: ContextType['loaders'], id: number) =>
-    loaders.VideoContent.loadByComponentId(id),
-  [ContentComponentTypeEnumType.Youtube]: (loaders: ContextType['loaders'], id: number) =>
-    loaders.YoutubeContent.loadByComponentId(id),
-};
+import { getComponentConfig } from './contentComponentRegistry.js';
 
 export const loadComponent = async (
   loaders: ContextType['loaders'],
@@ -17,9 +9,10 @@ export const loadComponent = async (
 ) => {
   const { id, type, denomination, is_published, is_required, rank } = componentData;
 
-  const loader = componentLoaders[type];
+  const config = getComponentConfig(type);
 
-  if (!loader) {
+  if (!config) {
+    logger.warn({ componentId: id, type }, 'Unknown content component type');
     return null;
   }
 
@@ -32,7 +25,7 @@ export const loadComponent = async (
   };
 
   try {
-    const content = await loader(loaders, id);
+    const content = await config.loadByComponentId(loaders, id);
 
     return content ? { ...content, ...componentValuesToInject } : null;
   } catch (error) {
