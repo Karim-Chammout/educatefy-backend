@@ -5,6 +5,10 @@ import { ContentComponentTypeEnumType } from '../../types/db-generated-types.js'
 import { ContextType } from '../../types/types.js';
 import { deleteFile } from '../../utils/fileStorageHandler.js';
 import logger from '../../utils/logger.js';
+import { AudioContent } from '../schema/types/AudioContent.js';
+import { DocumentContent } from '../schema/types/DocumentContent.js';
+import { EmbedContent } from '../schema/types/EmbedContent.js';
+import { ImageContent } from '../schema/types/ImageContent.js';
 import { TextContent } from '../schema/types/TextContent.js';
 import { VideoContent } from '../schema/types/VideoContent.js';
 import { YouTubeContent } from '../schema/types/YouTubeContent.js';
@@ -41,7 +45,14 @@ export type ContentComponentTypeConfig = {
     componentId: number,
   ) => Promise<Record<string, unknown> | null | undefined>;
   /** The name of the mutation arg that carries the type-specific payload. */
-  inputArgName: 'textContent' | 'videoContent' | 'youtubeContent';
+  inputArgName:
+    | 'textContent'
+    | 'videoContent'
+    | 'youtubeContent'
+    | 'audioContent'
+    | 'documentContent'
+    | 'embedContent'
+    | 'imageContent';
   /** Maps the mutation input to the insert payload of the type-specific table. */
   createPayload: (input: Record<string, unknown>) => Record<string, unknown>;
   /** Maps the mutation input to the update payload of the type-specific table. */
@@ -103,6 +114,125 @@ export const CONTENT_COMPONENT_REGISTRY: Record<
       youtube_video_id: input.videoId,
       description: input.description ?? null,
     }),
+  },
+  [ContentComponentTypeEnumType.Audio]: {
+    type: ContentComponentTypeEnumType.Audio,
+    graphqlType: AudioContent,
+    table: 'audio_content',
+    loadByComponentId: (loaders, componentId) =>
+      loaders.AudioContent.loadByComponentId(componentId),
+    inputArgName: 'audioContent',
+    createPayload: (input) => ({
+      url: input.url,
+      original_name: input.originalName ?? null,
+      mime_type: input.mimeType ?? null,
+    }),
+    updatePayload: (input) => ({
+      url: input.url,
+      original_name: input.originalName ?? null,
+      mime_type: input.mimeType ?? null,
+    }),
+    deleteFiles: async (transaction, componentId) => {
+      const [row] = await transaction('audio_content')
+        .where('component_id', componentId)
+        .select('url');
+
+      if (!row?.url) {
+        return;
+      }
+
+      try {
+        await deleteFile(row.url);
+      } catch (error) {
+        logger.error({ err: error, componentId }, 'Error deleting audio file');
+      }
+    },
+  },
+  [ContentComponentTypeEnumType.Document]: {
+    type: ContentComponentTypeEnumType.Document,
+    graphqlType: DocumentContent,
+    table: 'document_content',
+    loadByComponentId: (loaders, componentId) =>
+      loaders.DocumentContent.loadByComponentId(componentId),
+    inputArgName: 'documentContent',
+    createPayload: (input) => ({
+      url: input.url,
+      original_name: input.originalName ?? null,
+      mime_type: input.mimeType ?? null,
+    }),
+    updatePayload: (input) => ({
+      url: input.url,
+      original_name: input.originalName ?? null,
+      mime_type: input.mimeType ?? null,
+    }),
+    deleteFiles: async (transaction, componentId) => {
+      const [row] = await transaction('document_content')
+        .where('component_id', componentId)
+        .select('url');
+
+      if (!row?.url) {
+        return;
+      }
+
+      try {
+        await deleteFile(row.url);
+      } catch (error) {
+        logger.error({ err: error, componentId }, 'Error deleting document file');
+      }
+    },
+  },
+  [ContentComponentTypeEnumType.Embed]: {
+    type: ContentComponentTypeEnumType.Embed,
+    graphqlType: EmbedContent,
+    table: 'embed_content',
+    loadByComponentId: (loaders, componentId) =>
+      loaders.EmbedContent.loadByComponentId(componentId),
+    inputArgName: 'embedContent',
+    createPayload: (input) => ({
+      provider: input.provider,
+      url: input.url,
+    }),
+    updatePayload: (input) => ({
+      provider: input.provider,
+      url: input.url,
+    }),
+  },
+  [ContentComponentTypeEnumType.Image]: {
+    type: ContentComponentTypeEnumType.Image,
+    graphqlType: ImageContent,
+    table: 'image_content',
+    loadByComponentId: (loaders, componentId) =>
+      loaders.ImageContent.loadByComponentId(componentId),
+    inputArgName: 'imageContent',
+    createPayload: (input) => ({
+      url: input.url,
+      original_name: input.originalName ?? null,
+      mime_type: input.mimeType ?? null,
+      alt_text: input.altText ?? null,
+      caption: input.caption ?? null,
+    }),
+    updatePayload: (input) => ({
+      url: input.url,
+      original_name: input.originalName ?? null,
+      mime_type: input.mimeType ?? null,
+      alt_text: input.altText ?? null,
+      caption: input.caption ?? null,
+    }),
+    deleteFiles: async (transaction, componentId) => {
+      const [row] = await transaction('image_content')
+        .where('component_id', componentId)
+        .select('url');
+
+      if (!row?.url) {
+        return;
+      }
+
+      try {
+        await deleteFile(row.url);
+      } catch (error) {
+        logger.error({ err: error, componentId }, 'Error deleting image file');
+      }
+    },
   },
 };
 
