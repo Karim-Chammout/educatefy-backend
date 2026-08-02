@@ -669,8 +669,6 @@ export type Mutation = {
   revokeAllSessions?: Maybe<MutationResult>;
   /** Revokes all sessions on a specific device (by raw browser User-Agent string). */
   revokeDeviceSessions?: Maybe<MutationResult>;
-  /** Revokes a specific session (refresh token) by ID. */
-  revokeSession?: Maybe<MutationResult>;
   /** Unenrolls an account from a program. */
   unenrollFromProgram?: Maybe<UpdateProgramStatusResult>;
   /** Updates a user account information. */
@@ -800,11 +798,6 @@ export type MutationRateCourseArgs = {
 
 export type MutationRevokeDeviceSessionsArgs = {
   deviceBrowser: Scalars['String']['input'];
-};
-
-
-export type MutationRevokeSessionArgs = {
-  id: Scalars['ID']['input'];
 };
 
 
