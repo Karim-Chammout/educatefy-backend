@@ -349,7 +349,7 @@ type Lesson {
 }
 
 """A content component which can be of various types."""
-union ContentComponent = TextContent | VideoContent | YouTubeContent
+union ContentComponent = TextContent | VideoContent | YouTubeContent | AudioContent | DocumentContent | EmbedContent | ImageContent
 
 """A text content component."""
 type TextContent {
@@ -386,6 +386,10 @@ enum ComponentType {
   text
   video
   youtube
+  audio
+  document
+  embed
+  image
 }
 
 """Progress tracking for content components"""
@@ -445,6 +449,153 @@ type YouTubeContent {
   description: JSON
 
   """The id of the component this video content belongs to."""
+  component_id: ID!
+
+  """The denomination of the component."""
+  denomination: String!
+
+  """The type of the component."""
+  type: ComponentType!
+
+  """A flag indicating whether the component is required to continue."""
+  is_required: Boolean!
+
+  """A flag indicating whether the component is published"""
+  is_published: Boolean!
+
+  """The rank of the component"""
+  rank: Int!
+
+  """The progress of this component for the current user"""
+  progress: ContentComponentProgress
+}
+
+"""An audio content component."""
+type AudioContent {
+  """A unique id of this audio content component."""
+  id: ID!
+
+  """The URL of the audio file."""
+  url: String!
+
+  """The original file name of the audio."""
+  original_name: String
+
+  """The MIME type of the audio file."""
+  mime_type: String
+
+  """The id of the component this audio content belongs to."""
+  component_id: ID!
+
+  """The denomination of the component."""
+  denomination: String!
+
+  """The type of the component."""
+  type: ComponentType!
+
+  """A flag indicating whether the component is required to continue."""
+  is_required: Boolean!
+
+  """A flag indicating whether the component is published"""
+  is_published: Boolean!
+
+  """The rank of the component"""
+  rank: Int!
+
+  """The progress of this component for the current user"""
+  progress: ContentComponentProgress
+}
+
+"""A document content component (e.g. PDF)."""
+type DocumentContent {
+  """A unique id of this document content component."""
+  id: ID!
+
+  """The URL of the document."""
+  url: String!
+
+  """The original file name of the document."""
+  original_name: String
+
+  """The MIME type of the document file."""
+  mime_type: String
+
+  """The id of the component this document content belongs to."""
+  component_id: ID!
+
+  """The denomination of the component."""
+  denomination: String!
+
+  """The type of the component."""
+  type: ComponentType!
+
+  """A flag indicating whether the component is required to continue."""
+  is_required: Boolean!
+
+  """A flag indicating whether the component is published"""
+  is_published: Boolean!
+
+  """The rank of the component"""
+  rank: Int!
+
+  """The progress of this component for the current user"""
+  progress: ContentComponentProgress
+}
+
+"""An embedded content component (e.g. Loom, Vimeo, Slides, CodePen)."""
+type EmbedContent {
+  """A unique id of this embed content component."""
+  id: ID!
+
+  """The provider of the embedded content."""
+  provider: String!
+
+  """The URL of the embedded content."""
+  url: String!
+
+  """The id of the component this embed content belongs to."""
+  component_id: ID!
+
+  """The denomination of the component."""
+  denomination: String!
+
+  """The type of the component."""
+  type: ComponentType!
+
+  """A flag indicating whether the component is required to continue."""
+  is_required: Boolean!
+
+  """A flag indicating whether the component is published"""
+  is_published: Boolean!
+
+  """The rank of the component"""
+  rank: Int!
+
+  """The progress of this component for the current user"""
+  progress: ContentComponentProgress
+}
+
+"""An image content component."""
+type ImageContent {
+  """A unique id of this image content component."""
+  id: ID!
+
+  """The URL of the image file."""
+  url: String!
+
+  """The original file name of the image."""
+  original_name: String
+
+  """The MIME type of the image file."""
+  mime_type: String
+
+  """The alternative text of the image."""
+  alt_text: String
+
+  """The caption of the image."""
+  caption: String
+
+  """The id of the component this image content belongs to."""
   component_id: ID!
 
   """The denomination of the component."""
@@ -956,6 +1107,18 @@ type Mutation {
 
     """The YouTube content for the component."""
     youtubeContent: YouTubeContentInput
+
+    """The audio content for the component."""
+    audioContent: AudioContentInput
+
+    """The document content for the component."""
+    documentContent: DocumentContentInput
+
+    """The embedded content for the component."""
+    embedContent: EmbedContentInput
+
+    """The image content for the component."""
+    imageContent: ImageContentInput
   ): CreateOrUpdateContentComponent
 
   """Creates a course."""
@@ -1098,6 +1261,18 @@ type Mutation {
 
     """The YouTube content for the component."""
     youtubeContent: YouTubeContentInput
+
+    """The audio content for the component."""
+    audioContent: AudioContentInput
+
+    """The document content for the component."""
+    documentContent: DocumentContentInput
+
+    """The embedded content for the component."""
+    embedContent: EmbedContentInput
+
+    """The image content for the component."""
+    imageContent: ImageContentInput
   ): CreateOrUpdateContentComponent
 
   """Updates the progress of a content component."""
@@ -1264,6 +1439,53 @@ input YouTubeContentInput {
 
   """The description of the YouTube."""
   description: JSON
+}
+
+input AudioContentInput {
+  """The URL of the audio file."""
+  url: String!
+
+  """The original file name of the audio."""
+  originalName: String
+
+  """The MIME type of the audio file."""
+  mimeType: String
+}
+
+input DocumentContentInput {
+  """The URL of the document."""
+  url: String!
+
+  """The original file name of the document."""
+  originalName: String
+
+  """The MIME type of the document file."""
+  mimeType: String
+}
+
+input EmbedContentInput {
+  """The provider of the embedded content."""
+  provider: String!
+
+  """The URL of the embedded content."""
+  url: String!
+}
+
+input ImageContentInput {
+  """The URL of the image file."""
+  url: String!
+
+  """The original file name of the image."""
+  originalName: String
+
+  """The MIME type of the image file."""
+  mimeType: String
+
+  """The alternative text of the image."""
+  altText: String
+
+  """The caption of the image."""
+  caption: String
 }
 
 """The result of the creating or updating a course."""

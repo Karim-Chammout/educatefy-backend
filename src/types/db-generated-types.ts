@@ -10,6 +10,10 @@ export enum ContentComponentTypeEnumType {
   Text = "text",
   Video = "video",
   Youtube = "youtube",
+  Audio = "audio",
+  Document = "document",
+  Embed = "embed",
+  Image = "image",
 }
 
 export enum CourseLevelEnumType {
@@ -52,6 +56,7 @@ export enum Table {
   AccountProgram = "account__program",
   AccountSubject = "account__subject",
   AccountRole = "account_role",
+  AudioContent = "audio_content",
   ContentComponent = "content_component",
   ContentComponentProgress = "content_component_progress",
   Country = "country",
@@ -63,9 +68,12 @@ export enum Table {
   CourseRequirement = "course_requirement",
   CourseSection = "course_section",
   CourseSectionItem = "course_section_item",
+  DocumentContent = "document_content",
+  EmbedContent = "embed_content",
   Enrollment = "enrollment",
   EnrollmentHistory = "enrollment_history",
   File = "file",
+  ImageContent = "image_content",
   Language = "language",
   Lesson = "lesson",
   Migrations = "migrations",
@@ -89,6 +97,7 @@ export type Tables = {
   "account__program": AccountProgram,
   "account__subject": AccountSubject,
   "account_role": AccountRole,
+  "audio_content": AudioContent,
   "content_component": ContentComponent,
   "content_component_progress": ContentComponentProgress,
   "country": Country,
@@ -100,9 +109,12 @@ export type Tables = {
   "course_requirement": CourseRequirement,
   "course_section": CourseSection,
   "course_section_item": CourseSectionItem,
+  "document_content": DocumentContent,
+  "embed_content": EmbedContent,
   "enrollment": Enrollment,
   "enrollment_history": EnrollmentHistory,
   "file": File,
+  "image_content": ImageContent,
   "language": Language,
   "lesson": Lesson,
   "migrations": Migrations,
@@ -164,6 +176,16 @@ export type AccountRole = {
   denomination: string;
   code: string;
   description: string;
+  created_at: Date;
+  updated_at: Date;
+};
+
+export type AudioContent = {
+  id: number;
+  url: string;
+  original_name: string | null;
+  mime_type: string | null;
+  component_id: number;
   created_at: Date;
   updated_at: Date;
 };
@@ -281,6 +303,25 @@ export type CourseSectionItem = {
   deleted_at: Date | null;
 };
 
+export type DocumentContent = {
+  id: number;
+  url: string;
+  original_name: string | null;
+  mime_type: string | null;
+  component_id: number;
+  created_at: Date;
+  updated_at: Date;
+};
+
+export type EmbedContent = {
+  id: number;
+  provider: string;
+  url: string;
+  component_id: number;
+  created_at: Date;
+  updated_at: Date;
+};
+
 export type Enrollment = {
   id: number;
   course_id: number;
@@ -309,6 +350,18 @@ export type File = {
   key: string | null;
   uuid: string | null;
   account_id: number | null;
+  created_at: Date;
+  updated_at: Date;
+};
+
+export type ImageContent = {
+  id: number;
+  url: string;
+  original_name: string | null;
+  mime_type: string | null;
+  alt_text: string | null;
+  caption: string | null;
+  component_id: number;
   created_at: Date;
   updated_at: Date;
 };

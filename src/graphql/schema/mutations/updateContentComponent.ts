@@ -1,6 +1,10 @@
 import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
 
 import {
+  AudioContentInput as AudioContentInputType,
+  DocumentContentInput as DocumentContentInputType,
+  EmbedContentInput as EmbedContentInputType,
+  ImageContentInput as ImageContentInputType,
   TextContentInput as TextContentInputType,
   UpdateContentComponentBaseInput as UpdateContentComponentBaseInputType,
   VideoContentInput as VideoContentInputType,
@@ -11,6 +15,10 @@ import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
 import { getComponentConfig } from '../../utils/contentComponentRegistry.js';
 import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
+import AudioContentInput from '../inputs/AudioContent.js';
+import DocumentContentInput from '../inputs/DocumentContent.js';
+import EmbedContentInput from '../inputs/EmbedContent.js';
+import ImageContentInput from '../inputs/ImageContent.js';
 import TextContentInput from '../inputs/TextContent.js';
 import logger from '../../../utils/logger.js';
 import UpdateContentComponentBaseInput from '../inputs/UpdateContentComponentBase.js';
@@ -38,6 +46,22 @@ const updateContentComponent: GraphQLFieldConfig<null, ContextType> = {
       type: YouTubeContentInput,
       description: 'The YouTube content for the component.',
     },
+    audioContent: {
+      type: AudioContentInput,
+      description: 'The audio content for the component.',
+    },
+    documentContent: {
+      type: DocumentContentInput,
+      description: 'The document content for the component.',
+    },
+    embedContent: {
+      type: EmbedContentInput,
+      description: 'The embedded content for the component.',
+    },
+    imageContent: {
+      type: ImageContentInput,
+      description: 'The image content for the component.',
+    },
   },
   resolve: authenticated(
     async (
@@ -47,6 +71,10 @@ const updateContentComponent: GraphQLFieldConfig<null, ContextType> = {
         textContent?: TextContentInputType;
         videoContent?: VideoContentInputType;
         youtubeContent?: YouTubeContentInputType;
+        audioContent?: AudioContentInputType;
+        documentContent?: DocumentContentInputType;
+        embedContent?: EmbedContentInputType;
+        imageContent?: ImageContentInputType;
       },
       { db, loaders, user },
     ) => {
