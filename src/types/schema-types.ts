@@ -96,6 +96,42 @@ export type AudienceDemographics = {
   nationalityBreakdown: Array<DemographicBucket>;
 };
 
+/** An audio content component. */
+export type AudioContent = {
+  __typename?: 'AudioContent';
+  /** The id of the component this audio content belongs to. */
+  component_id: Scalars['ID']['output'];
+  /** The denomination of the component. */
+  denomination: Scalars['String']['output'];
+  /** A unique id of this audio content component. */
+  id: Scalars['ID']['output'];
+  /** A flag indicating whether the component is published */
+  is_published: Scalars['Boolean']['output'];
+  /** A flag indicating whether the component is required to continue. */
+  is_required: Scalars['Boolean']['output'];
+  /** The MIME type of the audio file. */
+  mime_type?: Maybe<Scalars['String']['output']>;
+  /** The original file name of the audio. */
+  original_name?: Maybe<Scalars['String']['output']>;
+  /** The progress of this component for the current user */
+  progress?: Maybe<ContentComponentProgress>;
+  /** The rank of the component */
+  rank: Scalars['Int']['output'];
+  /** The type of the component. */
+  type: ComponentType;
+  /** The URL of the audio file. */
+  url: Scalars['String']['output'];
+};
+
+export type AudioContentInput = {
+  /** The MIME type of the audio file. */
+  mimeType?: InputMaybe<Scalars['String']['input']>;
+  /** The original file name of the audio. */
+  originalName?: InputMaybe<Scalars['String']['input']>;
+  /** The URL of the audio file. */
+  url: Scalars['String']['input'];
+};
+
 /** The result of the changeProfilePicture mutation. */
 export type ChangeProfilePictureResult = {
   __typename?: 'ChangeProfilePictureResult';
@@ -114,13 +150,17 @@ export enum ComponentParentType {
 
 /** The type of the component. */
 export enum ComponentType {
+  Audio = 'audio',
+  Document = 'document',
+  Embed = 'embed',
+  Image = 'image',
   Text = 'text',
   Video = 'video',
   Youtube = 'youtube'
 }
 
 /** A content component which can be of various types. */
-export type ContentComponent = TextContent | VideoContent | YouTubeContent;
+export type ContentComponent = AudioContent | DocumentContent | EmbedContent | ImageContent | TextContent | VideoContent | YouTubeContent;
 
 export type ContentComponentBaseInput = {
   /** The denomination of the component. */
@@ -514,6 +554,74 @@ export type DemographicBucket = {
   label: Scalars['String']['output'];
 };
 
+/** A document content component (e.g. PDF). */
+export type DocumentContent = {
+  __typename?: 'DocumentContent';
+  /** The id of the component this document content belongs to. */
+  component_id: Scalars['ID']['output'];
+  /** The denomination of the component. */
+  denomination: Scalars['String']['output'];
+  /** A unique id of this document content component. */
+  id: Scalars['ID']['output'];
+  /** A flag indicating whether the component is published */
+  is_published: Scalars['Boolean']['output'];
+  /** A flag indicating whether the component is required to continue. */
+  is_required: Scalars['Boolean']['output'];
+  /** The MIME type of the document file. */
+  mime_type?: Maybe<Scalars['String']['output']>;
+  /** The original file name of the document. */
+  original_name?: Maybe<Scalars['String']['output']>;
+  /** The progress of this component for the current user */
+  progress?: Maybe<ContentComponentProgress>;
+  /** The rank of the component */
+  rank: Scalars['Int']['output'];
+  /** The type of the component. */
+  type: ComponentType;
+  /** The URL of the document. */
+  url: Scalars['String']['output'];
+};
+
+export type DocumentContentInput = {
+  /** The MIME type of the document file. */
+  mimeType?: InputMaybe<Scalars['String']['input']>;
+  /** The original file name of the document. */
+  originalName?: InputMaybe<Scalars['String']['input']>;
+  /** The URL of the document. */
+  url: Scalars['String']['input'];
+};
+
+/** An embedded content component (e.g. Loom, Vimeo, Slides, CodePen). */
+export type EmbedContent = {
+  __typename?: 'EmbedContent';
+  /** The id of the component this embed content belongs to. */
+  component_id: Scalars['ID']['output'];
+  /** The denomination of the component. */
+  denomination: Scalars['String']['output'];
+  /** A unique id of this embed content component. */
+  id: Scalars['ID']['output'];
+  /** A flag indicating whether the component is published */
+  is_published: Scalars['Boolean']['output'];
+  /** A flag indicating whether the component is required to continue. */
+  is_required: Scalars['Boolean']['output'];
+  /** The progress of this component for the current user */
+  progress?: Maybe<ContentComponentProgress>;
+  /** The provider of the embedded content. */
+  provider: Scalars['String']['output'];
+  /** The rank of the component */
+  rank: Scalars['Int']['output'];
+  /** The type of the component. */
+  type: ComponentType;
+  /** The URL of the embedded content. */
+  url: Scalars['String']['output'];
+};
+
+export type EmbedContentInput = {
+  /** The provider of the embedded content. */
+  provider: Scalars['String']['input'];
+  /** The URL of the embedded content. */
+  url: Scalars['String']['input'];
+};
+
 export type EnrolledStudent = {
   __typename?: 'EnrolledStudent';
   accountId: Scalars['ID']['output'];
@@ -582,6 +690,50 @@ export enum Gender {
   Male = 'male',
   Unknown = 'unknown'
 }
+
+/** An image content component. */
+export type ImageContent = {
+  __typename?: 'ImageContent';
+  /** The alternative text of the image. */
+  alt_text?: Maybe<Scalars['String']['output']>;
+  /** The caption of the image. */
+  caption?: Maybe<Scalars['String']['output']>;
+  /** The id of the component this image content belongs to. */
+  component_id: Scalars['ID']['output'];
+  /** The denomination of the component. */
+  denomination: Scalars['String']['output'];
+  /** A unique id of this image content component. */
+  id: Scalars['ID']['output'];
+  /** A flag indicating whether the component is published */
+  is_published: Scalars['Boolean']['output'];
+  /** A flag indicating whether the component is required to continue. */
+  is_required: Scalars['Boolean']['output'];
+  /** The MIME type of the image file. */
+  mime_type?: Maybe<Scalars['String']['output']>;
+  /** The original file name of the image. */
+  original_name?: Maybe<Scalars['String']['output']>;
+  /** The progress of this component for the current user */
+  progress?: Maybe<ContentComponentProgress>;
+  /** The rank of the component */
+  rank: Scalars['Int']['output'];
+  /** The type of the component. */
+  type: ComponentType;
+  /** The URL of the image file. */
+  url: Scalars['String']['output'];
+};
+
+export type ImageContentInput = {
+  /** The alternative text of the image. */
+  altText?: InputMaybe<Scalars['String']['input']>;
+  /** The caption of the image. */
+  caption?: InputMaybe<Scalars['String']['input']>;
+  /** The MIME type of the image file. */
+  mimeType?: InputMaybe<Scalars['String']['input']>;
+  /** The original file name of the image. */
+  originalName?: InputMaybe<Scalars['String']['input']>;
+  /** The URL of the image file. */
+  url: Scalars['String']['input'];
+};
 
 /** The language info */
 export type Language = {
@@ -708,7 +860,11 @@ export type MutationChangeProfilePictureArgs = {
 
 
 export type MutationCreateContentComponentArgs = {
+  audioContent?: InputMaybe<AudioContentInput>;
   baseComponentInfo: ContentComponentBaseInput;
+  documentContent?: InputMaybe<DocumentContentInput>;
+  embedContent?: InputMaybe<EmbedContentInput>;
+  imageContent?: InputMaybe<ImageContentInput>;
   textContent?: InputMaybe<TextContentInput>;
   videoContent?: InputMaybe<VideoContentInput>;
   youtubeContent?: InputMaybe<YouTubeContentInput>;
@@ -812,7 +968,11 @@ export type MutationUpdateAccountInfoArgs = {
 
 
 export type MutationUpdateContentComponentArgs = {
+  audioContent?: InputMaybe<AudioContentInput>;
   baseComponentInfo: UpdateContentComponentBaseInput;
+  documentContent?: InputMaybe<DocumentContentInput>;
+  embedContent?: InputMaybe<EmbedContentInput>;
+  imageContent?: InputMaybe<ImageContentInput>;
   textContent?: InputMaybe<TextContentInput>;
   videoContent?: InputMaybe<VideoContentInput>;
   youtubeContent?: InputMaybe<YouTubeContentInput>;
