@@ -13,6 +13,18 @@ export const ComponentType = new GraphQLEnumType({
     youtube: {
       value: 'youtube',
     },
+    audio: {
+      value: 'audio',
+    },
+    document: {
+      value: 'document',
+    },
+    embed: {
+      value: 'embed',
+    },
+    image: {
+      value: 'image',
+    },
   },
 });
 
