@@ -7,6 +7,7 @@ import { AccountBase as AccountReader } from './loaders/Account.generated.js';
 import { AccountProgramReader } from './loaders/AccountProgram.js';
 import { AccountRoleBase as AccountRoleReader } from './loaders/AccountRole.generated.js';
 import { AccountSubjectBase as AccountSubjectReader } from './loaders/AccountSubject.generated.js';
+import { AudioContentBase as AudioContentReader } from './loaders/AudioContent.generated.js';
 import { ContentComponentReader } from './loaders/ContentComponent.js';
 import { ContentComponentProgressReader } from './loaders/ContentComponentProgress.js';
 import { CountryBase as CountryReader } from './loaders/Country.generated.js';
@@ -18,9 +19,12 @@ import { CourseRequirementBase as CourseRequirementReader } from './loaders/Cour
 import { CourseSectionBase as CourseSectionReader } from './loaders/CourseSection.generated.js';
 import { CourseSectionItemBase as CourseSectionItemReader } from './loaders/CourseSectionItem.generated.js';
 import { CourseSubjectBase as CourseSubjectReader } from './loaders/CourseSubject.generated.js';
+import { DocumentContentBase as DocumentContentReader } from './loaders/DocumentContent.generated.js';
+import { EmbedContentBase as EmbedContentReader } from './loaders/EmbedContent.generated.js';
 import { EnrollmentReader } from './loaders/Enrollment.js';
 import { EnrollmentHistoryBase as EnrollmentHistoryReader } from './loaders/EnrollmentHistory.generated.js';
 import { FileReader } from './loaders/File.js';
+import { ImageContentBase as ImageContentReader } from './loaders/ImageContent.generated.js';
 import { LanguageBase as LanguageReader } from './loaders/Language.generated.js';
 import { LessonBase as LessonReader } from './loaders/Lesson.generated.js';
 import { OpenidClientBase as OpenidClientReader } from './loaders/OpenidClient.generated.js';
@@ -41,6 +45,7 @@ export type ReadersType = {
   AccountProgram: AccountProgramReader;
   AccountRole: AccountRoleReader;
   AccountSubject: AccountSubjectReader;
+  AudioContent: AudioContentReader;
   ContentComponent: ContentComponentReader;
   ContentComponentProgress: ContentComponentProgressReader;
   Country: CountryReader;
@@ -52,9 +57,12 @@ export type ReadersType = {
   CourseSection: CourseSectionReader;
   CourseSectionItem: CourseSectionItemReader;
   CourseSubject: CourseSubjectReader;
+  DocumentContent: DocumentContentReader;
+  EmbedContent: EmbedContentReader;
   Enrollment: EnrollmentReader;
   EnrollmentHistory: EnrollmentHistoryReader;
   File: FileReader;
+  ImageContent: ImageContentReader;
   Language: LanguageReader;
   Lesson: LessonReader;
   OpenidClient: OpenidClientReader;
@@ -77,6 +85,7 @@ export function createLoaders(db: Knex): ReadersType {
     AccountProgram: new AccountProgramReader(db),
     AccountRole: new AccountRoleReader(db),
     AccountSubject: new AccountSubjectReader(db),
+    AudioContent: new AudioContentReader(db),
     ContentComponent: new ContentComponentReader(db),
     ContentComponentProgress: new ContentComponentProgressReader(db),
     Country: new CountryReader(db),
@@ -88,9 +97,12 @@ export function createLoaders(db: Knex): ReadersType {
     CourseSection: new CourseSectionReader(db),
     CourseSectionItem: new CourseSectionItemReader(db),
     CourseSubject: new CourseSubjectReader(db),
+    DocumentContent: new DocumentContentReader(db),
+    EmbedContent: new EmbedContentReader(db),
     Enrollment: new EnrollmentReader(db),
     EnrollmentHistory: new EnrollmentHistoryReader(db),
     File: new FileReader(db),
+    ImageContent: new ImageContentReader(db),
     Language: new LanguageReader(db),
     Lesson: new LessonReader(db),
     OpenidClient: new OpenidClientReader(db),
