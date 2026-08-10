@@ -44,6 +44,18 @@ const deleteCourseSectionItem: GraphQLFieldConfig<null, ContextType> = {
         };
       }
 
+      const courseSection = await loaders.CourseSection.loadById(
+        courseSectionItem.course_section_id,
+      );
+      const course = courseSection ? await loaders.Course.loadById(courseSection.course_id) : null;
+
+      if (!course || course.teacher_id !== user.id) {
+        return {
+          success: false,
+          errors: [new Error(ErrorType.FORBIDDEN)],
+        };
+      }
+
       await db.transaction(async (transaction) => {
         const [deletedCourseSectionItems] = await transaction('course_section_item')
           .where('id', courseSectionItem.id)
@@ -53,7 +65,9 @@ const deleteCourseSectionItem: GraphQLFieldConfig<null, ContextType> = {
           })
           .returning(['content_id', 'content_type']);
 
-        // Delete the content attached to this 'deletedCourseSectionItem'
+        // Soft-delete the content attached to this item. Quizzes carry deleted_at
+        // too, so their question/attempt rows are kept (immutable history) and the
+        // generated Quiz loader filters them out of every read path.
         await transaction(deletedCourseSectionItems.content_type)
           .where('id', deletedCourseSectionItems.content_id)
           .update({
