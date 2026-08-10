@@ -59,6 +59,14 @@ export const CourseSection = new GraphQLObjectType<CourseSectionType, ContextTyp
                 }
 
                 return { ...lesson, ...courseSectionItemValuesToInject };
+              case CourseSectionItemContentTypeEnumType.Quiz:
+                const quiz = await loaders.Quiz.loadById(content_id);
+
+                if (!quiz) {
+                  return null;
+                }
+
+                return { ...quiz, ...courseSectionItemValuesToInject };
               default:
                 return null;
             }

@@ -1,9 +1,12 @@
 import DataLoader from 'dataloader';
 
-import { ContentComponent as ContentComponentType } from '../../../../types/db-generated-types.js';
+import {
+  ContentComponent as ContentComponentType,
+  ContentComponentParentTableEnumType,
+} from '../../../../types/db-generated-types.js';
 import { ContentComponentBase } from './ContentComponent.generated.js';
 
-type ParentType = 'lesson' | 'course';
+type ParentType = ContentComponentParentTableEnumType;
 
 export class ContentComponentReader extends ContentComponentBase {
   private byParentIdAndParentTypeLoader: DataLoader<

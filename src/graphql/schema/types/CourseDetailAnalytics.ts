@@ -10,6 +10,10 @@ import {
   GraphQLString,
 } from 'graphql';
 
+import {
+  ContentComponentParentTableEnumType,
+  CourseSectionItemContentTypeEnumType,
+} from '../../../types/db-generated-types.js';
 import { CourseStatus } from '../../../types/schema-types.js';
 import { ContextType } from '../../../types/types.js';
 import { getImageURL } from '../../../utils/getImageURL.js';
@@ -379,9 +383,11 @@ export const CourseDetailAnalytics = new GraphQLObjectType<{ courseId: number },
         const sectionIds = sections.map((s) => s.id);
 
         // Get all section items to find content component ids per section
+        // (only lesson items have content components; quiz items are graded separately)
         const sectionItems = await db('course_section_item')
           .whereIn('course_section_id', sectionIds)
           .whereNull('deleted_at')
+          .where('content_type', CourseSectionItemContentTypeEnumType.Lesson)
           .select('course_section_id', 'content_id', 'content_type');
 
         // Get required content components for each item
@@ -390,7 +396,7 @@ export const CourseDetailAnalytics = new GraphQLObjectType<{ courseId: number },
         const requiredComponents = contentIds.length
           ? await db('content_component')
               .whereIn('parent_id', contentIds)
-              .where('parent_table', 'lesson')
+              .where('parent_table', ContentComponentParentTableEnumType.Lesson)
               .where('is_required', true)
               .select('id', 'parent_id')
           : [];

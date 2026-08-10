@@ -7,6 +7,7 @@ import createCourseSection from './mutations/createCourseSection.js';
 import createLesson from './mutations/createLesson.js';
 import createProgram from './mutations/createProgram.js';
 import createProgramVersion from './mutations/createProgramVersion.js';
+import createQuiz from './mutations/createQuiz.js';
 import deleteContentComponent from './mutations/deleteContentComponent.js';
 import deleteCourse from './mutations/deleteCourse.js';
 import deleteCourseRating from './mutations/deleteCourseRating.js';
@@ -21,6 +22,8 @@ import rateCourse from './mutations/rateCourse.js';
 import removeProfilePicture from './mutations/removeProfilePicture.js';
 import revokeAllSessions from './mutations/revokeAllSessions.js';
 import revokeDeviceSessions from './mutations/revokeDeviceSessions.js';
+import startQuiz from './mutations/startQuiz.js';
+import submitQuiz from './mutations/submitQuiz.js';
 import unenrollFromProgram from './mutations/unenrollFromProgram.js';
 import updateAccountInfo from './mutations/updateAccountInfo.js';
 import updateContentComponent from './mutations/updateContentComponent.js';
@@ -35,6 +38,9 @@ import updateLesson from './mutations/updateLesson.js';
 import updateProfile from './mutations/updateProfile.js';
 import updateProgram from './mutations/updateProgram.js';
 import updateProgramVersionCourses from './mutations/updateProgramVersionCourses.js';
+import updateQuiz from './mutations/updateQuiz.js';
+import updateQuizAnswerRanks from './mutations/updateQuizAnswerRanks.js';
+import updateQuizQuestionRanks from './mutations/updateQuizQuestionRanks.js';
 import upgradeToLatestProgramVersion from './mutations/upgradeToLatestProgramVersion.js';
 
 const Mutation = new GraphQLObjectType({
@@ -47,6 +53,7 @@ const Mutation = new GraphQLObjectType({
     createLesson,
     createProgram,
     createProgramVersion,
+    createQuiz,
     deleteContentComponent,
     deleteCourse,
     deleteCourseRating,
@@ -61,6 +68,8 @@ const Mutation = new GraphQLObjectType({
     removeProfilePicture,
     revokeAllSessions,
     revokeDeviceSessions,
+    startQuiz,
+    submitQuiz,
     unenrollFromProgram,
     updateAccountInfo,
     updateContentComponent,
@@ -75,6 +84,9 @@ const Mutation = new GraphQLObjectType({
     updateProfile,
     updateProgram,
     updateProgramVersionCourses,
+    updateQuiz,
+    updateQuizAnswerRanks,
+    updateQuizQuestionRanks,
     upgradeToLatestProgramVersion,
   },
 });
