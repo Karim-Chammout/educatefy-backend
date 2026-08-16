@@ -1,5 +1,6 @@
 import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
 
+import { CourseSectionItemContentTypeEnumType } from '../../../types/db-generated-types.js';
 import { LessonInfoInput as LessonInfoInputType } from '../../../types/schema-types.js';
 import { ContextType } from '../../../types/types.js';
 import { ErrorType } from '../../../utils/ErrorType.js';
@@ -52,6 +53,25 @@ const createLesson: GraphQLFieldConfig<null, ContextType> = {
           };
         }
 
+        if (course.teacher_id !== user.id) {
+          return {
+            success: false,
+            errors: [new Error(ErrorType.FORBIDDEN)],
+            lesson: null,
+          };
+        }
+
+        const parsedSectionId = parseInt(sectionId, 10);
+        const section = await loaders.CourseSection.loadById(parsedSectionId);
+
+        if (!section || section.course_id !== course.id) {
+          return {
+            success: false,
+            errors: [new Error(ErrorType.INVALID_INPUT)],
+            lesson: null,
+          };
+        }
+
         const createdLesson = await db.transaction(async (transaction) => {
           const [lesson] = await transaction('lesson')
             .insert({
@@ -64,9 +84,9 @@ const createLesson: GraphQLFieldConfig<null, ContextType> = {
             .returning('id');
 
           await transaction('course_section_item').insert({
-            course_section_id: sectionId,
+            course_section_id: parsedSectionId,
             content_id: lesson.id,
-            content_type: 'lesson',
+            content_type: CourseSectionItemContentTypeEnumType.Lesson,
           });
 
           return lesson;

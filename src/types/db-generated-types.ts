@@ -24,6 +24,7 @@ export enum CourseLevelEnumType {
 
 export enum CourseSectionItemContentTypeEnumType {
   Lesson = "lesson",
+  Quiz = "quiz",
 }
 
 export enum EnrollmentStatusType {
@@ -49,6 +50,33 @@ export enum ProgramVersionStatusType {
   Draft = "draft",
   Published = "published",
   Archived = "archived",
+}
+
+export enum QuizAttemptStatusEnumType {
+  InProgress = "in_progress",
+  Completed = "completed",
+}
+
+export enum QuizNavigationModeEnumType {
+  Free = "free",
+  Sequential = "sequential",
+}
+
+export enum QuizQuestionDifficultyEnumType {
+  Easy = "easy",
+  Medium = "medium",
+  Hard = "hard",
+}
+
+export enum QuizQuestionMediaTypeEnumType {
+  Image = "image",
+  Video = "video",
+}
+
+export enum QuizQuestionTypeEnumType {
+  SingleChoice = "single_choice",
+  MultiSelect = "multi_select",
+  TrueFalse = "true_false",
 }
 
 export enum Table {
@@ -84,6 +112,12 @@ export enum Table {
   ProgramObjective = "program_objective",
   ProgramRequirement = "program_requirement",
   ProgramVersion = "program_version",
+  Quiz = "quiz",
+  QuizAnswer = "quiz_answer",
+  QuizAttempt = "quiz_attempt",
+  QuizAttemptAnswer = "quiz_attempt_answer",
+  QuizAttemptQuestion = "quiz_attempt_question",
+  QuizQuestion = "quiz_question",
   RefreshToken = "refresh_token",
   StudentTeacherFollow = "student_teacher_follow",
   Subject = "subject",
@@ -125,6 +159,12 @@ export type Tables = {
   "program_objective": ProgramObjective,
   "program_requirement": ProgramRequirement,
   "program_version": ProgramVersion,
+  "quiz": Quiz,
+  "quiz_answer": QuizAnswer,
+  "quiz_attempt": QuizAttempt,
+  "quiz_attempt_answer": QuizAttemptAnswer,
+  "quiz_attempt_question": QuizAttemptQuestion,
+  "quiz_question": QuizQuestion,
   "refresh_token": RefreshToken,
   "student_teacher_follow": StudentTeacherFollow,
   "subject": Subject,
@@ -446,6 +486,107 @@ export type ProgramVersion = {
   version_number: number;
   status: ProgramVersionStatusType;
   published_at: Date | null;
+  created_at: Date;
+  updated_at: Date;
+};
+
+export type Quiz = {
+  id: number;
+  denomination: string;
+  is_published: boolean;
+  course_id: number;
+  teacher_id: number;
+  passing_score: number;
+  max_attempts: number;
+  shuffle_questions: boolean;
+  shuffle_answers: boolean;
+  navigation_mode: QuizNavigationModeEnumType;
+  questions_per_page: number;
+  time_limit_minutes: number | null;
+  feedback_passed: string | null;
+  feedback_failed: string | null;
+  deleted_at: Date | null;
+  created_at: Date;
+  updated_at: Date;
+  show_correct_answers: boolean;
+};
+
+export type QuizAnswer = {
+  id: number;
+  question_id: number;
+  denomination: string | null;
+  image_url: string | null;
+  is_correct: boolean;
+  rank: number;
+  created_at: Date;
+  updated_at: Date;
+};
+
+export type QuizAttempt = {
+  id: number;
+  account_id: number;
+  enrollment_id: number;
+  quiz_id: number;
+  seed: number;
+  status: QuizAttemptStatusEnumType;
+  attempt_number: number;
+  score: number | null;
+  earned_points: number | null;
+  total_points: number | null;
+  passed: boolean | null;
+  timed_out: boolean;
+  started_at: Date;
+  submitted_at: Date | null;
+  created_at: Date;
+  updated_at: Date;
+};
+
+export type QuizAttemptAnswer = {
+  id: number;
+  attempt_id: number;
+  attempt_question_id: number;
+  answer_id: number | null;
+  denomination: string | null;
+  image_url: string | null;
+  is_correct: boolean;
+  created_at: Date;
+  updated_at: Date;
+};
+
+export type QuizAttemptQuestion = {
+  id: number;
+  attempt_id: number;
+  question_id: number | null;
+  prompt: string;
+  question_type: QuizQuestionTypeEnumType;
+  rank: number;
+  points: number;
+  media_url: string | null;
+  media_type: QuizQuestionMediaTypeEnumType | null;
+  hint: string | null;
+  difficulty: QuizQuestionDifficultyEnumType | null;
+  learning_objective: string | null;
+  feedback_correct: string | null;
+  feedback_incorrect: string | null;
+  answers: unknown;
+  created_at: Date;
+  updated_at: Date;
+};
+
+export type QuizQuestion = {
+  id: number;
+  quiz_id: number;
+  prompt: string;
+  question_type: QuizQuestionTypeEnumType;
+  points: number;
+  rank: number;
+  media_url: string | null;
+  media_type: QuizQuestionMediaTypeEnumType | null;
+  hint: string | null;
+  difficulty: QuizQuestionDifficultyEnumType | null;
+  learning_objective: string | null;
+  feedback_correct: string | null;
+  feedback_incorrect: string | null;
   created_at: Date;
   updated_at: Date;
 };

@@ -447,8 +447,8 @@ export type CourseSectionInfoInput = {
   is_published: Scalars['Boolean']['input'];
 };
 
-/** Course section item which contains the course curriculum (e.g. lesson) */
-export type CourseSectionItem = Lesson;
+/** Course section item which contains the course curriculum (e.g. lesson, quiz) */
+export type CourseSectionItem = Lesson | Quiz;
 
 /** The status of the course for the current user. */
 export enum CourseStatus {
@@ -523,6 +523,17 @@ export type CreateOrUpdateProgramResult = {
   errors: Array<Error>;
   /** The created or updated program information. */
   program?: Maybe<Program>;
+  /** Indicates if the mutation was successful. */
+  success: Scalars['Boolean']['output'];
+};
+
+/** The result of the creating or updating mutation. */
+export type CreateOrUpdateQuizResult = {
+  __typename?: 'CreateOrUpdateQuizResult';
+  /** A list of errors that occurred executing this mutation. */
+  errors: Array<Error>;
+  /** The created or updated quiz. */
+  quiz?: Maybe<Quiz>;
   /** Indicates if the mutation was successful. */
   success: Scalars['Boolean']['output'];
 };
@@ -793,6 +804,8 @@ export type Mutation = {
   createProgram?: Maybe<CreateOrUpdateProgramResult>;
   /** Creates a new draft version of a program, copying the course list from the latest published version. */
   createProgramVersion?: Maybe<CreateProgramVersionResult>;
+  /** Creates a quiz. */
+  createQuiz?: Maybe<CreateOrUpdateQuizResult>;
   /** Deletes a content component. */
   deleteContentComponent?: Maybe<MutationResult>;
   /** Deletes a course. */
@@ -821,6 +834,10 @@ export type Mutation = {
   revokeAllSessions?: Maybe<MutationResult>;
   /** Revokes all sessions on a specific device (by raw browser User-Agent string). */
   revokeDeviceSessions?: Maybe<MutationResult>;
+  /** Starts a quiz attempt for the current student. */
+  startQuiz?: Maybe<StartQuizResult>;
+  /** Submits a quiz attempt and grades it server-side. */
+  submitQuiz?: Maybe<SubmitQuizResult>;
   /** Unenrolls an account from a program. */
   unenrollFromProgram?: Maybe<UpdateProgramStatusResult>;
   /** Updates a user account information. */
@@ -849,6 +866,12 @@ export type Mutation = {
   updateProgram?: Maybe<CreateOrUpdateProgramResult>;
   /** Updates the courses linked to the current draft version of a program. */
   updateProgramVersionCourses?: Maybe<UpdateProgramVersionCoursesResult>;
+  /** Updates a quiz. */
+  updateQuiz?: Maybe<CreateOrUpdateQuizResult>;
+  /** Updates the ranks of multiple quiz answers. */
+  updateQuizAnswerRanks?: Maybe<MutationResult>;
+  /** Updates the ranks of multiple quiz questions. */
+  updateQuizQuestionRanks?: Maybe<MutationResult>;
   /** Upgrades an enrolled student to the latest published version of a program, preserving all existing course enrollment records. */
   upgradeToLatestProgramVersion?: Maybe<UpgradeToLatestProgramVersionResult>;
 };
@@ -893,6 +916,11 @@ export type MutationCreateProgramArgs = {
 
 export type MutationCreateProgramVersionArgs = {
   programId: Scalars['ID']['input'];
+};
+
+
+export type MutationCreateQuizArgs = {
+  quizInfo: QuizInfoInput;
 };
 
 
@@ -954,6 +982,16 @@ export type MutationRateCourseArgs = {
 
 export type MutationRevokeDeviceSessionsArgs = {
   deviceBrowser: Scalars['String']['input'];
+};
+
+
+export type MutationStartQuizArgs = {
+  quizId: Scalars['String']['input'];
+};
+
+
+export type MutationSubmitQuizArgs = {
+  submission: QuizSubmissionInput;
 };
 
 
@@ -1031,6 +1069,21 @@ export type MutationUpdateProgramArgs = {
 
 export type MutationUpdateProgramVersionCoursesArgs = {
   updateProgramVersionCoursesInfo: UpdateProgramVersionCoursesInput;
+};
+
+
+export type MutationUpdateQuizArgs = {
+  quizInfo: UpdateQuizInfoInput;
+};
+
+
+export type MutationUpdateQuizAnswerRanksArgs = {
+  answerRanks: Array<UpdateQuizAnswerRankInput>;
+};
+
+
+export type MutationUpdateQuizQuestionRanksArgs = {
+  questionRanks: Array<UpdateQuizQuestionRankInput>;
 };
 
 
@@ -1325,6 +1378,8 @@ export type Query = {
   openIdClients: Array<OpenidClient>;
   /** Retrieve a program by its slug */
   program?: Maybe<Program>;
+  /** Returns a single quiz attempt question by its display index. Used for sequential navigation so future questions are never sent to the client. */
+  quizAttemptQuestion?: Maybe<QuizAttemptQuestion>;
   /** Active sessions grouped by device/browser. */
   sessionDevices: Array<SessionDevice>;
   /** Retrieve a subject by its id */
@@ -1372,8 +1427,308 @@ export type QueryProgramArgs = {
 };
 
 
+export type QueryQuizAttemptQuestionArgs = {
+  attemptId: Scalars['ID']['input'];
+  index: Scalars['Int']['input'];
+};
+
+
 export type QuerySubjectArgs = {
   id: Scalars['ID']['input'];
+};
+
+/** The quiz info */
+export type Quiz = {
+  __typename?: 'Quiz';
+  /** The attempts of the current user for this quiz. */
+  attempts: Array<QuizAttempt>;
+  /** The denomination of this quiz. */
+  denomination: Scalars['String']['output'];
+  /** The overall feedback shown when the quiz is failed. */
+  feedback_failed?: Maybe<Scalars['String']['output']>;
+  /** The overall feedback shown when the quiz is passed. */
+  feedback_passed?: Maybe<Scalars['String']['output']>;
+  /** A unique id of this quiz. */
+  id: Scalars['ID']['output'];
+  /** A flag to indicate whether this quiz is published or not. */
+  is_published: Scalars['Boolean']['output'];
+  /** The ID of the section item this quiz belongs to. */
+  itemId: Scalars['ID']['output'];
+  /** The maximum number of allowed attempts. */
+  max_attempts: Scalars['Int']['output'];
+  /** How students navigate through the questions. */
+  navigation_mode: QuizNavigationMode;
+  /** Whether the current user has a completed attempt that passed this quiz. */
+  passed?: Maybe<Scalars['Boolean']['output']>;
+  /** The passing score in percentage. */
+  passing_score: Scalars['Int']['output'];
+  /** The questions of this quiz (only visible to teachers). */
+  questions: Array<QuizQuestion>;
+  /** The number of questions shown per page (0 means all on one page). */
+  questions_per_page: Scalars['Int']['output'];
+  /** Whether the correct answers are revealed to the student after submission. */
+  show_correct_answers: Scalars['Boolean']['output'];
+  /** A flag to indicate whether the answer order is shuffled per attempt. */
+  shuffle_answers: Scalars['Boolean']['output'];
+  /** A flag to indicate whether the question order is shuffled per attempt. */
+  shuffle_questions: Scalars['Boolean']['output'];
+  /** The time limit in minutes, null means no limit. */
+  time_limit_minutes?: Maybe<Scalars['Int']['output']>;
+};
+
+/** An answer option of a quiz question. */
+export type QuizAnswer = {
+  __typename?: 'QuizAnswer';
+  /** The text of this answer option. */
+  denomination?: Maybe<Scalars['String']['output']>;
+  /** A unique id of this answer. */
+  id: Scalars['ID']['output'];
+  /** The URL of the image of this answer option. */
+  image_url?: Maybe<Scalars['String']['output']>;
+  /** Whether this answer is correct (only visible to teachers). */
+  is_correct?: Maybe<Scalars['Boolean']['output']>;
+  /** The rank of this answer within the question. */
+  rank: Scalars['Int']['output'];
+};
+
+/** Input for creating a quiz answer option. */
+export type QuizAnswerInfoInput = {
+  /** The text of this answer option. */
+  denomination?: InputMaybe<Scalars['String']['input']>;
+  /** The URL of the image of this answer option. */
+  image_url?: InputMaybe<Scalars['String']['input']>;
+  /** Whether this answer is correct. */
+  is_correct?: InputMaybe<Scalars['Boolean']['input']>;
+  /** The rank of this answer within the question. */
+  rank?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** An attempt of a quiz taken by a student. */
+export type QuizAttempt = {
+  __typename?: 'QuizAttempt';
+  /** The ID of the account that took the attempt. */
+  accountId: Scalars['ID']['output'];
+  /** The 1-based number of this attempt for the account. */
+  attempt_number: Scalars['Int']['output'];
+  /** The points earned, null while the attempt is in progress. */
+  earned_points?: Maybe<Scalars['Int']['output']>;
+  /** The ID of the enrollment this attempt belongs to. */
+  enrollmentId: Scalars['ID']['output'];
+  /** A unique id of this attempt. */
+  id: Scalars['ID']['output'];
+  /** Whether the attempt passed the quiz, null while in progress. */
+  passed?: Maybe<Scalars['Boolean']['output']>;
+  /** The number of questions in this attempt. Useful for sequential navigation without revealing the questions themselves. */
+  questionCount: Scalars['Int']['output'];
+  /** The snapshot of the questions as seen by the student. */
+  questions: Array<QuizAttemptQuestion>;
+  /** The ID of the quiz this attempt belongs to. */
+  quizId: Scalars['ID']['output'];
+  /** The score in percentage, null while the attempt is in progress. */
+  score?: Maybe<Scalars['Int']['output']>;
+  /** When the attempt was started (server time). */
+  started_at: Scalars['Date']['output'];
+  /** The status of this attempt. */
+  status: QuizAttemptStatus;
+  /** When the attempt was submitted. */
+  submitted_at?: Maybe<Scalars['Date']['output']>;
+  /** Whether the attempt was submitted after the time limit. */
+  timed_out: Scalars['Boolean']['output'];
+  /** The total points available, null while the attempt is in progress. */
+  total_points?: Maybe<Scalars['Int']['output']>;
+};
+
+/** An answer selected by the student in a quiz attempt. */
+export type QuizAttemptAnswer = {
+  __typename?: 'QuizAttemptAnswer';
+  /** The ID of the original answer, null if it was deleted since. */
+  answerId?: Maybe<Scalars['ID']['output']>;
+  /** The ID of the attempt question snapshot this answer belongs to. */
+  attemptQuestionId: Scalars['ID']['output'];
+  /** The text of the answer as the student saw it. */
+  denomination?: Maybe<Scalars['String']['output']>;
+  /** A unique id of this attempt answer. */
+  id: Scalars['ID']['output'];
+  /** The image of the answer as the student saw it. */
+  image_url?: Maybe<Scalars['String']['output']>;
+  /** Whether the selected answer was correct at grading time. */
+  is_correct: Scalars['Boolean']['output'];
+};
+
+/** A snapshot of a quiz question as the student saw it. */
+export type QuizAttemptQuestion = {
+  __typename?: 'QuizAttemptQuestion';
+  /** The answer options as displayed. The correctness of each answer is only revealed once the attempt is completed. */
+  answers: Scalars['JSON']['output'];
+  /** The difficulty of this question. */
+  difficulty?: Maybe<QuizQuestionDifficulty>;
+  /** The feedback shown when answered correctly. */
+  feedback_correct?: Maybe<Scalars['String']['output']>;
+  /** The feedback shown when answered incorrectly. */
+  feedback_incorrect?: Maybe<Scalars['String']['output']>;
+  /** The hint of this question. */
+  hint?: Maybe<Scalars['String']['output']>;
+  /** A unique id of this attempt question snapshot. */
+  id: Scalars['ID']['output'];
+  /** The learning objective of this question. */
+  learning_objective?: Maybe<Scalars['String']['output']>;
+  /** The type of media attached to this question. */
+  media_type?: Maybe<QuizQuestionMediaType>;
+  /** The URL of the media attached to this question. */
+  media_url?: Maybe<Scalars['String']['output']>;
+  /** The points this question was worth. */
+  points: Scalars['Int']['output'];
+  /** The text of the question as seen by the student. */
+  prompt: Scalars['String']['output'];
+  /** The ID of the original question, null if it was deleted since. */
+  questionId?: Maybe<Scalars['ID']['output']>;
+  /** The type of the question. */
+  question_type: QuizQuestionType;
+  /** The order of this question within the attempt as displayed. */
+  rank: Scalars['Int']['output'];
+  /** The answers selected by the student for this question. */
+  selectedAnswers: Array<QuizAttemptAnswer>;
+};
+
+/** The status of a quiz attempt. */
+export enum QuizAttemptStatus {
+  Completed = 'completed',
+  InProgress = 'in_progress'
+}
+
+/** Input for creating a quiz record. */
+export type QuizInfoInput = {
+  /** The ID of the course. */
+  courseId: Scalars['String']['input'];
+  /** The denomination of this quiz. */
+  denomination: Scalars['String']['input'];
+  /** The overall feedback shown when the quiz is failed. */
+  feedback_failed?: InputMaybe<Scalars['String']['input']>;
+  /** The overall feedback shown when the quiz is passed. */
+  feedback_passed?: InputMaybe<Scalars['String']['input']>;
+  /** A flag to indicate whether this quiz is published or not. */
+  is_published: Scalars['Boolean']['input'];
+  /** The maximum number of attempts, 0 means unlimited. */
+  max_attempts?: InputMaybe<Scalars['Int']['input']>;
+  /** How students navigate through the questions. */
+  navigation_mode?: InputMaybe<QuizNavigationMode>;
+  /** The passing score in percentage (0-100). */
+  passing_score?: InputMaybe<Scalars['Int']['input']>;
+  /** The questions of the quiz. */
+  questions: Array<QuizQuestionInfoInput>;
+  /** The number of questions shown per page (0 means all on one page). */
+  questions_per_page?: InputMaybe<Scalars['Int']['input']>;
+  /** The ID of the section where the quiz item is located. */
+  sectionId: Scalars['String']['input'];
+  /** Whether the correct answers are revealed to the student after submission. */
+  show_correct_answers?: InputMaybe<Scalars['Boolean']['input']>;
+  /** A flag to indicate whether the answer order is shuffled per attempt. */
+  shuffle_answers?: InputMaybe<Scalars['Boolean']['input']>;
+  /** A flag to indicate whether the question order is shuffled per attempt. */
+  shuffle_questions?: InputMaybe<Scalars['Boolean']['input']>;
+  /** The time limit in minutes, null means no limit. */
+  time_limit_minutes?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** How students navigate through the questions of a quiz. */
+export enum QuizNavigationMode {
+  Free = 'free',
+  Sequential = 'sequential'
+}
+
+/** A question of a quiz. */
+export type QuizQuestion = {
+  __typename?: 'QuizQuestion';
+  /** The answer options of this question. */
+  answers: Array<QuizAnswer>;
+  /** The difficulty level of this question. */
+  difficulty?: Maybe<QuizQuestionDifficulty>;
+  /** The feedback shown when this question is answered correctly. */
+  feedback_correct?: Maybe<Scalars['String']['output']>;
+  /** The feedback shown when this question is answered incorrectly. */
+  feedback_incorrect?: Maybe<Scalars['String']['output']>;
+  /** An optional hint shown to students on demand. */
+  hint?: Maybe<Scalars['String']['output']>;
+  /** A unique id of this question. */
+  id: Scalars['ID']['output'];
+  /** The learning objective this question targets. */
+  learning_objective?: Maybe<Scalars['String']['output']>;
+  /** The type of media attached to this question. */
+  media_type?: Maybe<QuizQuestionMediaType>;
+  /** The URL of the media attached to this question. */
+  media_url?: Maybe<Scalars['String']['output']>;
+  /** The points awarded for answering this question correctly. */
+  points: Scalars['Int']['output'];
+  /** The text of the question. */
+  prompt: Scalars['String']['output'];
+  /** The type of the question. */
+  question_type: QuizQuestionType;
+  /** The rank of this question within the quiz. */
+  rank: Scalars['Int']['output'];
+};
+
+/** The difficulty level of a quiz question. */
+export enum QuizQuestionDifficulty {
+  Easy = 'easy',
+  Hard = 'hard',
+  Medium = 'medium'
+}
+
+/** Input for creating a quiz question. */
+export type QuizQuestionInfoInput = {
+  /** The answer options of this question. */
+  answers: Array<QuizAnswerInfoInput>;
+  /** The difficulty level of this question. */
+  difficulty?: InputMaybe<QuizQuestionDifficulty>;
+  /** The feedback shown when this question is answered correctly. */
+  feedback_correct?: InputMaybe<Scalars['String']['input']>;
+  /** The feedback shown when this question is answered incorrectly. */
+  feedback_incorrect?: InputMaybe<Scalars['String']['input']>;
+  /** An optional hint shown to students on demand. */
+  hint?: InputMaybe<Scalars['String']['input']>;
+  /** The learning objective this question targets. */
+  learning_objective?: InputMaybe<Scalars['String']['input']>;
+  /** The type of media attached to this question. */
+  media_type?: InputMaybe<QuizQuestionMediaType>;
+  /** The URL of the media attached to this question. */
+  media_url?: InputMaybe<Scalars['String']['input']>;
+  /** The points awarded for answering this question correctly. */
+  points?: InputMaybe<Scalars['Int']['input']>;
+  /** The text of the question. */
+  prompt: Scalars['String']['input'];
+  /** The type of the question. */
+  question_type: QuizQuestionType;
+  /** The rank of this question within the quiz. */
+  rank?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** The type of media attached to a quiz question. */
+export enum QuizQuestionMediaType {
+  Image = 'image',
+  Video = 'video'
+}
+
+/** The type of a quiz question. */
+export enum QuizQuestionType {
+  MultiSelect = 'multi_select',
+  SingleChoice = 'single_choice',
+  TrueFalse = 'true_false'
+}
+
+/** The answers selected for a single question in a quiz submission. */
+export type QuizSubmissionAnswerInput = {
+  /** The IDs of the selected answers. */
+  answerIds: Array<Scalars['String']['input']>;
+  /** The ID of the attempt question snapshot being answered. */
+  questionId: Scalars['String']['input'];
+};
+
+/** Input for submitting a quiz attempt. */
+export type QuizSubmissionInput = {
+  /** The answers selected for each question. */
+  answers: Array<QuizSubmissionAnswerInput>;
+  /** The ID of the attempt being submitted. */
+  attemptId: Scalars['String']['input'];
 };
 
 /** Input for rating a course. */
@@ -1424,6 +1779,19 @@ export type SessionDevice = {
   os: Scalars['String']['output'];
 };
 
+/** The result of starting a quiz attempt. */
+export type StartQuizResult = {
+  __typename?: 'StartQuizResult';
+  /** A list of errors that occurred executing this mutation. */
+  errors: Array<Error>;
+  /** The created quiz attempt with its shuffled question snapshots. */
+  quizAttempt?: Maybe<QuizAttempt>;
+  /** Indicates if the mutation was successful. */
+  success: Scalars['Boolean']['output'];
+  /** The time limit of the quiz in minutes, null if there is no limit. */
+  timeLimitMinutes?: Maybe<Scalars['Int']['output']>;
+};
+
 /** Statistics info for the current user. */
 export type Statistics = {
   __typename?: 'Statistics';
@@ -1444,6 +1812,17 @@ export type Subject = {
   id: Scalars['ID']['output'];
   /** The programs linked to this subject. */
   programs: Array<Program>;
+};
+
+/** The result of submitting a quiz attempt. */
+export type SubmitQuizResult = {
+  __typename?: 'SubmitQuizResult';
+  /** A list of errors that occurred executing this mutation. */
+  errors: Array<Error>;
+  /** The completed quiz attempt with grading and review data. */
+  quizAttempt?: Maybe<QuizAttempt>;
+  /** Indicates if the mutation was successful. */
+  success: Scalars['Boolean']['output'];
 };
 
 /** The properties of a teacher account */
@@ -1715,6 +2094,98 @@ export type UpdateProgramVersionCoursesResult = {
   programVersion?: Maybe<ProgramVersion>;
   /** Indicates if the mutation was successful. */
   success: Scalars['Boolean']['output'];
+};
+
+/** Input for updating a quiz answer option. A null id means the answer is new. */
+export type UpdateQuizAnswerInfoInput = {
+  /** The text of this answer option. */
+  denomination?: InputMaybe<Scalars['String']['input']>;
+  /** The ID of the answer to update, null for a new answer. */
+  id?: InputMaybe<Scalars['ID']['input']>;
+  /** The URL of the image of this answer option. */
+  image_url?: InputMaybe<Scalars['String']['input']>;
+  /** Whether this answer is correct. */
+  is_correct?: InputMaybe<Scalars['Boolean']['input']>;
+  /** The rank of this answer within the question. */
+  rank?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** Input for updating the rank of a quiz answer. */
+export type UpdateQuizAnswerRankInput = {
+  /** The ID of the answer. */
+  id: Scalars['String']['input'];
+  /** The new rank of the answer. */
+  rank: Scalars['Int']['input'];
+};
+
+/** Input for updating a quiz record. */
+export type UpdateQuizInfoInput = {
+  /** The denomination of this quiz. */
+  denomination?: InputMaybe<Scalars['String']['input']>;
+  /** The overall feedback shown when the quiz is failed. */
+  feedback_failed?: InputMaybe<Scalars['String']['input']>;
+  /** The overall feedback shown when the quiz is passed. */
+  feedback_passed?: InputMaybe<Scalars['String']['input']>;
+  /** The ID of the quiz to update. */
+  id: Scalars['String']['input'];
+  /** A flag to indicate whether this quiz is published or not. */
+  is_published?: InputMaybe<Scalars['Boolean']['input']>;
+  /** The maximum number of attempts, 0 means unlimited. */
+  max_attempts?: InputMaybe<Scalars['Int']['input']>;
+  /** How students navigate through the questions. */
+  navigation_mode?: InputMaybe<QuizNavigationMode>;
+  /** The passing score in percentage (0-100). */
+  passing_score?: InputMaybe<Scalars['Int']['input']>;
+  /** The full list of questions. Questions omitted from the list are deleted. */
+  questions: Array<UpdateQuizQuestionInfoInput>;
+  /** The number of questions shown per page (0 means all on one page). */
+  questions_per_page?: InputMaybe<Scalars['Int']['input']>;
+  /** Whether the correct answers are revealed to the student after submission. */
+  show_correct_answers?: InputMaybe<Scalars['Boolean']['input']>;
+  /** A flag to indicate whether the answer order is shuffled per attempt. */
+  shuffle_answers?: InputMaybe<Scalars['Boolean']['input']>;
+  /** A flag to indicate whether the question order is shuffled per attempt. */
+  shuffle_questions?: InputMaybe<Scalars['Boolean']['input']>;
+  /** The time limit in minutes, null means no limit. */
+  time_limit_minutes?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** Input for updating a quiz question. A null id means the question is new. */
+export type UpdateQuizQuestionInfoInput = {
+  /** The full list of answers. Answers omitted from the list are deleted. */
+  answers: Array<UpdateQuizAnswerInfoInput>;
+  /** The difficulty level of this question. */
+  difficulty?: InputMaybe<QuizQuestionDifficulty>;
+  /** The feedback shown when this question is answered correctly. */
+  feedback_correct?: InputMaybe<Scalars['String']['input']>;
+  /** The feedback shown when this question is answered incorrectly. */
+  feedback_incorrect?: InputMaybe<Scalars['String']['input']>;
+  /** An optional hint shown to students on demand. */
+  hint?: InputMaybe<Scalars['String']['input']>;
+  /** The ID of the question to update, null for a new question. */
+  id?: InputMaybe<Scalars['ID']['input']>;
+  /** The learning objective this question targets. */
+  learning_objective?: InputMaybe<Scalars['String']['input']>;
+  /** The type of media attached to this question. */
+  media_type?: InputMaybe<QuizQuestionMediaType>;
+  /** The URL of the media attached to this question. */
+  media_url?: InputMaybe<Scalars['String']['input']>;
+  /** The points awarded for answering this question correctly. */
+  points?: InputMaybe<Scalars['Int']['input']>;
+  /** The text of the question. */
+  prompt: Scalars['String']['input'];
+  /** The type of the question. */
+  question_type: QuizQuestionType;
+  /** The rank of this question within the quiz. */
+  rank?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** Input for updating the rank of a quiz question. */
+export type UpdateQuizQuestionRankInput = {
+  /** The ID of the question. */
+  id: Scalars['String']['input'];
+  /** The new rank of the question. */
+  rank: Scalars['Int']['input'];
 };
 
 /** The result of upgrading a student to the latest published program version. */

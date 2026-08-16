@@ -17,7 +17,7 @@ import { CourseProgramVersionBase as CourseProgramVersionReader } from './loader
 import { CourseRatingReader } from './loaders/CourseRating.js';
 import { CourseRequirementBase as CourseRequirementReader } from './loaders/CourseRequirement.generated.js';
 import { CourseSectionBase as CourseSectionReader } from './loaders/CourseSection.generated.js';
-import { CourseSectionItemBase as CourseSectionItemReader } from './loaders/CourseSectionItem.generated.js';
+import { CourseSectionItemReader } from './loaders/CourseSectionItem.js';
 import { CourseSubjectBase as CourseSubjectReader } from './loaders/CourseSubject.generated.js';
 import { DocumentContentBase as DocumentContentReader } from './loaders/DocumentContent.generated.js';
 import { EmbedContentBase as EmbedContentReader } from './loaders/EmbedContent.generated.js';
@@ -33,6 +33,12 @@ import { ProgramObjectiveBase as ProgramObjectiveReader } from './loaders/Progra
 import { ProgramRequirementBase as ProgramRequirementReader } from './loaders/ProgramRequirement.generated.js';
 import { ProgramSubjectBase as ProgramSubjectReader } from './loaders/ProgramSubject.generated.js';
 import { ProgramVersionBase as ProgramVersionReader } from './loaders/ProgramVersion.generated.js';
+import { QuizBase as QuizReader } from './loaders/Quiz.generated.js';
+import { QuizAnswerBase as QuizAnswerReader } from './loaders/QuizAnswer.generated.js';
+import { QuizAttemptBase as QuizAttemptReader } from './loaders/QuizAttempt.generated.js';
+import { QuizAttemptAnswerBase as QuizAttemptAnswerReader } from './loaders/QuizAttemptAnswer.generated.js';
+import { QuizAttemptQuestionBase as QuizAttemptQuestionReader } from './loaders/QuizAttemptQuestion.generated.js';
+import { QuizQuestionBase as QuizQuestionReader } from './loaders/QuizQuestion.generated.js';
 import { RefreshTokenBase as RefreshTokenReader } from './loaders/RefreshToken.generated.js';
 import { StudentTeacherFollowReader } from './loaders/StudentTeacherFollow.js';
 import { SubjectReader } from './loaders/Subject.js';
@@ -71,6 +77,12 @@ export type ReadersType = {
   ProgramRequirement: ProgramRequirementReader;
   ProgramSubject: ProgramSubjectReader;
   ProgramVersion: ProgramVersionReader;
+  Quiz: QuizReader;
+  QuizAnswer: QuizAnswerReader;
+  QuizAttempt: QuizAttemptReader;
+  QuizAttemptAnswer: QuizAttemptAnswerReader;
+  QuizAttemptQuestion: QuizAttemptQuestionReader;
+  QuizQuestion: QuizQuestionReader;
   RefreshToken: RefreshTokenReader;
   StudentTeacherFollow: StudentTeacherFollowReader;
   Subject: SubjectReader;
@@ -111,6 +123,12 @@ export function createLoaders(db: Knex): ReadersType {
     ProgramRequirement: new ProgramRequirementReader(db),
     ProgramSubject: new ProgramSubjectReader(db),
     ProgramVersion: new ProgramVersionReader(db),
+    Quiz: new QuizReader(db),
+    QuizAnswer: new QuizAnswerReader(db),
+    QuizAttempt: new QuizAttemptReader(db),
+    QuizAttemptAnswer: new QuizAttemptAnswerReader(db),
+    QuizAttemptQuestion: new QuizAttemptQuestionReader(db),
+    QuizQuestion: new QuizQuestionReader(db),
     RefreshToken: new RefreshTokenReader(db),
     StudentTeacherFollow: new StudentTeacherFollowReader(db),
     Subject: new SubjectReader(db),

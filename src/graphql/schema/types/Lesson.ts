@@ -8,7 +8,11 @@ import {
   GraphQLString,
 } from 'graphql';
 
-import { Lesson as LessonType } from '../../../types/db-generated-types.js';
+import {
+  ContentComponentParentTableEnumType,
+  CourseSectionItemContentTypeEnumType,
+  Lesson as LessonType,
+} from '../../../types/db-generated-types.js';
 import { ContextType } from '../../../types/types.js';
 import { loadComponents } from '../../utils/contentComponentLoader.js';
 import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
@@ -25,6 +29,24 @@ export const Lesson = new GraphQLObjectType<LessonType, ContextType>({
     itemId: {
       type: new GraphQLNonNull(GraphQLID),
       description: 'The ID of the section item this lesson belongs to.',
+      resolve: async (parent, _, { loaders }) => {
+        const parentWithItemId = parent as LessonType & { itemId?: number };
+
+        if (parentWithItemId.itemId) {
+          return parentWithItemId.itemId;
+        }
+
+        const sectionItems = await loaders.CourseSectionItem.loadByContentIdAndType(
+          parent.id,
+          CourseSectionItemContentTypeEnumType.Lesson,
+        );
+
+        if (!sectionItems || sectionItems.length === 0) {
+          throw new Error('Course section item not found for this lesson.');
+        }
+
+        return sectionItems[0].id;
+      },
     },
     denomination: {
       type: new GraphQLNonNull(GraphQLString),
@@ -44,7 +66,7 @@ export const Lesson = new GraphQLObjectType<LessonType, ContextType>({
       resolve: async (parent, _, { loaders, user }) => {
         const contentComponents = await loaders.ContentComponent.loadByParentIdAndParentType(
           parent.id,
-          'lesson',
+          ContentComponentParentTableEnumType.Lesson,
         );
 
         if (!contentComponents || contentComponents.length === 0) {

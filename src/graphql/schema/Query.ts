@@ -1,6 +1,7 @@
 import {
   GraphQLError,
   GraphQLID,
+  GraphQLInt,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
@@ -8,11 +9,13 @@ import {
 } from 'graphql';
 
 import { CourseStatus } from '../../types/schema-types.js';
+import { QuizAttemptStatusEnumType } from '../../types/db-generated-types.js';
 import { ContextType } from '../../types/types.js';
 import { ErrorType } from '../../utils/ErrorType.js';
 import { authenticated } from '../utils/auth.js';
 import { hasValidProgramVersion } from '../utils/contentUtils.js';
 import { hasTeacherRole } from '../utils/hasTeacherRole.js';
+import { isQuizAttemptExpired } from '../utils/quizTimeLimit.js';
 import { Account } from './types/Account.js';
 import { Country } from './types/Country.js';
 import { Course } from './types/Course.js';
@@ -20,6 +23,7 @@ import { CourseDetailAnalytics } from './types/CourseDetailAnalytics.js';
 import { Language } from './types/Language.js';
 import { OpenidClient } from './types/OpenidClient.js';
 import { Program } from './types/Program.js';
+import { QuizAttemptQuestion } from './types/QuizAttemptQuestion.js';
 import { SessionDevice } from './types/SessionDevice.js';
 import { Subject } from './types/Subject.js';
 import { Teacher } from './types/Teacher.js';
@@ -374,6 +378,60 @@ const Query = new GraphQLObjectType<any, ContextType>({
           }
 
           return { courseId: id };
+        },
+      ),
+    },
+    quizAttemptQuestion: {
+      type: QuizAttemptQuestion,
+      description:
+        'Returns a single quiz attempt question by its display index. Used for sequential navigation so future questions are never sent to the client.',
+      args: {
+        attemptId: {
+          type: new GraphQLNonNull(GraphQLID),
+          description: 'The ID of the quiz attempt.',
+        },
+        index: {
+          type: new GraphQLNonNull(GraphQLInt),
+          description: 'The 0-based display index of the question.',
+        },
+      },
+      resolve: authenticated(
+        async (
+          _,
+          { attemptId, index }: { attemptId: string; index: number },
+          { db, loaders, user },
+        ) => {
+          const attemptIdParsed = parseInt(attemptId, 10);
+          const attempt = await loaders.QuizAttempt.loadById(attemptIdParsed);
+
+          if (!attempt || attempt.account_id !== user.id) {
+            return null;
+          }
+
+          // Only an active attempt can fetch questions. The review screen is
+          // fed from the submit response, never from this query.
+          if (attempt.status !== QuizAttemptStatusEnumType.InProgress) {
+            return null;
+          }
+
+          const quiz = await loaders.Quiz.loadById(attempt.quiz_id);
+
+          if (!quiz) {
+            return null;
+          }
+
+          // Do not keep serving questions once the time limit has passed.
+          const nowRow = await db.raw('select now() as now');
+          const nowTime = new Date(nowRow.rows[0].now);
+
+          if (isQuizAttemptExpired(quiz.time_limit_minutes, attempt.started_at, nowTime)) {
+            return null;
+          }
+
+          const questions = await loaders.QuizAttemptQuestion.loadByAttemptId(attemptIdParsed);
+          const rankedQuestions = [...questions].sort((a, b) => a.rank - b.rank);
+
+          return rankedQuestions[index] ?? null;
         },
       ),
     },

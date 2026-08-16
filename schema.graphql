@@ -76,6 +76,17 @@ type Query {
     courseId: ID!
   ): CourseDetailAnalytics
 
+  """
+  Returns a single quiz attempt question by its display index. Used for sequential navigation so future questions are never sent to the client.
+  """
+  quizAttemptQuestion(
+    """The ID of the quiz attempt."""
+    attemptId: ID!
+
+    """The 0-based display index of the question."""
+    index: Int!
+  ): QuizAttemptQuestion
+
   """Active sessions grouped by device/browser."""
   sessionDevices: [SessionDevice!]!
 }
@@ -324,8 +335,10 @@ type CourseSection {
   items: [CourseSectionItem!]!
 }
 
-"""Course section item which contains the course curriculum (e.g. lesson)"""
-union CourseSectionItem = Lesson
+"""
+Course section item which contains the course curriculum (e.g. lesson, quiz)
+"""
+union CourseSectionItem = Lesson | Quiz
 
 """The lesson info"""
 type Lesson {
@@ -615,6 +628,277 @@ type ImageContent {
 
   """The progress of this component for the current user"""
   progress: ContentComponentProgress
+}
+
+"""The quiz info"""
+type Quiz {
+  """A unique id of this quiz."""
+  id: ID!
+
+  """The ID of the section item this quiz belongs to."""
+  itemId: ID!
+
+  """The denomination of this quiz."""
+  denomination: String!
+
+  """A flag to indicate whether this quiz is published or not."""
+  is_published: Boolean!
+
+  """The passing score in percentage."""
+  passing_score: Int!
+
+  """The maximum number of allowed attempts."""
+  max_attempts: Int!
+
+  """A flag to indicate whether the question order is shuffled per attempt."""
+  shuffle_questions: Boolean!
+
+  """A flag to indicate whether the answer order is shuffled per attempt."""
+  shuffle_answers: Boolean!
+
+  """How students navigate through the questions."""
+  navigation_mode: QuizNavigationMode!
+
+  """The number of questions shown per page (0 means all on one page)."""
+  questions_per_page: Int!
+
+  """
+  Whether the correct answers are revealed to the student after submission.
+  """
+  show_correct_answers: Boolean!
+
+  """The time limit in minutes, null means no limit."""
+  time_limit_minutes: Int
+
+  """The overall feedback shown when the quiz is passed."""
+  feedback_passed: String
+
+  """The overall feedback shown when the quiz is failed."""
+  feedback_failed: String
+
+  """The questions of this quiz (only visible to teachers)."""
+  questions: [QuizQuestion!]!
+
+  """
+  Whether the current user has a completed attempt that passed this quiz.
+  """
+  passed: Boolean
+
+  """The attempts of the current user for this quiz."""
+  attempts: [QuizAttempt!]!
+}
+
+"""How students navigate through the questions of a quiz."""
+enum QuizNavigationMode {
+  free
+  sequential
+}
+
+"""A question of a quiz."""
+type QuizQuestion {
+  """A unique id of this question."""
+  id: ID!
+
+  """The text of the question."""
+  prompt: String!
+
+  """The type of the question."""
+  question_type: QuizQuestionType!
+
+  """The points awarded for answering this question correctly."""
+  points: Int!
+
+  """The rank of this question within the quiz."""
+  rank: Int!
+
+  """The URL of the media attached to this question."""
+  media_url: String
+
+  """The type of media attached to this question."""
+  media_type: QuizQuestionMediaType
+
+  """An optional hint shown to students on demand."""
+  hint: String
+
+  """The difficulty level of this question."""
+  difficulty: QuizQuestionDifficulty
+
+  """The learning objective this question targets."""
+  learning_objective: String
+
+  """The feedback shown when this question is answered correctly."""
+  feedback_correct: String
+
+  """The feedback shown when this question is answered incorrectly."""
+  feedback_incorrect: String
+
+  """The answer options of this question."""
+  answers: [QuizAnswer!]!
+}
+
+"""The type of a quiz question."""
+enum QuizQuestionType {
+  single_choice
+  multi_select
+  true_false
+}
+
+"""The type of media attached to a quiz question."""
+enum QuizQuestionMediaType {
+  image
+  video
+}
+
+"""The difficulty level of a quiz question."""
+enum QuizQuestionDifficulty {
+  easy
+  medium
+  hard
+}
+
+"""An answer option of a quiz question."""
+type QuizAnswer {
+  """A unique id of this answer."""
+  id: ID!
+
+  """The text of this answer option."""
+  denomination: String
+
+  """The URL of the image of this answer option."""
+  image_url: String
+
+  """Whether this answer is correct (only visible to teachers)."""
+  is_correct: Boolean
+
+  """The rank of this answer within the question."""
+  rank: Int!
+}
+
+"""An attempt of a quiz taken by a student."""
+type QuizAttempt {
+  """A unique id of this attempt."""
+  id: ID!
+
+  """The ID of the quiz this attempt belongs to."""
+  quizId: ID!
+
+  """The ID of the account that took the attempt."""
+  accountId: ID!
+
+  """The ID of the enrollment this attempt belongs to."""
+  enrollmentId: ID!
+
+  """The 1-based number of this attempt for the account."""
+  attempt_number: Int!
+
+  """The status of this attempt."""
+  status: QuizAttemptStatus!
+
+  """The score in percentage, null while the attempt is in progress."""
+  score: Int
+
+  """The points earned, null while the attempt is in progress."""
+  earned_points: Int
+
+  """The total points available, null while the attempt is in progress."""
+  total_points: Int
+
+  """Whether the attempt passed the quiz, null while in progress."""
+  passed: Boolean
+
+  """Whether the attempt was submitted after the time limit."""
+  timed_out: Boolean!
+
+  """When the attempt was started (server time)."""
+  started_at: Date!
+
+  """When the attempt was submitted."""
+  submitted_at: Date
+
+  """The snapshot of the questions as seen by the student."""
+  questions: [QuizAttemptQuestion!]!
+
+  """
+  The number of questions in this attempt. Useful for sequential navigation without revealing the questions themselves.
+  """
+  questionCount: Int!
+}
+
+"""The status of a quiz attempt."""
+enum QuizAttemptStatus {
+  in_progress
+  completed
+}
+
+"""A snapshot of a quiz question as the student saw it."""
+type QuizAttemptQuestion {
+  """A unique id of this attempt question snapshot."""
+  id: ID!
+
+  """The ID of the original question, null if it was deleted since."""
+  questionId: ID
+
+  """The text of the question as seen by the student."""
+  prompt: String!
+
+  """The type of the question."""
+  question_type: QuizQuestionType!
+
+  """The order of this question within the attempt as displayed."""
+  rank: Int!
+
+  """The points this question was worth."""
+  points: Int!
+
+  """The URL of the media attached to this question."""
+  media_url: String
+
+  """The type of media attached to this question."""
+  media_type: QuizQuestionMediaType
+
+  """The hint of this question."""
+  hint: String
+
+  """The difficulty of this question."""
+  difficulty: QuizQuestionDifficulty
+
+  """The learning objective of this question."""
+  learning_objective: String
+
+  """The feedback shown when answered correctly."""
+  feedback_correct: String
+
+  """The feedback shown when answered incorrectly."""
+  feedback_incorrect: String
+
+  """
+  The answer options as displayed. The correctness of each answer is only revealed once the attempt is completed.
+  """
+  answers: JSON!
+
+  """The answers selected by the student for this question."""
+  selectedAnswers: [QuizAttemptAnswer!]!
+}
+
+"""An answer selected by the student in a quiz attempt."""
+type QuizAttemptAnswer {
+  """A unique id of this attempt answer."""
+  id: ID!
+
+  """The ID of the attempt question snapshot this answer belongs to."""
+  attemptQuestionId: ID!
+
+  """The ID of the original answer, null if it was deleted since."""
+  answerId: ID
+
+  """The text of the answer as the student saw it."""
+  denomination: String
+
+  """The image of the answer as the student saw it."""
+  image_url: String
+
+  """Whether the selected answer was correct at grading time."""
+  is_correct: Boolean!
 }
 
 """The review details of a course"""
@@ -1153,6 +1437,12 @@ type Mutation {
     programId: ID!
   ): CreateProgramVersionResult
 
+  """Creates a quiz."""
+  createQuiz(
+    """The quiz information"""
+    quizInfo: QuizInfoInput!
+  ): CreateOrUpdateQuizResult
+
   """Deletes a content component."""
   deleteContentComponent(
     """The ID of the content component to delete."""
@@ -1235,6 +1525,18 @@ type Mutation {
     """The raw browser User-Agent string identifying the device."""
     deviceBrowser: String!
   ): MutationResult
+
+  """Starts a quiz attempt for the current student."""
+  startQuiz(
+    """The ID of the quiz to start."""
+    quizId: String!
+  ): StartQuizResult
+
+  """Submits a quiz attempt and grades it server-side."""
+  submitQuiz(
+    """The quiz submission"""
+    submission: QuizSubmissionInput!
+  ): SubmitQuizResult
 
   """Unenrolls an account from a program."""
   unenrollFromProgram(
@@ -1340,6 +1642,24 @@ type Mutation {
     """The program version courses information to be updated."""
     updateProgramVersionCoursesInfo: UpdateProgramVersionCoursesInput!
   ): UpdateProgramVersionCoursesResult
+
+  """Updates a quiz."""
+  updateQuiz(
+    """The quiz information"""
+    quizInfo: UpdateQuizInfoInput!
+  ): CreateOrUpdateQuizResult
+
+  """Updates the ranks of multiple quiz answers."""
+  updateQuizAnswerRanks(
+    """The quiz answers and their new ranks"""
+    answerRanks: [UpdateQuizAnswerRankInput!]!
+  ): MutationResult
+
+  """Updates the ranks of multiple quiz questions."""
+  updateQuizQuestionRanks(
+    """The quiz questions and their new ranks"""
+    questionRanks: [UpdateQuizQuestionRankInput!]!
+  ): MutationResult
 
   """
   Upgrades an enrolled student to the latest published version of a program, preserving all existing course enrollment records.
@@ -1656,6 +1976,122 @@ type CreateProgramVersionResult {
   programVersion: ProgramVersion
 }
 
+"""The result of the creating or updating mutation."""
+type CreateOrUpdateQuizResult {
+  """Indicates if the mutation was successful."""
+  success: Boolean!
+
+  """A list of errors that occurred executing this mutation."""
+  errors: [Error!]!
+
+  """The created or updated quiz."""
+  quiz: Quiz
+}
+
+"""Input for creating a quiz record."""
+input QuizInfoInput {
+  """The ID of the course."""
+  courseId: String!
+
+  """The ID of the section where the quiz item is located."""
+  sectionId: String!
+
+  """The denomination of this quiz."""
+  denomination: String!
+
+  """A flag to indicate whether this quiz is published or not."""
+  is_published: Boolean!
+
+  """The passing score in percentage (0-100)."""
+  passing_score: Int
+
+  """The maximum number of attempts, 0 means unlimited."""
+  max_attempts: Int
+
+  """A flag to indicate whether the question order is shuffled per attempt."""
+  shuffle_questions: Boolean
+
+  """A flag to indicate whether the answer order is shuffled per attempt."""
+  shuffle_answers: Boolean
+
+  """How students navigate through the questions."""
+  navigation_mode: QuizNavigationMode
+
+  """The number of questions shown per page (0 means all on one page)."""
+  questions_per_page: Int
+
+  """
+  Whether the correct answers are revealed to the student after submission.
+  """
+  show_correct_answers: Boolean
+
+  """The time limit in minutes, null means no limit."""
+  time_limit_minutes: Int
+
+  """The overall feedback shown when the quiz is passed."""
+  feedback_passed: String
+
+  """The overall feedback shown when the quiz is failed."""
+  feedback_failed: String
+
+  """The questions of the quiz."""
+  questions: [QuizQuestionInfoInput!]!
+}
+
+"""Input for creating a quiz question."""
+input QuizQuestionInfoInput {
+  """The text of the question."""
+  prompt: String!
+
+  """The type of the question."""
+  question_type: QuizQuestionType!
+
+  """The points awarded for answering this question correctly."""
+  points: Int
+
+  """The rank of this question within the quiz."""
+  rank: Int
+
+  """The URL of the media attached to this question."""
+  media_url: String
+
+  """The type of media attached to this question."""
+  media_type: QuizQuestionMediaType
+
+  """An optional hint shown to students on demand."""
+  hint: String
+
+  """The difficulty level of this question."""
+  difficulty: QuizQuestionDifficulty
+
+  """The learning objective this question targets."""
+  learning_objective: String
+
+  """The feedback shown when this question is answered correctly."""
+  feedback_correct: String
+
+  """The feedback shown when this question is answered incorrectly."""
+  feedback_incorrect: String
+
+  """The answer options of this question."""
+  answers: [QuizAnswerInfoInput!]!
+}
+
+"""Input for creating a quiz answer option."""
+input QuizAnswerInfoInput {
+  """The text of this answer option."""
+  denomination: String
+
+  """The URL of the image of this answer option."""
+  image_url: String
+
+  """Whether this answer is correct."""
+  is_correct: Boolean
+
+  """The rank of this answer within the question."""
+  rank: Int
+}
+
 """The result of a mutation."""
 type MutationResult {
   """Indicates if the mutation was successful."""
@@ -1738,6 +2174,51 @@ input RateCourse {
 
   """The review text given by the reviewer"""
   review: String
+}
+
+"""The result of starting a quiz attempt."""
+type StartQuizResult {
+  """Indicates if the mutation was successful."""
+  success: Boolean!
+
+  """A list of errors that occurred executing this mutation."""
+  errors: [Error!]!
+
+  """The created quiz attempt with its shuffled question snapshots."""
+  quizAttempt: QuizAttempt
+
+  """The time limit of the quiz in minutes, null if there is no limit."""
+  timeLimitMinutes: Int
+}
+
+"""The result of submitting a quiz attempt."""
+type SubmitQuizResult {
+  """Indicates if the mutation was successful."""
+  success: Boolean!
+
+  """A list of errors that occurred executing this mutation."""
+  errors: [Error!]!
+
+  """The completed quiz attempt with grading and review data."""
+  quizAttempt: QuizAttempt
+}
+
+"""Input for submitting a quiz attempt."""
+input QuizSubmissionInput {
+  """The ID of the attempt being submitted."""
+  attemptId: String!
+
+  """The answers selected for each question."""
+  answers: [QuizSubmissionAnswerInput!]!
+}
+
+"""The answers selected for a single question in a quiz submission."""
+input QuizSubmissionAnswerInput {
+  """The ID of the attempt question snapshot being answered."""
+  questionId: String!
+
+  """The IDs of the selected answers."""
+  answerIds: [String!]!
 }
 
 """Input for updating an account information"""
@@ -2097,6 +2578,137 @@ input ProgramVersionCourseInput {
   The ID of the course that must be completed before this one. Null means no prerequisite.
   """
   prerequisiteCourseId: ID
+}
+
+"""Input for updating a quiz record."""
+input UpdateQuizInfoInput {
+  """The ID of the quiz to update."""
+  id: String!
+
+  """The denomination of this quiz."""
+  denomination: String
+
+  """A flag to indicate whether this quiz is published or not."""
+  is_published: Boolean
+
+  """The passing score in percentage (0-100)."""
+  passing_score: Int
+
+  """The maximum number of attempts, 0 means unlimited."""
+  max_attempts: Int
+
+  """A flag to indicate whether the question order is shuffled per attempt."""
+  shuffle_questions: Boolean
+
+  """A flag to indicate whether the answer order is shuffled per attempt."""
+  shuffle_answers: Boolean
+
+  """How students navigate through the questions."""
+  navigation_mode: QuizNavigationMode
+
+  """The number of questions shown per page (0 means all on one page)."""
+  questions_per_page: Int
+
+  """
+  Whether the correct answers are revealed to the student after submission.
+  """
+  show_correct_answers: Boolean
+
+  """The time limit in minutes, null means no limit."""
+  time_limit_minutes: Int
+
+  """The overall feedback shown when the quiz is passed."""
+  feedback_passed: String
+
+  """The overall feedback shown when the quiz is failed."""
+  feedback_failed: String
+
+  """
+  The full list of questions. Questions omitted from the list are deleted.
+  """
+  questions: [UpdateQuizQuestionInfoInput!]!
+}
+
+"""
+Input for updating a quiz question. A null id means the question is new.
+"""
+input UpdateQuizQuestionInfoInput {
+  """The ID of the question to update, null for a new question."""
+  id: ID
+
+  """The text of the question."""
+  prompt: String!
+
+  """The type of the question."""
+  question_type: QuizQuestionType!
+
+  """The points awarded for answering this question correctly."""
+  points: Int
+
+  """The rank of this question within the quiz."""
+  rank: Int
+
+  """The URL of the media attached to this question."""
+  media_url: String
+
+  """The type of media attached to this question."""
+  media_type: QuizQuestionMediaType
+
+  """An optional hint shown to students on demand."""
+  hint: String
+
+  """The difficulty level of this question."""
+  difficulty: QuizQuestionDifficulty
+
+  """The learning objective this question targets."""
+  learning_objective: String
+
+  """The feedback shown when this question is answered correctly."""
+  feedback_correct: String
+
+  """The feedback shown when this question is answered incorrectly."""
+  feedback_incorrect: String
+
+  """The full list of answers. Answers omitted from the list are deleted."""
+  answers: [UpdateQuizAnswerInfoInput!]!
+}
+
+"""
+Input for updating a quiz answer option. A null id means the answer is new.
+"""
+input UpdateQuizAnswerInfoInput {
+  """The ID of the answer to update, null for a new answer."""
+  id: ID
+
+  """The text of this answer option."""
+  denomination: String
+
+  """The URL of the image of this answer option."""
+  image_url: String
+
+  """Whether this answer is correct."""
+  is_correct: Boolean
+
+  """The rank of this answer within the question."""
+  rank: Int
+}
+
+"""Input for updating the rank of a quiz answer."""
+input UpdateQuizAnswerRankInput {
+  """The ID of the answer."""
+  id: String!
+
+  """The new rank of the answer."""
+  rank: Int!
+}
+
+"""Input for updating the rank of a quiz question."""
+input UpdateQuizQuestionRankInput {
+  """The ID of the question."""
+  id: String!
+
+  """The new rank of the question."""
+  rank: Int!
 }
 
 """
