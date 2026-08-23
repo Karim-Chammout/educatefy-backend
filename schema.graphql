@@ -1476,12 +1476,6 @@ type Mutation {
     id: ID!
   ): MutationResult
 
-  """Deletes a lesson."""
-  deleteLesson(
-    """The ID of the lesson to delete."""
-    id: ID!
-  ): MutationResult
-
   """Deletes a program."""
   deleteProgram(
     """The ID of the program to delete."""
