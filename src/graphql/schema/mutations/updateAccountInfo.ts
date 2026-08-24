@@ -5,6 +5,7 @@ import { ContextType } from '../../../types/types.js';
 import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
 import { getSelectedLanguageId } from '../../utils/getSelectedLanguageId.js';
+import { replaceTeacherSpecialties } from '../../utils/teacherSubjects.js';
 import AccountInfoInput from '../inputs/AccountInfo.js';
 import MutationResult from '../types/MutationResult.js';
 import { AccountRoleEnum } from '../types/enum/AccountRole.js';
@@ -81,15 +82,21 @@ const updateAccountInfo: GraphQLFieldConfig<null, ContextType> = {
             updated_at: db.fn.now(),
           });
 
-        if (isTeacherAccount && teacherSpecialties && teacherSpecialties.length > 0) {
-          for (const subjectId of teacherSpecialties) {
-            await db('account__subject')
-              .insert({
-                account_id: user.id,
-                subject_id: subjectId,
-              })
-              .onConflict(['account_id', 'subject_id'])
-              .ignore();
+        if (isTeacherAccount && teacherSpecialties != null) {
+          // Replaces (not merges) the teacher's specialties via the shared
+          // validated helper — same semantics as updateProfile.
+          const subjectResult = await replaceTeacherSpecialties(db, user.id, teacherSpecialties);
+
+          if (!subjectResult.success) {
+            const errors = [new Error(subjectResult.error)];
+            if (subjectResult.detail) {
+              errors.push(new Error(subjectResult.detail));
+            }
+
+            return {
+              success: false,
+              errors,
+            };
           }
         }
 
