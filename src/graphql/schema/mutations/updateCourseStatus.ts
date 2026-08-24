@@ -12,6 +12,14 @@ import CourseStatusInput from '../inputs/CourseStatus.js';
 import { UpdateCourseStatusResult } from '../types/UpdateCourseStatusResult.js';
 import logger from '../../../utils/logger.js';
 
+// Allowed self-service transitions.
+const ALLOWED_TRANSITIONS: Record<string, CourseStatus[]> = {
+  [CourseStatus.Available]: [CourseStatus.Enrolled],
+  [CourseStatus.Enrolled]: [CourseStatus.Completed, CourseStatus.Unenrolled],
+  [CourseStatus.Unenrolled]: [CourseStatus.Enrolled],
+  [CourseStatus.Completed]: [CourseStatus.Enrolled],
+};
+
 const updateCourseStatus: GraphQLFieldConfig<null, ContextType> = {
   type: UpdateCourseStatusResult,
   description: 'Updates the status of a course.',
@@ -48,6 +56,17 @@ const updateCourseStatus: GraphQLFieldConfig<null, ContextType> = {
         };
       }
 
+      // Creating or renewing an enrollment is acquisition: the course must be
+      // published. Transitions out of an active enrollment keep working so
+      // students retain access to courses unpublished mid-way.
+      if (status === CourseStatus.Enrolled && !course.is_published) {
+        return {
+          success: false,
+          errors: [new Error(ErrorType.NOT_FOUND)],
+          course: null,
+        };
+      }
+
       try {
         const result = await db.transaction(async (transaction) => {
           // Check if enrollment exists
@@ -57,6 +76,15 @@ const updateCourseStatus: GraphQLFieldConfig<null, ContextType> = {
           );
 
           if (!existingEnrollment) {
+            // Fresh enrollments may only start as `available -> enrolled`.
+            if (status !== CourseStatus.Enrolled) {
+              return {
+                success: false,
+                errors: [new Error(ErrorType.INVALID_INPUT)],
+                course: null,
+              };
+            }
+
             const [enrollment] = await transaction('enrollment')
               .insert({
                 course_id: course.id,
@@ -90,6 +118,16 @@ const updateCourseStatus: GraphQLFieldConfig<null, ContextType> = {
           }
 
           if ((existingEnrollment.status as string) === status) {
+            return {
+              success: false,
+              errors: [new Error(ErrorType.INVALID_INPUT)],
+              course: null,
+            };
+          }
+
+          const currentStatus = String(existingEnrollment.status);
+
+          if (!ALLOWED_TRANSITIONS[currentStatus]?.includes(status)) {
             return {
               success: false,
               errors: [new Error(ErrorType.INVALID_INPUT)],
