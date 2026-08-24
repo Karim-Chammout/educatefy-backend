@@ -676,7 +676,7 @@ type Quiz {
   """The overall feedback shown when the quiz is failed."""
   feedback_failed: String
 
-  """The questions of this quiz (only visible to teachers)."""
+  """The questions of this quiz (only visible to the quiz owner)."""
   questions: [QuizQuestion!]!
 
   """

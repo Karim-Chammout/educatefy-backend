@@ -13,7 +13,6 @@ import { GraphQLJSON } from 'graphql-type-json';
 import { Course as CourseType, EnrollmentStatusType } from '../../../types/db-generated-types.js';
 import { ContextType } from '../../../types/types.js';
 import { getImageURL } from '../../../utils/getImageURL.js';
-import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
 import GraphQLDate from '../Scalars/Date.js';
 import { CourseObjective } from './CourseObjective.js';
 import { CourseRequirement } from './CourseRequirement.js';
@@ -158,14 +157,13 @@ export const Course: GraphQLObjectType = new GraphQLObjectType<CourseType, Conte
           return [];
         }
 
-        const isTeacher = user.authenticated && (await hasTeacherRole(loaders, user.roleId));
-
-        // Return published & unpublished sections to the teacher account
-        if (isTeacher) {
-          return [...sections].sort((a, b) => a.rank - b.rank);
+        // Draft preview is restricted to the course owner.
+        if (!user.authenticated || parent.teacher_id !== user.id) {
+          return sections.filter((section) => section.is_published).sort((a, b) => a.rank - b.rank);
         }
 
-        return sections.filter((section) => section.is_published).sort((a, b) => a.rank - b.rank);
+        // Return published & unpublished sections to the course owner
+        return [...sections].sort((a, b) => a.rank - b.rank);
       },
     },
     rating: {

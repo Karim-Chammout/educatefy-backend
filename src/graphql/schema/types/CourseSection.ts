@@ -13,7 +13,7 @@ import {
   CourseSection as CourseSectionType,
 } from '../../../types/db-generated-types.js';
 import { ContextType } from '../../../types/types.js';
-import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
+import { isCourseOwner } from '../../utils/contentUtils.js';
 import { CourseSectionItem } from './union/CourseSectionItem.js';
 
 export const CourseSection = new GraphQLObjectType<CourseSectionType, ContextType>({
@@ -77,10 +77,10 @@ export const CourseSection = new GraphQLObjectType<CourseSectionType, ContextTyp
           return [];
         }
 
-        const isTeacher = user.authenticated && (await hasTeacherRole(loaders, user.roleId));
+        const canPreview = await isCourseOwner(loaders, user, parent.course_id);
 
-        // Filter out unpublished items for students
-        const filteredSectionItems = isTeacher
+        // Draft preview is restricted to the course owner.
+        const filteredSectionItems = canPreview
           ? sectionItems
           : sectionItems.filter((item) => item !== null && item.is_published);
 
