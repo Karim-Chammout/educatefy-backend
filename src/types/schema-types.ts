@@ -1455,7 +1455,7 @@ export type Quiz = {
   passed?: Maybe<Scalars['Boolean']['output']>;
   /** The passing score in percentage. */
   passing_score: Scalars['Int']['output'];
-  /** The questions of this quiz (only visible to teachers). */
+  /** The questions of this quiz (only visible to the quiz owner). */
   questions: Array<QuizQuestion>;
   /** The number of questions shown per page (0 means all on one page). */
   questions_per_page: Scalars['Int']['output'];
