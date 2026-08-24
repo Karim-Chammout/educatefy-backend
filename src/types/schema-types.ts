@@ -1478,7 +1478,7 @@ export type QuizAnswer = {
   id: Scalars['ID']['output'];
   /** The URL of the image of this answer option. */
   image_url?: Maybe<Scalars['String']['output']>;
-  /** Whether this answer is correct (only visible to teachers). */
+  /** Whether this answer is correct (only visible to the teacher who owns the quiz). */
   is_correct?: Maybe<Scalars['Boolean']['output']>;
   /** The rank of this answer within the question. */
   rank: Scalars['Int']['output'];
