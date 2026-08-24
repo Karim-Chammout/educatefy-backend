@@ -4,6 +4,7 @@ import { UpdateContentComponentRankInput as UpdateContentComponentRankInputType 
 import { ContextType } from '../../../types/types.js';
 import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
+import { getContentComponentOwnerId } from '../../utils/contentOwnership.js';
 import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
 import UpdateContentComponentRankInput from '../inputs/UpdateContentComponentRank.js';
 import MutationResult from '../types/MutationResult.js';
@@ -41,6 +42,35 @@ const updateContentComponentRanks: GraphQLFieldConfig<null, ContextType> = {
             success: false,
             errors: [new Error(ErrorType.PERMISSION_DENIED)],
           };
+        }
+
+        // Validate ownership of every component up front so the reorder is
+        // applied atomically or not at all.
+        for (const component of componentRanks) {
+          const loaded = await loaders.ContentComponent.loadById(parseInt(component.id, 10));
+
+          if (!loaded) {
+            return {
+              success: false,
+              errors: [new Error(ErrorType.NOT_FOUND)],
+            };
+          }
+
+          const ownerId = await getContentComponentOwnerId(loaders, loaded);
+
+          if (ownerId === null) {
+            return {
+              success: false,
+              errors: [new Error(ErrorType.NOT_FOUND)],
+            };
+          }
+
+          if (ownerId !== user.id) {
+            return {
+              success: false,
+              errors: [new Error(ErrorType.FORBIDDEN)],
+            };
+          }
         }
 
         await db.transaction(async (transaction) => {

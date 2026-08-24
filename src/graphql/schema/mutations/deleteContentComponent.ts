@@ -5,6 +5,7 @@ import { ContextType } from '../../../types/types.js';
 import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
 import { getComponentConfig } from '../../utils/contentComponentRegistry.js';
+import { getContentComponentOwnerId } from '../../utils/contentOwnership.js';
 import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
 import { ComponentType as ComponentEnumType } from '../types/enum/ContentComponent.js';
 import MutationResult from '../types/MutationResult.js';
@@ -58,6 +59,31 @@ export const deleteContentComponent: GraphQLFieldConfig<null, ContextType> = {
           return {
             success: false,
             errors: [new Error(ErrorType.PERMISSION_DENIED)],
+          };
+        }
+
+        const component = await loaders.ContentComponent.loadById(parseInt(componentId, 10));
+
+        if (!component) {
+          return {
+            success: false,
+            errors: [new Error(ErrorType.NOT_FOUND)],
+          };
+        }
+
+        const ownerId = await getContentComponentOwnerId(loaders, component);
+
+        if (ownerId === null) {
+          return {
+            success: false,
+            errors: [new Error(ErrorType.NOT_FOUND)],
+          };
+        }
+
+        if (ownerId !== user.id) {
+          return {
+            success: false,
+            errors: [new Error(ErrorType.FORBIDDEN)],
           };
         }
 

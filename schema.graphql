@@ -767,7 +767,9 @@ type QuizAnswer {
   """The URL of the image of this answer option."""
   image_url: String
 
-  """Whether this answer is correct (only visible to teachers)."""
+  """
+  Whether this answer is correct (only visible to the teacher who owns the quiz).
+  """
   is_correct: Boolean
 
   """The rank of this answer within the question."""

@@ -9,6 +9,7 @@ import {
 
 import { QuizAnswer as QuizAnswerType } from '../../../types/db-generated-types.js';
 import { ContextType } from '../../../types/types.js';
+import { getQuizOwnerIdByAnswer } from '../../utils/contentOwnership.js';
 import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
 
 export const QuizAnswer = new GraphQLObjectType<QuizAnswerType, ContextType>({
@@ -29,7 +30,8 @@ export const QuizAnswer = new GraphQLObjectType<QuizAnswerType, ContextType>({
     },
     is_correct: {
       type: GraphQLBoolean,
-      description: 'Whether this answer is correct (only visible to teachers).',
+      description:
+        'Whether this answer is correct (only visible to the teacher who owns the quiz).',
       resolve: async (parent, _, { loaders, user }) => {
         if (!user.authenticated) {
           return null;
@@ -37,7 +39,17 @@ export const QuizAnswer = new GraphQLObjectType<QuizAnswerType, ContextType>({
 
         const isTeacher = await hasTeacherRole(loaders, user.roleId);
 
-        return isTeacher ? parent.is_correct : null;
+        if (!isTeacher) {
+          return null;
+        }
+
+        const quizOwnerId = await getQuizOwnerIdByAnswer(loaders, parent);
+
+        if (quizOwnerId === null || quizOwnerId !== user.id) {
+          return null;
+        }
+
+        return parent.is_correct;
       },
     },
     rank: {
