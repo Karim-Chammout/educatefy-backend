@@ -56,6 +56,14 @@ const createCourseSection: GraphQLFieldConfig<null, ContextType> = {
           };
         }
 
+        if (course.teacher_id !== user.id) {
+          return {
+            success: false,
+            errors: [new Error(ErrorType.FORBIDDEN)],
+            courseSection: null,
+          };
+        }
+
         const [createdCourseSection] = await db('course_section')
           .insert({
             denomination: denomination.trim(),

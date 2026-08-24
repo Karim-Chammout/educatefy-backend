@@ -44,6 +44,15 @@ const deleteCourseSection: GraphQLFieldConfig<null, ContextType> = {
         };
       }
 
+      const course = await loaders.Course.loadById(courseSection.course_id);
+
+      if (!course || course.teacher_id !== user.id) {
+        return {
+          success: false,
+          errors: [new Error(ErrorType.FORBIDDEN)],
+        };
+      }
+
       await db.transaction(async (transaction) => {
         await transaction('course_section').where('id', courseSection.id).update({
           deleted_at: db.fn.now(),

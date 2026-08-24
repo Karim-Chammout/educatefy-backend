@@ -14,6 +14,7 @@ import { ContextType } from '../../../types/types.js';
 import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
 import { getComponentConfig } from '../../utils/contentComponentRegistry.js';
+import { getContentComponentOwnerId } from '../../utils/contentOwnership.js';
 import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
 import AudioContentInput from '../inputs/AudioContent.js';
 import ContentComponentBaseInput from '../inputs/ContentComponentBase.js';
@@ -115,6 +116,27 @@ export const createContentComponent: GraphQLFieldConfig<null, ContextType> = {
           return {
             success: false,
             errors: [new Error(ErrorType.PERMISSION_DENIED)],
+            component: null,
+          };
+        }
+
+        const ownerId = await getContentComponentOwnerId(loaders, {
+          parent_id: parseInt(baseComponentInfo.parentId, 10),
+          parent_table: baseComponentInfo.parentType,
+        });
+
+        if (ownerId === null) {
+          return {
+            success: false,
+            errors: [new Error(ErrorType.NOT_FOUND)],
+            component: null,
+          };
+        }
+
+        if (ownerId !== user.id) {
+          return {
+            success: false,
+            errors: [new Error(ErrorType.FORBIDDEN)],
             component: null,
           };
         }
