@@ -94,6 +94,20 @@ export const canUserAccessProgram = async (
   );
 };
 
+export const isCourseOwner = async (
+  loaders: ContextType['loaders'],
+  user: ContextType['user'],
+  courseId: number,
+): Promise<boolean> => {
+  if (!user.authenticated) {
+    return false;
+  }
+
+  const course = await loaders.Course.loadById(courseId);
+
+  return !!course && course.teacher_id === user.id;
+};
+
 export const filterProgramsWithValidVersions = async (
   programs: readonly Program[],
   user: ContextType['user'],

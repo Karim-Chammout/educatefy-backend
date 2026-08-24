@@ -13,7 +13,6 @@ import {
   Quiz as QuizType,
 } from '../../../types/db-generated-types.js';
 import { ContextType } from '../../../types/types.js';
-import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
 import QuizNavigationMode from './enum/QuizNavigationMode.js';
 import { QuizAttempt } from './QuizAttempt.js';
 import { QuizQuestion } from './QuizQuestion.js';
@@ -98,11 +97,10 @@ export const Quiz = new GraphQLObjectType<QuizType, ContextType>({
     },
     questions: {
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(QuizQuestion))),
-      description: 'The questions of this quiz (only visible to teachers).',
+      description: 'The questions of this quiz (only visible to the quiz owner).',
       resolve: async (parent, _, { loaders, user }) => {
-        const isTeacher = user.authenticated && (await hasTeacherRole(loaders, user.roleId));
-
-        if (!isTeacher) {
+        // Questions are private to the quiz owner.
+        if (!user.authenticated || parent.teacher_id !== user.id) {
           return [];
         }
 

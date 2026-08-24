@@ -15,7 +15,6 @@ import {
 } from '../../../types/db-generated-types.js';
 import { ContextType } from '../../../types/types.js';
 import { loadComponents } from '../../utils/contentComponentLoader.js';
-import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
 import { ContentComponent } from './union/ContentComponent.js';
 
 export const Lesson = new GraphQLObjectType<LessonType, ContextType>({
@@ -75,11 +74,12 @@ export const Lesson = new GraphQLObjectType<LessonType, ContextType>({
 
         const loadedComponents = await loadComponents(loaders, contentComponents);
 
-        const isTeacher = user.authenticated && (await hasTeacherRole(loaders, user.roleId));
+        // Draft preview is restricted to the lesson owner.
+        const canPreview = user.authenticated && parent.teacher_id === user.id;
 
         const components = loadedComponents.filter((component) => component !== null);
 
-        const filteredComponents = isTeacher
+        const filteredComponents = canPreview
           ? components
           : components.filter((component) => component.is_published);
 
