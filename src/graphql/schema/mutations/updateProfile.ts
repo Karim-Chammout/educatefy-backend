@@ -5,10 +5,18 @@ import { ContextType } from '../../../types/types.js';
 import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
 import { getSelectedLanguageId } from '../../utils/getSelectedLanguageId.js';
+import { replaceTeacherSpecialties } from '../../utils/teacherSubjects.js';
 import ProfileDetailsInput from '../inputs/ProfileDetails.js';
 import UpdateProfileResult from '../types/UpdateProfileResult.js';
 import { AccountRoleEnum } from '../types/enum/AccountRole.js';
 import logger from '../../../utils/logger.js';
+
+class TransactionAbortedWithSubjectError extends Error {
+  constructor(public readonly subjectError: { error: ErrorType; detail?: string }) {
+    super('Teacher specialties update failed');
+    this.name = 'TransactionAbortedWithSubjectError';
+  }
+}
 
 const updateProfile: GraphQLFieldConfig<null, ContextType> = {
   type: UpdateProfileResult,
@@ -58,7 +66,13 @@ const updateProfile: GraphQLFieldConfig<null, ContextType> = {
         ...(teacherDescription && { description: teacherDescription }),
       };
 
-      if (Object.keys(dataToUpdate).length === 0) {
+      const teacherRole = await loaders.AccountRole.loadByCode(AccountRoleEnum.Teacher);
+      const isTeacherAccount = teacherRole.id === user.roleId;
+      // Specialties are replaced (not merged) and validated server-side; an
+      // empty array is rejected by the shared helper (min 1 specialty).
+      const hasSpecialtyUpdate = isTeacherAccount && teacherSpecialties != null;
+
+      if (Object.keys(dataToUpdate).length === 0 && !hasSpecialtyUpdate) {
         return {
           success: false,
           errors: [new Error(ErrorType.INVALID_INPUT)],
@@ -67,41 +81,64 @@ const updateProfile: GraphQLFieldConfig<null, ContextType> = {
       }
 
       try {
-        const [account] = await db('account')
-          .where('id', user.id)
-          .update({
-            ...dataToUpdate,
-            updated_at: db.fn.now(),
-          })
-          .returning('*');
+        const result = await db.transaction(async (transaction) => {
+          let account = null;
+          let subjectError: { error: ErrorType; detail?: string } | null = null;
 
-        // Update teacher specialties (account__subjects relation)
-        if (teacherSpecialties && teacherSpecialties.length > 0) {
-          const teacherRole = await loaders.AccountRole.loadByCode(AccountRoleEnum.Teacher);
-          const isTeacherAccount = teacherRole.id === user.roleId;
-
-          if (isTeacherAccount) {
-            db.transaction(async (transaction) => {
-              await transaction('account__subject').where('account_id', user.id).del();
-
-              for (const subjectId of teacherSpecialties) {
-                await transaction('account__subject').insert({
-                  account_id: user.id,
-                  subject_id: subjectId,
-                });
-              }
-            });
+          if (Object.keys(dataToUpdate).length > 0) {
+            [account] = await transaction('account')
+              .where('id', user.id)
+              .update({
+                ...dataToUpdate,
+                updated_at: transaction.fn.now(),
+              })
+              .returning('*');
           }
-        }
+
+          if (hasSpecialtyUpdate) {
+            const subjectResult = await replaceTeacherSpecialties(
+              transaction,
+              user.id,
+              teacherSpecialties ?? [],
+            );
+
+            if (!subjectResult.success) {
+              subjectError = { error: subjectResult.error, detail: subjectResult.detail };
+            }
+          }
+
+          if (subjectError) {
+            throw new TransactionAbortedWithSubjectError(subjectError);
+          }
+
+          if (!account) {
+            account = await transaction('account').where('id', user.id).first();
+          }
+
+          return account;
+        });
 
         loaders.Account.loaders.byIdLoader.clear(user.id);
 
         return {
           success: true,
           errors: [],
-          user: account,
+          user: result,
         };
       } catch (error) {
+        if (error instanceof TransactionAbortedWithSubjectError) {
+          const errors = [new Error(error.subjectError.error)];
+          if (error.subjectError.detail) {
+            errors.push(new Error(error.subjectError.detail));
+          }
+
+          return {
+            success: false,
+            errors,
+            user: null,
+          };
+        }
+
         logger.error({ err: error, userId: user.id }, 'Failed to update profile details');
 
         return {
