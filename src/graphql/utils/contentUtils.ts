@@ -57,6 +57,43 @@ export const hasValidProgramVersion = async (
   return programVersions.some((version) => version.status === ProgramVersionStatusType.Published);
 };
 
+/**
+ * Decides whether a user may access a program.
+ *
+ * Two-level publishing contract:
+ * - Enrolled students keep access to their (published/archived) version even while
+ *   the program is hidden from the catalog via the master switch (`is_published`).
+ * - Everyone else needs both the master switch on AND a published version.
+ */
+export const canUserAccessProgram = async (
+  program: Program,
+  user: ContextType['user'],
+  loaders: ContextType['loaders'],
+): Promise<boolean> => {
+  const programVersions = await loaders.ProgramVersion.loadByProgramId(program.id);
+
+  if (user.authenticated) {
+    const programEnrollment = await loaders.AccountProgram.loadByAccountIdAndProgramId(
+      user.id,
+      program.id,
+    );
+
+    if (programEnrollment) {
+      return programVersions.some(
+        (version) =>
+          version.id === programEnrollment.program_version_id &&
+          (version.status === ProgramVersionStatusType.Published ||
+            version.status === ProgramVersionStatusType.Archived),
+      );
+    }
+  }
+
+  return (
+    Boolean(program.is_published) &&
+    programVersions.some((version) => version.status === ProgramVersionStatusType.Published)
+  );
+};
+
 export const filterProgramsWithValidVersions = async (
   programs: readonly Program[],
   user: ContextType['user'],

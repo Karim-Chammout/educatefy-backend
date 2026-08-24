@@ -13,7 +13,7 @@ import { QuizAttemptStatusEnumType } from '../../types/db-generated-types.js';
 import { ContextType } from '../../types/types.js';
 import { ErrorType } from '../../utils/ErrorType.js';
 import { authenticated } from '../utils/auth.js';
-import { hasValidProgramVersion } from '../utils/contentUtils.js';
+import { canUserAccessProgram } from '../utils/contentUtils.js';
 import { hasTeacherRole } from '../utils/hasTeacherRole.js';
 import { isQuizAttemptExpired } from '../utils/quizTimeLimit.js';
 import { Account } from './types/Account.js';
@@ -228,17 +228,13 @@ const Query = new GraphQLObjectType<any, ContextType>({
       resolve: async (_, { slug }: { slug: string }, { loaders, user }) => {
         const program = await loaders.Program.loadBySlug(slug);
 
-        if (!program || !program.is_published) {
+        if (!program) {
           return null;
         }
 
-        const hasValidVersion = await hasValidProgramVersion(program.id, user, loaders);
+        const canAccess = await canUserAccessProgram(program, user, loaders);
 
-        if (!hasValidVersion) {
-          return null;
-        }
-
-        return program;
+        return canAccess ? program : null;
       },
     },
     teacherPrograms: {

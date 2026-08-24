@@ -1,6 +1,7 @@
 import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
 
 import { RateCourse as RateCourseType } from '../../../types/schema-types.js';
+import { EnrollmentStatusType } from '../../../types/db-generated-types.js';
 import { ContextType } from '../../../types/types.js';
 import { ErrorType } from '../../../utils/ErrorType.js';
 import { sanitizeText } from '../../../utils/sanitizeText.js';
@@ -45,6 +46,30 @@ const rateCourse: GraphQLFieldConfig<null, ContextType> = {
           return {
             success: false,
             errors: [new Error(ErrorType.NOT_FOUND)],
+            course: null,
+          };
+        }
+
+        // Only students with an active enrollment may rate or review.
+        const enrollment = await loaders.Enrollment.loadByAccountIdAndCourseId(user.id, course.id);
+
+        const hasActiveEnrollment =
+          !!enrollment &&
+          (enrollment.status === EnrollmentStatusType.Enrolled ||
+            enrollment.status === EnrollmentStatusType.Completed);
+
+        if (!hasActiveEnrollment) {
+          return {
+            success: false,
+            errors: [new Error(ErrorType.FORBIDDEN)],
+            course: null,
+          };
+        }
+
+        if (!course.is_published) {
+          return {
+            success: false,
+            errors: [new Error(ErrorType.INVALID_INPUT)],
             course: null,
           };
         }
