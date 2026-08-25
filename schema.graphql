@@ -140,6 +140,11 @@ type Account {
 
   """Statistics for the current user."""
   statistics: Statistics
+
+  """
+  The social media links of this account (only visible to the account owner).
+  """
+  socialLinks: [SocialLink!]!
 }
 
 """Gender of the account."""
@@ -982,11 +987,47 @@ type Teacher {
   """The number of followers this teacher has"""
   followersCount: Int!
 
+  """The public social media links of this teacher."""
+  socialLinks: [SocialLink!]!
+
+  """Represents the subjects a teacher is specialized in for teaching."""
+  subjects: [Subject!]!
+
   """List of courses created by the teacher"""
   courses: [Course!]!
 
   """List of programs created by the teacher"""
   programs: [Program!]!
+}
+
+"""A social media link attached to an account."""
+type SocialLink {
+  """A unique id of this social link."""
+  id: ID!
+
+  """
+  The platform identifier (linkedin, x, youtube, github, instagram, facebook, tiktok, website).
+  """
+  platform: String!
+
+  """Human-readable platform name."""
+  platformDisplayName: String!
+
+  """
+  The username/handle on the platform (without leading @), if applicable.
+  """
+  userName: String
+
+  """
+  Optional custom label chosen by the user. Falls back to the handle or platform name in UIs when absent.
+  """
+  displayName: String
+
+  """The full https URL of the social profile."""
+  url: String!
+
+  """Whether this is the highlighted main link of the account."""
+  isPrimary: Boolean!
 }
 
 """The program info."""
@@ -1544,6 +1585,14 @@ type Mutation {
   updateAccountInfo(
     """The account information"""
     accountInfo: AccountInfoInput!
+  ): MutationResult
+
+  """Replaces all social media links of the current account."""
+  updateAccountSocialLinks(
+    """
+    The full desired set of social links for this account. Empty array removes all links.
+    """
+    links: [SocialLinkInfo!]!
   ): MutationResult
 
   """Updates a content component."""
@@ -2251,6 +2300,32 @@ input AccountInfoInput {
 
   """The short description about the teacher."""
   teacherDescription: JSON
+}
+
+"""Input for a single social media link of an account."""
+input SocialLinkInfo {
+  """
+  One of the supported platforms (linkedin, x, youtube, github, instagram, facebook, tiktok, website).
+  """
+  platform: String!
+
+  """
+  The username/handle on the platform, without the leading @. Optional for websites.
+  """
+  userName: String
+
+  """
+  Optional custom label chosen by the user (e.g. "My portfolio"). Falls back to the handle or platform name when absent.
+  """
+  displayName: String
+
+  """The full https URL of the social profile."""
+  url: String!
+
+  """
+  Flags the main link to be highlighted on the profile. At most one link per account keeps this flag (last one wins).
+  """
+  isPrimary: Boolean
 }
 
 input UpdateContentComponentBaseInput {

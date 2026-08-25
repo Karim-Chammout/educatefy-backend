@@ -25,6 +25,7 @@ import startQuiz from './mutations/startQuiz.js';
 import submitQuiz from './mutations/submitQuiz.js';
 import unenrollFromProgram from './mutations/unenrollFromProgram.js';
 import updateAccountInfo from './mutations/updateAccountInfo.js';
+import updateAccountSocialLinks from './mutations/updateAccountSocialLinks.js';
 import updateContentComponent from './mutations/updateContentComponent.js';
 import updateContentComponentProgress from './mutations/updateContentComponentProgress.js';
 import updateContentComponentRanks from './mutations/updateContentComponentRank.js';
@@ -70,6 +71,7 @@ const Mutation = new GraphQLObjectType({
     submitQuiz,
     unenrollFromProgram,
     updateAccountInfo,
+    updateAccountSocialLinks,
     updateContentComponent,
     updateContentComponentProgress,
     updateContentComponentRanks,

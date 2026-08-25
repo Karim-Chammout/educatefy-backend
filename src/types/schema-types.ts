@@ -44,6 +44,8 @@ export type Account = {
   nickname?: Maybe<Scalars['String']['output']>;
   /** The preferred language for the account */
   preferredLanguage: Scalars['String']['output'];
+  /** The social media links of this account (only visible to the account owner). */
+  socialLinks: Array<SocialLink>;
   /** Statistics for the current user. */
   statistics?: Maybe<Statistics>;
   /** Represents the subjects a teacher is specialized in for teaching. */
@@ -840,6 +842,8 @@ export type Mutation = {
   unenrollFromProgram?: Maybe<UpdateProgramStatusResult>;
   /** Updates a user account information. */
   updateAccountInfo?: Maybe<MutationResult>;
+  /** Replaces all social media links of the current account. */
+  updateAccountSocialLinks?: Maybe<MutationResult>;
   /** Updates a content component. */
   updateContentComponent?: Maybe<CreateOrUpdateContentComponent>;
   /** Updates the progress of a content component. */
@@ -995,6 +999,11 @@ export type MutationUnenrollFromProgramArgs = {
 
 export type MutationUpdateAccountInfoArgs = {
   accountInfo: AccountInfoInput;
+};
+
+
+export type MutationUpdateAccountSocialLinksArgs = {
+  links: Array<SocialLinkInfo>;
 };
 
 
@@ -1772,6 +1781,39 @@ export type SessionDevice = {
   os: Scalars['String']['output'];
 };
 
+/** A social media link attached to an account. */
+export type SocialLink = {
+  __typename?: 'SocialLink';
+  /** Optional custom label chosen by the user. Falls back to the handle or platform name in UIs when absent. */
+  displayName?: Maybe<Scalars['String']['output']>;
+  /** A unique id of this social link. */
+  id: Scalars['ID']['output'];
+  /** Whether this is the highlighted main link of the account. */
+  isPrimary: Scalars['Boolean']['output'];
+  /** The platform identifier (linkedin, x, youtube, github, instagram, facebook, tiktok, website). */
+  platform: Scalars['String']['output'];
+  /** Human-readable platform name. */
+  platformDisplayName: Scalars['String']['output'];
+  /** The full https URL of the social profile. */
+  url: Scalars['String']['output'];
+  /** The username/handle on the platform (without leading @), if applicable. */
+  userName?: Maybe<Scalars['String']['output']>;
+};
+
+/** Input for a single social media link of an account. */
+export type SocialLinkInfo = {
+  /** Optional custom label chosen by the user (e.g. "My portfolio"). Falls back to the handle or platform name when absent. */
+  displayName?: InputMaybe<Scalars['String']['input']>;
+  /** Flags the main link to be highlighted on the profile. At most one link per account keeps this flag (last one wins). */
+  isPrimary?: InputMaybe<Scalars['Boolean']['input']>;
+  /** One of the supported platforms (linkedin, x, youtube, github, instagram, facebook, tiktok, website). */
+  platform: Scalars['String']['input'];
+  /** The full https URL of the social profile. */
+  url: Scalars['String']['input'];
+  /** The username/handle on the platform, without the leading @. Optional for websites. */
+  userName?: InputMaybe<Scalars['String']['input']>;
+};
+
 /** The result of starting a quiz attempt. */
 export type StartQuizResult = {
   __typename?: 'StartQuizResult';
@@ -1847,6 +1889,10 @@ export type Teacher = {
   nickname?: Maybe<Scalars['String']['output']>;
   /** List of programs created by the teacher */
   programs: Array<Program>;
+  /** The public social media links of this teacher. */
+  socialLinks: Array<SocialLink>;
+  /** Represents the subjects a teacher is specialized in for teaching. */
+  subjects: Array<Subject>;
 };
 
 /** Aggregated analytics data for a teacher. */

@@ -6,6 +6,7 @@ import type { Knex } from 'knex';
 import { AccountBase as AccountReader } from './loaders/Account.generated.js';
 import { AccountProgramReader } from './loaders/AccountProgram.js';
 import { AccountRoleBase as AccountRoleReader } from './loaders/AccountRole.generated.js';
+import { AccountSocialLinksBase as AccountSocialLinksReader } from './loaders/AccountSocialLinks.generated.js';
 import { AccountSubjectBase as AccountSubjectReader } from './loaders/AccountSubject.generated.js';
 import { AudioContentBase as AudioContentReader } from './loaders/AudioContent.generated.js';
 import { ContentComponentReader } from './loaders/ContentComponent.js';
@@ -50,6 +51,7 @@ export type ReadersType = {
   Account: AccountReader;
   AccountProgram: AccountProgramReader;
   AccountRole: AccountRoleReader;
+  AccountSocialLinks: AccountSocialLinksReader;
   AccountSubject: AccountSubjectReader;
   AudioContent: AudioContentReader;
   ContentComponent: ContentComponentReader;
@@ -96,6 +98,7 @@ export function createLoaders(db: Knex): ReadersType {
     Account: new AccountReader(db),
     AccountProgram: new AccountProgramReader(db),
     AccountRole: new AccountRoleReader(db),
+    AccountSocialLinks: new AccountSocialLinksReader(db),
     AccountSubject: new AccountSubjectReader(db),
     AudioContent: new AudioContentReader(db),
     ContentComponent: new ContentComponentReader(db),

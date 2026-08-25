@@ -15,6 +15,7 @@ import AccountRole from './enum/AccountRole.js';
 import Gender from './enum/Gender.js';
 import { Statistics } from './Statistics.js';
 import { Subject } from './Subject.js';
+import { SocialLink } from './SocialLink.js';
 
 export const Account = new GraphQLObjectType<AccountType, ContextType>({
   name: 'Account',
@@ -170,6 +171,22 @@ export const Account = new GraphQLObjectType<AccountType, ContextType>({
         );
 
         return coursesCount;
+      }),
+    },
+    socialLinks: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(SocialLink))),
+      description: 'The social media links of this account (only visible to the account owner).',
+      resolve: authenticated(async (parent, _, { loaders, user }) => {
+        if (parent.id !== user.id) {
+          return [];
+        }
+
+        const links = await loaders.AccountSocialLinks.loadByAccountId(parent.id);
+
+        // Primary link first, then by id for a stable order.
+        return [...links].sort(
+          (a, b) => Number(b.is_primary) - Number(a.is_primary) || a.id - b.id,
+        );
       }),
     },
   }),

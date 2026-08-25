@@ -84,6 +84,7 @@ export enum Table {
   AccountProgram = "account__program",
   AccountSubject = "account__subject",
   AccountRole = "account_role",
+  AccountSocialLinks = "account_social_links",
   AudioContent = "audio_content",
   ContentComponent = "content_component",
   ContentComponentProgress = "content_component_progress",
@@ -131,6 +132,7 @@ export type Tables = {
   "account__program": AccountProgram,
   "account__subject": AccountSubject,
   "account_role": AccountRole,
+  "account_social_links": AccountSocialLinks,
   "audio_content": AudioContent,
   "content_component": ContentComponent,
   "content_component_progress": ContentComponentProgress,
@@ -216,6 +218,18 @@ export type AccountRole = {
   denomination: string;
   code: string;
   description: string;
+  created_at: Date;
+  updated_at: Date;
+};
+
+export type AccountSocialLinks = {
+  id: number;
+  account_id: number;
+  platform: string;
+  user_name: string | null;
+  display_name: string | null;
+  url: string;
+  is_primary: boolean;
   created_at: Date;
   updated_at: Date;
 };
@@ -503,12 +517,12 @@ export type Quiz = {
   navigation_mode: QuizNavigationModeEnumType;
   questions_per_page: number;
   time_limit_minutes: number | null;
+  show_correct_answers: boolean;
   feedback_passed: string | null;
   feedback_failed: string | null;
   deleted_at: Date | null;
   created_at: Date;
   updated_at: Date;
-  show_correct_answers: boolean;
 };
 
 export type QuizAnswer = {
