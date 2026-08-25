@@ -16,6 +16,8 @@ import { filterProgramsWithValidVersions } from '../../utils/contentUtils.js';
 import { filterPublishedContent } from '../../utils/filterPublishedContent.js';
 import { Course } from './Course.js';
 import { Program } from './Program.js';
+import { SocialLink } from './SocialLink.js';
+import { Subject } from './Subject.js';
 
 export const Teacher = new GraphQLObjectType<AccountType, ContextType>({
   name: 'Teacher',
@@ -91,6 +93,37 @@ export const Teacher = new GraphQLObjectType<AccountType, ContextType>({
         }
 
         return follows.filter((f) => f.is_following).length;
+      },
+    },
+    socialLinks: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(SocialLink))),
+      description: 'The public social media links of this teacher.',
+      resolve: async (parent, _, { loaders }) => {
+        const links = await loaders.AccountSocialLinks.loadByAccountId(parent.id);
+
+        // Primary link first, then by id for a stable order.
+        return [...links].sort(
+          (a, b) => Number(b.is_primary) - Number(a.is_primary) || a.id - b.id,
+        );
+      },
+    },
+    subjects: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Subject))),
+      description: 'Represents the subjects a teacher is specialized in for teaching.',
+      resolve: async (parent, _, { loaders }) => {
+        const accountSubjects = await loaders.AccountSubject.loadByAccountId(parent.id);
+
+        if (accountSubjects.length === 0) {
+          return [];
+        }
+
+        const subjects = await Promise.all(
+          accountSubjects.map(async (accountSubject) =>
+            loaders.Subject.loadById(accountSubject.subject_id),
+          ),
+        );
+
+        return subjects;
       },
     },
     courses: {
