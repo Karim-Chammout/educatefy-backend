@@ -358,24 +358,22 @@ const Query = new GraphQLObjectType<any, ContextType>({
           description: 'The id of the course.',
         },
       },
-      resolve: authenticated(
-        async (_, { courseId }: { courseId: string }, { user, db, loaders }) => {
-          const isTeacher = await hasTeacherRole(loaders, user.roleId);
+      resolve: authenticated(async (_, { courseId }: { courseId: string }, { user, loaders }) => {
+        const isTeacher = await hasTeacherRole(loaders, user.roleId);
 
-          if (!isTeacher) {
-            throw new GraphQLError(ErrorType.FORBIDDEN);
-          }
+        if (!isTeacher) {
+          throw new GraphQLError(ErrorType.FORBIDDEN);
+        }
 
-          const id = parseInt(courseId, 10);
-          const course = await db('course').where('id', id).first();
+        const id = parseInt(courseId, 10);
+        const course = await loaders.Course.loadById(id);
 
-          if (!course || course.teacher_id !== user.id) {
-            throw new GraphQLError(ErrorType.FORBIDDEN);
-          }
+        if (!course || course.teacher_id !== user.id) {
+          throw new GraphQLError(ErrorType.FORBIDDEN);
+        }
 
-          return { courseId: id };
-        },
-      ),
+        return { courseId: id };
+      }),
     },
     quizAttemptQuestion: {
       type: QuizAttemptQuestion,

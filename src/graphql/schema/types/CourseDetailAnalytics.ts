@@ -218,19 +218,8 @@ export const CourseDetailAnalytics = new GraphQLObjectType<{ courseId: number },
   fields: () => ({
     meta: {
       type: new GraphQLNonNull(CourseDetailMeta),
-      resolve: async ({ courseId }, _, { db, loaders }) => {
-        const course = await db('course')
-          .where('id', courseId)
-          .select(
-            'denomination',
-            'is_published',
-            'level',
-            'language_id',
-            'start_date',
-            'end_date',
-            'created_at',
-          )
-          .first();
+      resolve: async ({ courseId }, _, { loaders }) => {
+        const course = await loaders.Course.loadById(courseId);
 
         const language = await loaders.Language.loadById(course.language_id);
 
