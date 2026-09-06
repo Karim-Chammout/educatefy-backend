@@ -197,6 +197,8 @@ export type ContentComponentProgressResult = {
   __typename?: 'ContentComponentProgressResult';
   /** The updated content component progress. */
   contentComponentProgress?: Maybe<ContentComponentProgress>;
+  /** True when this progress update caused the course to be auto-completed (so the frontend can show the completion success flow). */
+  courseCompleted?: Maybe<Scalars['Boolean']['output']>;
   /** A list of errors that occurred executing this mutation. */
   errors: Array<Error>;
   /** Indicates if the mutation was successful. */
@@ -1852,6 +1854,8 @@ export type Subject = {
 /** The result of submitting a quiz attempt. */
 export type SubmitQuizResult = {
   __typename?: 'SubmitQuizResult';
+  /** True when this quiz submission caused the course to be auto-completed (so the frontend can show the completion success flow). */
+  courseCompleted?: Maybe<Scalars['Boolean']['output']>;
   /** A list of errors that occurred executing this mutation. */
   errors: Array<Error>;
   /** The completed quiz attempt with grading and review data. */
