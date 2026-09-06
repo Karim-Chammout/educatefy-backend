@@ -4,6 +4,7 @@ import { UpdateContentComponentProgressInput as UpdateContentComponentProgressIn
 import { ContextType } from '../../../types/types.js';
 import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
+import { checkAndAutoCompleteCourse } from '../../utils/checkAndAutoCompleteCourse.js';
 import { UpdateContentComponentProgressInput } from '../inputs/UpdateContentComponentProgress.js';
 import { ContentComponentProgressResult } from '../types/ContentComponentProgressResult.js';
 import logger from '../../../utils/logger.js';
@@ -98,7 +99,13 @@ const updateContentComponentProgress: GraphQLFieldConfig<null, ContextType> = {
               .returning('*');
           }
 
-          return progressRecord;
+          // If the update marked a component complete, check whether the whole
+          // course is now done and auto-complete the enrollment in the same transaction.
+          const courseCompleted = isCompleted
+            ? await checkAndAutoCompleteCourse(transaction, user.id, lesson.course_id)
+            : false;
+
+          return { progressRecord, courseCompleted };
         });
 
         // Clear cache
@@ -107,11 +114,16 @@ const updateContentComponentProgress: GraphQLFieldConfig<null, ContextType> = {
           componentId: componentId,
         });
         loaders.ContentComponent.loaders.byIdLoader.clear(componentId);
+        loaders.Enrollment.loaders.byAccountIdAndCourseIdLoader.clear({
+          accountId: user.id,
+          courseId: lesson.course_id,
+        });
 
         return {
           success: true,
           errors: [],
-          contentComponentProgress: result,
+          contentComponentProgress: result.progressRecord,
+          courseCompleted: result.courseCompleted,
         };
       } catch (error) {
         logger.error(
