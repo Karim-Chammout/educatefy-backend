@@ -13,11 +13,13 @@ import { UpdateCourseStatusResult } from '../types/UpdateCourseStatusResult.js';
 import logger from '../../../utils/logger.js';
 
 // Allowed self-service transitions.
+// Completion is earned (auto-completed from progress), never self-declared, and
+// `Completed` is a terminal state: a completed student keeps access to the content
+// by browsing, so there is no retake transition.
 const ALLOWED_TRANSITIONS: Record<string, CourseStatus[]> = {
   [CourseStatus.Available]: [CourseStatus.Enrolled],
-  [CourseStatus.Enrolled]: [CourseStatus.Completed, CourseStatus.Unenrolled],
+  [CourseStatus.Enrolled]: [CourseStatus.Unenrolled],
   [CourseStatus.Unenrolled]: [CourseStatus.Enrolled],
-  [CourseStatus.Completed]: [CourseStatus.Enrolled],
 };
 
 const updateCourseStatus: GraphQLFieldConfig<null, ContextType> = {
