@@ -5,6 +5,7 @@ import { QuizAttemptStatusEnumType } from '../../../types/db-generated-types.js'
 import { ContextType } from '../../../types/types.js';
 import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
+import { checkAndAutoCompleteCourse } from '../../utils/checkAndAutoCompleteCourse.js';
 import { isQuizAttemptExpired } from '../../utils/quizTimeLimit.js';
 import QuizSubmissionInput from '../inputs/QuizSubmission.js';
 import { SubmitQuizResult } from '../types/SubmitQuizResult.js';
@@ -86,7 +87,7 @@ const submitQuiz: GraphQLFieldConfig<null, ContextType> = {
           );
         }
 
-        const gradedAttempt = await db.transaction(async (transaction) => {
+        const gradingResult = await db.transaction(async (transaction) => {
           // Atomically claim the attempt. Two concurrent submissions race
           // here: the second transaction blocks on the row lock, then sees the
           // completed status and backs off, so answers are only ever inserted
@@ -156,10 +157,16 @@ const submitQuiz: GraphQLFieldConfig<null, ContextType> = {
             })
             .returning('*');
 
-          return updatedAttempt;
+          // If this passing attempt completes the last content, auto-complete
+          // the enrollment in the same transaction.
+          const courseCompleted = passed
+            ? await checkAndAutoCompleteCourse(transaction, user.id, quiz.course_id)
+            : false;
+
+          return { gradedAttempt: updatedAttempt, courseCompleted };
         });
 
-        if (!gradedAttempt) {
+        if (!gradingResult || !gradingResult.gradedAttempt) {
           return {
             success: false,
             errors: [new Error(ErrorType.INVALID_STATE)],
@@ -170,11 +177,16 @@ const submitQuiz: GraphQLFieldConfig<null, ContextType> = {
         loaders.QuizAttempt.loaders.byIdLoader.clear(attempt.id);
         loaders.QuizAttemptAnswer.loaders.byAttemptIdLoader.clear(attempt.id);
         loaders.QuizAttemptQuestion.loaders.byAttemptIdLoader.clear(attempt.id);
+        loaders.Enrollment.loaders.byAccountIdAndCourseIdLoader.clear({
+          accountId: user.id,
+          courseId: quiz.course_id,
+        });
 
         return {
           success: true,
           errors: [],
-          quizAttempt: gradedAttempt,
+          quizAttempt: gradingResult.gradedAttempt,
+          courseCompleted: gradingResult.courseCompleted,
         };
       } catch (error) {
         logger.error({ err: error, userId: user.id }, 'Failed to submit quiz');
