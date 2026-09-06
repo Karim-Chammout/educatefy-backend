@@ -2246,6 +2246,11 @@ type SubmitQuizResult {
 
   """The completed quiz attempt with grading and review data."""
   quizAttempt: QuizAttempt
+
+  """
+  True when this quiz submission caused the course to be auto-completed (so the frontend can show the completion success flow).
+  """
+  courseCompleted: Boolean
 }
 
 """Input for submitting a quiz attempt."""
@@ -2355,6 +2360,11 @@ type ContentComponentProgressResult {
 
   """The updated content component progress."""
   contentComponentProgress: ContentComponentProgress
+
+  """
+  True when this progress update caused the course to be auto-completed (so the frontend can show the completion success flow).
+  """
+  courseCompleted: Boolean
 }
 
 """Input for updating content component progress"""
