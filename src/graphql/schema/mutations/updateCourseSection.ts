@@ -4,6 +4,7 @@ import { UpdateCourseSectionInfo as UpdateCourseSectionInfoInputType } from '../
 import { ContextType } from '../../../types/types.js';
 import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
+import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
 import logger from '../../../utils/logger.js';
 import UpdateCourseSectionInfo from '../inputs/UpdateCourseSectionInfo.js';
 import { CreateOrUpdateCourseSectionResult } from '../types/CreateOrUpdateCourseSectionResult.js';
@@ -34,6 +35,16 @@ const updateCourseSection: GraphQLFieldConfig<null, ContextType> = {
       }
 
       try {
+        const isTeacher = await hasTeacherRole(loaders, user.roleId);
+
+        if (!isTeacher) {
+          return {
+            success: false,
+            errors: [new Error(ErrorType.PERMISSION_DENIED)],
+            courseSection: null,
+          };
+        }
+
         const courseSectionId = parseInt(id, 10);
         const courseSection = await loaders.CourseSection.loadById(courseSectionId);
 
