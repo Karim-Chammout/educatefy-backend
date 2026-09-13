@@ -246,6 +246,11 @@ type Course {
   """The status of the course for the current user"""
   status: CourseStatus!
 
+  """
+  The progress of the current user through the course. Null when the user is not enrolled (or not completed) in this course.
+  """
+  progress: CourseProgress
+
   """The subjects linked to this course."""
   subjects: [Subject!]!
 
@@ -302,6 +307,27 @@ enum CourseStatus {
 
   """This course has been completed by the user."""
   completed
+}
+
+"""The progress of the current user through a course."""
+type CourseProgress {
+  """
+  The number of completed content components plus passed quizzes (a quiz counts as one unit).
+  """
+  completedComponents: Int!
+
+  """
+  The total number of published content components plus published quizzes (a quiz counts as one unit).
+  """
+  totalComponents: Int!
+
+  """The course progress as a percentage from 0 to 100."""
+  progressPercentage: Float!
+
+  """
+  True when every unit is completed, i.e. the course completion gate would pass (0 when the course has no content).
+  """
+  isCompleted: Boolean!
 }
 
 """The course objective info"""
@@ -2251,6 +2277,11 @@ type SubmitQuizResult {
   True when this quiz submission caused the course to be auto-completed (so the frontend can show the completion success flow).
   """
   courseCompleted: Boolean
+
+  """
+  The recomputed course progress for the current user after this submission.
+  """
+  progress: CourseProgress
 }
 
 """Input for submitting a quiz attempt."""
@@ -2365,6 +2396,9 @@ type ContentComponentProgressResult {
   True when this progress update caused the course to be auto-completed (so the frontend can show the completion success flow).
   """
   courseCompleted: Boolean
+
+  """The recomputed course progress for the current user after this update."""
+  progress: CourseProgress
 }
 
 """Input for updating content component progress"""
