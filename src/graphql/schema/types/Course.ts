@@ -12,9 +12,11 @@ import { GraphQLJSON } from 'graphql-type-json';
 
 import { Course as CourseType, EnrollmentStatusType } from '../../../types/db-generated-types.js';
 import { ContextType } from '../../../types/types.js';
+import { computeCourseProgress } from '../../../graphql/utils/computeCourseProgress.js';
 import { getImageURL } from '../../../utils/getImageURL.js';
 import GraphQLDate from '../Scalars/Date.js';
 import { CourseObjective } from './CourseObjective.js';
+import { CourseProgress } from './CourseProgress.js';
 import { CourseRequirement } from './CourseRequirement.js';
 import { CourseReview } from './CourseReview.js';
 import { CourseSection } from './CourseSection.js';
@@ -106,6 +108,32 @@ export const Course: GraphQLObjectType = new GraphQLObjectType<CourseType, Conte
         }
 
         return enrollment.status;
+      },
+    },
+    progress: {
+      type: CourseProgress,
+      description:
+        'The progress of the current user through the course. Null when the user is not enrolled (or not completed) in this course.',
+      resolve: async (parent, _, { user, db, loaders }) => {
+        if (!user.authenticated) {
+          return null;
+        }
+
+        const enrollment = await loaders.Enrollment.loadByAccountIdAndCourseId(user.id, parent.id);
+
+        if (
+          !enrollment ||
+          (enrollment.status !== EnrollmentStatusType.Enrolled &&
+            enrollment.status !== EnrollmentStatusType.Completed)
+        ) {
+          return null;
+        }
+
+        // The owner sees draft content in their preview, mirroring the
+        // visibility rules of the `sections` resolver.
+        const includeDrafts = parent.teacher_id === user.id;
+
+        return computeCourseProgress(db, user.id, parent.id, enrollment.id, includeDrafts);
       },
     },
     subjects: {
