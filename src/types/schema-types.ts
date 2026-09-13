@@ -201,6 +201,8 @@ export type ContentComponentProgressResult = {
   courseCompleted?: Maybe<Scalars['Boolean']['output']>;
   /** A list of errors that occurred executing this mutation. */
   errors: Array<Error>;
+  /** The recomputed course progress for the current user after this update. */
+  progress?: Maybe<CourseProgress>;
   /** Indicates if the mutation was successful. */
   success: Scalars['Boolean']['output'];
 };
@@ -251,6 +253,8 @@ export type Course = {
   objectives: Array<CourseObjective>;
   /** The number of participants enrolled in this course (or completed it) */
   participationCount: Scalars['Int']['output'];
+  /** The progress of the current user through the course. Null when the user is not enrolled (or not completed) in this course. */
+  progress?: Maybe<CourseProgress>;
   /** Average star rating for this course */
   rating: Scalars['Float']['output'];
   /** Total number of ratings for this course */
@@ -379,6 +383,19 @@ export type CourseObjectiveInput = {
   id: Scalars['ID']['input'];
   /** The objective of this course. */
   objective: Scalars['String']['input'];
+};
+
+/** The progress of the current user through a course. */
+export type CourseProgress = {
+  __typename?: 'CourseProgress';
+  /** The number of completed content components plus passed quizzes (a quiz counts as one unit). */
+  completedComponents: Scalars['Int']['output'];
+  /** True when every unit is completed, i.e. the course completion gate would pass (0 when the course has no content). */
+  isCompleted: Scalars['Boolean']['output'];
+  /** The course progress as a percentage from 0 to 100. */
+  progressPercentage: Scalars['Float']['output'];
+  /** The total number of published content components plus published quizzes (a quiz counts as one unit). */
+  totalComponents: Scalars['Int']['output'];
 };
 
 /** The course requirement info */
@@ -1858,6 +1875,8 @@ export type SubmitQuizResult = {
   courseCompleted?: Maybe<Scalars['Boolean']['output']>;
   /** A list of errors that occurred executing this mutation. */
   errors: Array<Error>;
+  /** The recomputed course progress for the current user after this submission. */
+  progress?: Maybe<CourseProgress>;
   /** The completed quiz attempt with grading and review data. */
   quizAttempt?: Maybe<QuizAttempt>;
   /** Indicates if the mutation was successful. */
