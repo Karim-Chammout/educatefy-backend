@@ -5,7 +5,8 @@ import { QuizAttemptStatusEnumType } from '../../../types/db-generated-types.js'
 import { ContextType } from '../../../types/types.js';
 import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
-import { checkAndAutoCompleteCourse } from '../../utils/checkAndAutoCompleteCourse.js';
+import { recomputeProgressAndAutoCompleteCourse } from '../../utils/recomputeProgressAndAutoCompleteCourse.js';
+import { computeCourseProgress } from '../../utils/computeCourseProgress.js';
 import { isQuizAttemptExpired } from '../../utils/quizTimeLimit.js';
 import QuizSubmissionInput from '../inputs/QuizSubmission.js';
 import { SubmitQuizResult } from '../types/SubmitQuizResult.js';
@@ -159,11 +160,20 @@ const submitQuiz: GraphQLFieldConfig<null, ContextType> = {
 
           // If this passing attempt completes the last content, auto-complete
           // the enrollment in the same transaction.
-          const courseCompleted = passed
-            ? await checkAndAutoCompleteCourse(transaction, user.id, quiz.course_id)
-            : false;
+          const { courseCompleted, progress } = passed
+            ? await recomputeProgressAndAutoCompleteCourse(transaction, user.id, quiz.course_id)
+            : {
+                courseCompleted: false,
+                progress: await computeCourseProgress(
+                  transaction,
+                  user.id,
+                  quiz.course_id,
+                  attempt.enrollment_id,
+                  false,
+                ),
+              };
 
-          return { gradedAttempt: updatedAttempt, courseCompleted };
+          return { gradedAttempt: updatedAttempt, courseCompleted, progress };
         });
 
         if (!gradingResult || !gradingResult.gradedAttempt) {
@@ -187,6 +197,7 @@ const submitQuiz: GraphQLFieldConfig<null, ContextType> = {
           errors: [],
           quizAttempt: gradingResult.gradedAttempt,
           courseCompleted: gradingResult.courseCompleted,
+          progress: gradingResult.progress,
         };
       } catch (error) {
         logger.error({ err: error, userId: user.id }, 'Failed to submit quiz');
