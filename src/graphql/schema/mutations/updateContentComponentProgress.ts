@@ -4,7 +4,8 @@ import { UpdateContentComponentProgressInput as UpdateContentComponentProgressIn
 import { ContextType } from '../../../types/types.js';
 import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
-import { checkAndAutoCompleteCourse } from '../../utils/checkAndAutoCompleteCourse.js';
+import { recomputeProgressAndAutoCompleteCourse } from '../../utils/recomputeProgressAndAutoCompleteCourse.js';
+import { computeCourseProgress } from '../../utils/computeCourseProgress.js';
 import { UpdateContentComponentProgressInput } from '../inputs/UpdateContentComponentProgress.js';
 import { ContentComponentProgressResult } from '../types/ContentComponentProgressResult.js';
 import logger from '../../../utils/logger.js';
@@ -101,11 +102,21 @@ const updateContentComponentProgress: GraphQLFieldConfig<null, ContextType> = {
 
           // If the update marked a component complete, check whether the whole
           // course is now done and auto-complete the enrollment in the same transaction.
-          const courseCompleted = isCompleted
-            ? await checkAndAutoCompleteCourse(transaction, user.id, lesson.course_id)
-            : false;
+          // When not marking complete, still compute progress for the result.
+          const { courseCompleted, progress } = isCompleted
+            ? await recomputeProgressAndAutoCompleteCourse(transaction, user.id, lesson.course_id)
+            : {
+                courseCompleted: false,
+                progress: await computeCourseProgress(
+                  transaction,
+                  user.id,
+                  lesson.course_id,
+                  enrollment.id,
+                  false,
+                ),
+              };
 
-          return { progressRecord, courseCompleted };
+          return { progressRecord, courseCompleted, progress };
         });
 
         // Clear cache
@@ -124,6 +135,7 @@ const updateContentComponentProgress: GraphQLFieldConfig<null, ContextType> = {
           errors: [],
           contentComponentProgress: result.progressRecord,
           courseCompleted: result.courseCompleted,
+          progress: result.progress,
         };
       } catch (error) {
         logger.error(
