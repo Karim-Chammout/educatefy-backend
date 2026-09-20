@@ -1415,6 +1415,8 @@ export type Query = {
   teacherCourses: Array<Course>;
   /** List of programs created by the teacher */
   teacherPrograms: Array<Program>;
+  /** List of paginated teacher accounts. */
+  teachers: Array<Teacher>;
 };
 
 
@@ -1456,6 +1458,12 @@ export type QueryQuizAttemptQuestionArgs = {
 
 export type QuerySubjectArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type QueryTeachersArgs = {
+  first?: Scalars['Int']['input'];
+  offset?: Scalars['Int']['input'];
 };
 
 /** The quiz info */
