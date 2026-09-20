@@ -17,6 +17,7 @@ import { canUserAccessProgram } from '../utils/contentUtils.js';
 import { hasTeacherRole } from '../utils/hasTeacherRole.js';
 import { isQuizAttemptExpired } from '../utils/quizTimeLimit.js';
 import { Account } from './types/Account.js';
+import { AccountRoleEnum } from './types/enum/AccountRole.js';
 import { Country } from './types/Country.js';
 import { Course } from './types/Course.js';
 import { CourseDetailAnalytics } from './types/CourseDetailAnalytics.js';
@@ -280,6 +281,36 @@ const Query = new GraphQLObjectType<any, ContextType>({
         }
 
         return account;
+      },
+    },
+    teachers: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Teacher))),
+      description: 'List of paginated teacher accounts.',
+      args: {
+        first: {
+          type: new GraphQLNonNull(GraphQLInt),
+          defaultValue: 20,
+          description: 'The number of teachers to return.',
+        },
+        offset: {
+          type: new GraphQLNonNull(GraphQLInt),
+          defaultValue: 0,
+          description: 'The number of teachers to skip, for pagination.',
+        },
+      },
+      resolve: async (_, { first, offset }: { first: number; offset: number }, { db, loaders }) => {
+        const accountRoles = await loaders.AccountRole.loadAll();
+        const teacherRole = accountRoles.find((role) => role.code === AccountRoleEnum.Teacher);
+
+        if (!teacherRole) {
+          return [];
+        }
+
+        return db('account')
+          .where('role_id', teacherRole.id)
+          .orderBy('id', 'asc')
+          .limit(first)
+          .offset(offset);
       },
     },
     enrolledCourses: {
