@@ -59,6 +59,15 @@ type Query {
     id: ID!
   ): Teacher
 
+  """List of paginated teacher accounts."""
+  teachers(
+    """The number of teachers to return."""
+    first: Int! = 20
+
+    """The number of teachers to skip, for pagination."""
+    offset: Int! = 0
+  ): [Teacher!]!
+
   """List of courses the user is enrolled in"""
   enrolledCourses: [Course!]!
 
