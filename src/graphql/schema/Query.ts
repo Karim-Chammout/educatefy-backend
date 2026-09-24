@@ -9,7 +9,11 @@ import {
 } from 'graphql';
 
 import { CourseStatus } from '../../types/schema-types.js';
-import { QuizAttemptStatusEnumType } from '../../types/db-generated-types.js';
+import {
+  EnrollmentStatusType,
+  ProgramVersionStatusType,
+  QuizAttemptStatusEnumType,
+} from '../../types/db-generated-types.js';
 import { ContextType } from '../../types/types.js';
 import { ErrorType } from '../../utils/ErrorType.js';
 import { authenticated } from '../utils/auth.js';
@@ -18,6 +22,7 @@ import { hasTeacherRole } from '../utils/hasTeacherRole.js';
 import { isQuizAttemptExpired } from '../utils/quizTimeLimit.js';
 import { Account } from './types/Account.js';
 import { AccountRoleEnum } from './types/enum/AccountRole.js';
+import { ContentPaginatedResult } from './types/ContentPaginatedResult.js';
 import { Country } from './types/Country.js';
 import { Course } from './types/Course.js';
 import { CourseDetailAnalytics } from './types/CourseDetailAnalytics.js';
@@ -29,6 +34,7 @@ import { SessionDevice } from './types/SessionDevice.js';
 import { Subject } from './types/Subject.js';
 import { Teacher } from './types/Teacher.js';
 import { TeacherAnalytics } from './types/TeacherAnalytics.js';
+import { TeachersPaginatedResult } from './types/TeachersPaginatedResult.js';
 
 const Query = new GraphQLObjectType<any, ContextType>({
   name: 'Query',
@@ -284,13 +290,13 @@ const Query = new GraphQLObjectType<any, ContextType>({
       },
     },
     teachers: {
-      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Teacher))),
-      description: 'List of paginated teacher accounts.',
+      type: new GraphQLNonNull(TeachersPaginatedResult),
+      description: 'A paginated list of teacher accounts, ranked by number of followers.',
       args: {
         first: {
           type: new GraphQLNonNull(GraphQLInt),
-          defaultValue: 20,
-          description: 'The number of teachers to return.',
+          defaultValue: 8,
+          description: 'The number of teachers to return per page.',
         },
         offset: {
           type: new GraphQLNonNull(GraphQLInt),
@@ -299,18 +305,127 @@ const Query = new GraphQLObjectType<any, ContextType>({
         },
       },
       resolve: async (_, { first, offset }: { first: number; offset: number }, { db, loaders }) => {
-        const accountRoles = await loaders.AccountRole.loadAll();
-        const teacherRole = accountRoles.find((role) => role.code === AccountRoleEnum.Teacher);
+        const teacherRole = await loaders.AccountRole.loadByCode(AccountRoleEnum.Teacher);
 
         if (!teacherRole) {
-          return [];
+          return { items: [], totalCount: 0 };
         }
 
-        return db('account')
-          .where('role_id', teacherRole.id)
-          .orderBy('id', 'asc')
-          .limit(first)
-          .offset(offset);
+        const [teachers, count] = await Promise.all([
+          db('account as a')
+            .select(
+              'a.*',
+              db.raw(
+                '(SELECT COUNT(*) FROM student_teacher_follow stf WHERE stf.teacher_id = a.id AND stf.is_following = true) AS followers_count',
+              ),
+            )
+            .where('a.role_id', teacherRole.id)
+            .orderByRaw('followers_count DESC, a.id ASC')
+            .limit(first)
+            .offset(offset),
+          db('account').where('role_id', teacherRole.id).count({ total: '*' }).first(),
+        ]);
+
+        return {
+          items: teachers,
+          totalCount: Number((count as { total?: string | number } | undefined)?.total) || 0,
+        };
+      },
+    },
+    topContent: {
+      type: new GraphQLNonNull(ContentPaginatedResult),
+      description:
+        'A popularity-ranked feed combining published courses and programs, page by page. Each item is either a course or a program.',
+      args: {
+        first: {
+          type: new GraphQLNonNull(GraphQLInt),
+          defaultValue: 8,
+          description: 'The number of items to return per page.',
+        },
+        offset: {
+          type: new GraphQLNonNull(GraphQLInt),
+          defaultValue: 0,
+          description: 'The number of items to skip, for pagination.',
+        },
+      },
+      resolve: async (_, { first, offset }: { first: number; offset: number }, { db }) => {
+        const limit = offset + first;
+
+        const [courses, programs, counts] = await Promise.all([
+          db('course as c')
+            .select('c.*')
+            .select(
+              db.raw(
+                '(SELECT COUNT(*) FROM enrollment e WHERE e.course_id = c.id AND e.status IN (?, ?)) AS enrollment_count',
+                [EnrollmentStatusType.Enrolled, EnrollmentStatusType.Completed],
+              ),
+              db.raw(
+                'COALESCE((SELECT AVG(r.rating) FROM course_rating r WHERE r.course_id = c.id), 0) AS avg_rating',
+              ),
+            )
+            .where('c.is_published', true)
+            .whereNull('c.deleted_at')
+            .orderByRaw('enrollment_count DESC, avg_rating DESC, c.id ASC')
+            .limit(limit),
+          db('program as p')
+            .select('p.*')
+            .select(
+              db.raw(
+                '(SELECT COUNT(*) FROM account__program ap WHERE ap.program_id = p.id AND ap.deleted_at IS NULL) AS learner_count',
+              ),
+            )
+            .where('p.is_published', true)
+            .whereNull('p.deleted_at')
+            .whereExists((builder) =>
+              builder
+                .select(1)
+                .from('program_version as pv')
+                .whereRaw('pv.program_id = p.id')
+                .where('pv.status', ProgramVersionStatusType.Published),
+            )
+            .orderByRaw('learner_count DESC, p.id ASC')
+            .limit(limit),
+          db
+            .select(
+              db.raw(
+                '(SELECT COUNT(*) FROM course c WHERE c.is_published = true AND c.deleted_at IS NULL) AS courses_count',
+              ),
+              db.raw(
+                `(SELECT COUNT(*) FROM program p WHERE p.is_published = true AND p.deleted_at IS NULL
+                  AND EXISTS (SELECT 1 FROM program_version pv WHERE pv.program_id = p.id AND pv.status = ?)) AS programs_count`,
+                [ProgramVersionStatusType.Published],
+              ),
+            )
+            .first(),
+        ]);
+
+        const mergedContent: Array<
+          {
+            kind?: 'course' | 'program';
+            id: number;
+            enrollment_count?: number | string;
+            learner_count?: number | string;
+          } & Record<string, unknown>
+        > = [
+          ...courses.map((row) => ({ ...row, kind: 'course' as const })),
+          ...programs.map((row) => ({ ...row, kind: 'program' as const })),
+        ].sort((a, b) => {
+          const aCount =
+            a.kind === 'program' ? Number(a.learner_count) : Number(a.enrollment_count);
+          const bCount =
+            b.kind === 'program' ? Number(b.learner_count) : Number(b.enrollment_count);
+
+          if (bCount !== aCount) {
+            return bCount - aCount;
+          }
+
+          return Number(a.id) - Number(b.id);
+        });
+
+        return {
+          items: mergedContent.slice(offset, offset + first),
+          totalCount: (Number(counts?.courses_count) || 0) + (Number(counts?.programs_count) || 0),
+        };
       },
     },
     enrolledCourses: {
