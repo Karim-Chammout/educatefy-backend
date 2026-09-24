@@ -1,6 +1,9 @@
 import DataLoader from 'dataloader';
 
-import { Subject as SubjectType } from '../../../../types/db-generated-types.js';
+import {
+  ProgramVersionStatusType,
+  Subject as SubjectType,
+} from '../../../../types/db-generated-types.js';
 import { SubjectBase } from './Subject.generated.js';
 
 export class SubjectReader extends SubjectBase {
@@ -51,15 +54,31 @@ export class SubjectReader extends SubjectBase {
     });
 
     this.byLinkedContentLoader = new DataLoader(async (keys) => {
+      // Only subjects with at least one published course or at least one
+      // program that has a published version count as "linked content".
       const rows = await this.db
         .table('subject')
         .distinct('subject.*')
-        .leftJoin('course__subject', 'subject.id', 'course__subject.subject_id')
-        .leftJoin('program__subject', 'subject.id', 'program__subject.subject_id')
         .where((builder) =>
           builder
-            .whereNotNull('course__subject.subject_id')
-            .orWhereNotNull('program__subject.subject_id'),
+            .whereExists((qb) =>
+              qb
+                .from('course__subject')
+                .join('course', 'course.id', 'course__subject.course_id')
+                .whereRaw('course__subject.subject_id = subject.id')
+                .where('course.is_published', true)
+                .whereNull('course.deleted_at'),
+            )
+            .orWhereExists((qb) =>
+              qb
+                .from('program__subject')
+                .join('program', 'program.id', 'program__subject.program_id')
+                .join('program_version', 'program_version.program_id', 'program.id')
+                .whereRaw('program__subject.subject_id = subject.id')
+                .where('program.is_published', true)
+                .whereNull('program.deleted_at')
+                .where('program_version.status', ProgramVersionStatusType.Published),
+            ),
         )
         .select('subject.*');
 
