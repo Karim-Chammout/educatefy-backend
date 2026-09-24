@@ -207,6 +207,18 @@ export type ContentComponentProgressResult = {
   success: Scalars['Boolean']['output'];
 };
 
+/** A rankable content item, which can be either a course or a program. */
+export type ContentItem = Course | Program;
+
+/** A page of content items together with the total number of available items. */
+export type ContentPaginatedResult = {
+  __typename?: 'ContentPaginatedResult';
+  /** The content items for the requested page. */
+  items: Array<ContentItem>;
+  /** The total number of available content items across all pages. */
+  totalCount: Scalars['Int']['output'];
+};
+
 /** The country info */
 export type Country = {
   __typename?: 'Country';
@@ -1417,6 +1429,8 @@ export type Query = {
   teacherPrograms: Array<Program>;
   /** List of paginated teacher accounts. */
   teachers: Array<Teacher>;
+  /** A popularity-ranked feed combining published courses and programs, page by page. Each item is either a course or a program. */
+  topContent: ContentPaginatedResult;
 };
 
 
@@ -1462,6 +1476,12 @@ export type QuerySubjectArgs = {
 
 
 export type QueryTeachersArgs = {
+  first?: Scalars['Int']['input'];
+  offset?: Scalars['Int']['input'];
+};
+
+
+export type QueryTopContentArgs = {
   first?: Scalars['Int']['input'];
   offset?: Scalars['Int']['input'];
 };
