@@ -59,14 +59,25 @@ type Query {
     id: ID!
   ): Teacher
 
-  """List of paginated teacher accounts."""
+  """A paginated list of teacher accounts, ranked by number of followers."""
   teachers(
-    """The number of teachers to return."""
-    first: Int! = 20
+    """The number of teachers to return per page."""
+    first: Int! = 8
 
     """The number of teachers to skip, for pagination."""
     offset: Int! = 0
-  ): [Teacher!]!
+  ): TeachersPaginatedResult!
+
+  """
+  A popularity-ranked feed combining published courses and programs, page by page. Each item is either a course or a program.
+  """
+  topContent(
+    """The number of items to return per page."""
+    first: Int! = 8
+
+    """The number of items to skip, for pagination."""
+    offset: Int! = 0
+  ): ContentPaginatedResult!
 
   """List of courses the user is enrolled in"""
   enrolledCourses: [Course!]!
@@ -1259,6 +1270,31 @@ type Language {
   """The code of this language"""
   code: String!
 }
+
+"""
+A page of teachers together with the total number of available teachers.
+"""
+type TeachersPaginatedResult {
+  """The teachers for the requested page."""
+  items: [Teacher!]!
+
+  """The total number of available teachers across all pages."""
+  totalCount: Int!
+}
+
+"""
+A page of content items together with the total number of available items.
+"""
+type ContentPaginatedResult {
+  """The content items for the requested page."""
+  items: [ContentItem!]!
+
+  """The total number of available content items across all pages."""
+  totalCount: Int!
+}
+
+"""A rankable content item, which can be either a course or a program."""
+union ContentItem = Course | Program
 
 """Aggregated analytics data for a teacher."""
 type TeacherAnalytics {
