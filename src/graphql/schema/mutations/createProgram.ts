@@ -2,8 +2,8 @@ import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
 
 import { ProgramVersionStatusType } from '../../../types/db-generated-types.js';
 import {
+  ContentLevel,
   ProgramInfoInput as ProgramInfoInputType,
-  ProgramLevel,
 } from '../../../types/schema-types.js';
 import { ContextType } from '../../../types/types.js';
 import { ErrorType } from '../../../utils/ErrorType.js';
@@ -43,7 +43,7 @@ const createProgram: GraphQLFieldConfig<null, ContextType> = {
         !slug ||
         !description ||
         !subtitle ||
-        !Object.values(ProgramLevel).includes(level)
+        !Object.values(ContentLevel).includes(level)
       ) {
         return {
           success: false,

@@ -20,7 +20,7 @@ import { ErrorType } from '../../../utils/ErrorType.js';
 import { getImageURL } from '../../../utils/getImageURL.js';
 import { authenticated } from '../../utils/auth.js';
 import GraphQLDate from '../Scalars/Date.js';
-import ProgramLevel from './enum/ProgramLevel.js';
+import ContentLevel from './enum/ContentLevel.js';
 import ProgramStatus, { ProgramStatusEnum } from './enum/ProgramStatus.js';
 import { ProgramObjective } from './ProgramObjective.js';
 import { ProgramRequirement } from './ProgramRequirement.js';
@@ -53,7 +53,7 @@ export const Program: GraphQLObjectType = new GraphQLObjectType<ProgramType, Con
       description: 'The description of this program.',
     },
     level: {
-      type: new GraphQLNonNull(ProgramLevel),
+      type: new GraphQLNonNull(ContentLevel),
       description: 'The difficulty level of this program.',
     },
     is_published: {

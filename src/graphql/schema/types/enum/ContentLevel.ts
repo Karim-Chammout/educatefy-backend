@@ -1,8 +1,8 @@
 import { GraphQLEnumType } from 'graphql';
 
-const ProgramLevel = new GraphQLEnumType({
-  name: 'ProgramLevel',
-  description: 'The difficulty level of a program.',
+const ContentLevel = new GraphQLEnumType({
+  name: 'ContentLevel',
+  description: 'The difficulty level of a course or program.',
   values: {
     beginner: {
       value: 'beginner',
@@ -16,4 +16,4 @@ const ProgramLevel = new GraphQLEnumType({
   },
 });
 
-export default ProgramLevel;
+export default ContentLevel;

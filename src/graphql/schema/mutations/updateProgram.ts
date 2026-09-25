@@ -2,7 +2,7 @@ import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
 import lodash from 'lodash';
 
 import {
-  ProgramLevel,
+  ContentLevel,
   UpdateProgramInfoInput as UpdateProgramInfoInputType,
 } from '../../../types/schema-types.js';
 import { ContextType } from '../../../types/types.js';
@@ -42,7 +42,7 @@ const updateProgram: GraphQLFieldConfig<null, ContextType> = {
         requirements,
       } = updateProgramInfo;
 
-      if (!id || (level && !Object.values(ProgramLevel).includes(level))) {
+      if (!id || (level && !Object.values(ContentLevel).includes(level))) {
         return {
           success: false,
           errors: [new Error(ErrorType.INVALID_INPUT)],

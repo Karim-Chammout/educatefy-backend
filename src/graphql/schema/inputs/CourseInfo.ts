@@ -9,7 +9,7 @@ import {
 import { GraphQLJSON } from 'graphql-type-json';
 
 import GraphQLDate from '../Scalars/Date.js';
-import CourseLevel from '../types/enum/CourseLevel.js';
+import ContentLevel from '../types/enum/ContentLevel.js';
 
 const CourseInfoInput = new GraphQLInputObjectType({
   name: 'CourseInfoInput',
@@ -36,7 +36,7 @@ const CourseInfoInput = new GraphQLInputObjectType({
       description: 'The language of this course.',
     },
     level: {
-      type: new GraphQLNonNull(CourseLevel),
+      type: new GraphQLNonNull(ContentLevel),
       description: 'The difficulty level of this course.',
     },
     image: {

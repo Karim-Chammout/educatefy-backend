@@ -2,7 +2,7 @@ import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
 import lodash from 'lodash';
 
 import {
-  CourseLevel,
+  ContentLevel,
   UpdateCourseInfoInput as UpdateCourseInfoInputType,
 } from '../../../types/schema-types.js';
 import { ContextType } from '../../../types/types.js';
@@ -47,7 +47,7 @@ const updateCourse: GraphQLFieldConfig<null, ContextType> = {
         requirements,
       } = updateCourseInfo;
 
-      if (!id || (level && !Object.values(CourseLevel).includes(level))) {
+      if (!id || (level && !Object.values(ContentLevel).includes(level))) {
         return {
           success: false,
           errors: [new Error(ErrorType.INVALID_INPUT)],

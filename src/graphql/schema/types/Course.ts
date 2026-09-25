@@ -20,7 +20,7 @@ import { CourseProgress } from './CourseProgress.js';
 import { CourseRequirement } from './CourseRequirement.js';
 import { CourseReview } from './CourseReview.js';
 import { CourseSection } from './CourseSection.js';
-import CourseLevel from './enum/CourseLevel.js';
+import ContentLevel from './enum/ContentLevel.js';
 import CourseStatus from './enum/CourseStatus.js';
 import { Subject } from './Subject.js';
 import { Teacher } from './Teacher.js';
@@ -50,7 +50,7 @@ export const Course: GraphQLObjectType = new GraphQLObjectType<CourseType, Conte
       description: 'The description of this course.',
     },
     level: {
-      type: new GraphQLNonNull(CourseLevel),
+      type: new GraphQLNonNull(ContentLevel),
       description: 'The difficulty level of this course.',
     },
     external_resource_link: {

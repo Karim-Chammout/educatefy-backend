@@ -8,7 +8,7 @@ import {
 } from 'graphql';
 import { GraphQLJSON } from 'graphql-type-json';
 
-import ProgramLevel from '../types/enum/ProgramLevel.js';
+import ContentLevel from '../types/enum/ContentLevel.js';
 
 const ProgramInfoInput = new GraphQLInputObjectType({
   name: 'ProgramInfoInput',
@@ -31,7 +31,7 @@ const ProgramInfoInput = new GraphQLInputObjectType({
       description: 'The description of this program.',
     },
     level: {
-      type: new GraphQLNonNull(ProgramLevel),
+      type: new GraphQLNonNull(ContentLevel),
       description: 'The difficulty level of this program.',
     },
     image: {

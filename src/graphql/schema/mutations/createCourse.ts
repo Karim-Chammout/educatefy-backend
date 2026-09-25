@@ -1,8 +1,8 @@
 import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
 
 import {
+  ContentLevel,
   CourseInfoInput as CourseInfoInputType,
-  CourseLevel,
 } from '../../../types/schema-types.js';
 import { ContextType } from '../../../types/types.js';
 import { ErrorType } from '../../../utils/ErrorType.js';
@@ -47,7 +47,7 @@ const createCourse: GraphQLFieldConfig<null, ContextType> = {
         !slug ||
         !description ||
         !subtitle ||
-        !Object.values(CourseLevel).includes(level)
+        !Object.values(ContentLevel).includes(level)
       ) {
         return {
           success: false,
