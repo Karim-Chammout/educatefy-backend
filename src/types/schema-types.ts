@@ -210,6 +210,13 @@ export type ContentComponentProgressResult = {
 /** A rankable content item, which can be either a course or a program. */
 export type ContentItem = Course | Program;
 
+/** The difficulty level of a course or program. */
+export enum ContentLevel {
+  Advanced = 'advanced',
+  Beginner = 'beginner',
+  Intermediate = 'intermediate'
+}
+
 /** A page of content items together with the total number of available items. */
 export type ContentPaginatedResult = {
   __typename?: 'ContentPaginatedResult';
@@ -260,7 +267,7 @@ export type Course = {
   /** The language of this course */
   language: Scalars['String']['output'];
   /** The difficulty level of this course. */
-  level: CourseLevel;
+  level: ContentLevel;
   /** The objectives of this course. */
   objectives: Array<CourseObjective>;
   /** The number of participants enrolled in this course (or completed it) */
@@ -358,7 +365,7 @@ export type CourseInfoInput = {
   /** The language of this course. */
   language: Scalars['String']['input'];
   /** The difficulty level of this course. */
-  level: CourseLevel;
+  level: ContentLevel;
   /** List of objectives for the course */
   objectives?: InputMaybe<Array<Scalars['String']['input']>>;
   /** List of requirements for the course */
@@ -372,13 +379,6 @@ export type CourseInfoInput = {
   /** The subtitle of this course. */
   subtitle: Scalars['String']['input'];
 };
-
-/** The difficulty level of a course. */
-export enum CourseLevel {
-  Advanced = 'advanced',
-  Beginner = 'beginner',
-  Intermediate = 'intermediate'
-}
 
 /** The course objective info */
 export type CourseObjective = {
@@ -1214,7 +1214,7 @@ export type Program = {
   /** The latest program version number. */
   latestVersionNumber?: Maybe<Scalars['Int']['output']>;
   /** The difficulty level of this program. */
-  level: ProgramLevel;
+  level: ContentLevel;
   /** The objectives of this program. */
   objectives: Array<ProgramObjective>;
   /** The requirements of this program. */
@@ -1242,7 +1242,7 @@ export type ProgramInfoInput = {
   /** A flag to indicate whether this program is published or not. */
   is_published: Scalars['Boolean']['input'];
   /** The difficulty level of this program. */
-  level: ProgramLevel;
+  level: ContentLevel;
   /** List of objectives for the program */
   objectives?: InputMaybe<Array<Scalars['String']['input']>>;
   /** List of requirements for the program */
@@ -1254,13 +1254,6 @@ export type ProgramInfoInput = {
   /** The subtitle of this program. */
   subtitle: Scalars['String']['input'];
 };
-
-/** The difficulty level of a program. */
-export enum ProgramLevel {
-  Advanced = 'advanced',
-  Beginner = 'beginner',
-  Intermediate = 'intermediate'
-}
 
 /** The program objective info */
 export type ProgramObjective = {
@@ -1427,8 +1420,8 @@ export type Query = {
   teacherCourses: Array<Course>;
   /** List of programs created by the teacher */
   teacherPrograms: Array<Program>;
-  /** List of paginated teacher accounts. */
-  teachers: Array<Teacher>;
+  /** A paginated list of teacher accounts, ranked by number of followers. */
+  teachers: TeachersPaginatedResult;
   /** A popularity-ranked feed combining published courses and programs, page by page. Each item is either a course or a program. */
   topContent: ContentPaginatedResult;
 };
@@ -1979,6 +1972,15 @@ export type TeacherAnalytics = {
   totalUniqueStudents: Scalars['Int']['output'];
 };
 
+/** A page of teachers together with the total number of available teachers. */
+export type TeachersPaginatedResult = {
+  __typename?: 'TeachersPaginatedResult';
+  /** The teachers for the requested page. */
+  items: Array<Teacher>;
+  /** The total number of available teachers across all pages. */
+  totalCount: Scalars['Int']['output'];
+};
+
 /** A text content component. */
 export type TextContent = {
   __typename?: 'TextContent';
@@ -2055,7 +2057,7 @@ export type UpdateCourseInfoInput = {
   /** The language of this course. */
   language?: InputMaybe<Scalars['String']['input']>;
   /** The difficulty level of this course */
-  level?: InputMaybe<CourseLevel>;
+  level?: InputMaybe<ContentLevel>;
   /** List of objectives for the course */
   objectives?: InputMaybe<Array<CourseObjectiveInput>>;
   /** List of requirements for the course */
@@ -2143,7 +2145,7 @@ export type UpdateProgramInfoInput = {
   /** A flag to indicate whether this program is published or not */
   is_published?: InputMaybe<Scalars['Boolean']['input']>;
   /** The difficulty level of this program */
-  level?: InputMaybe<ProgramLevel>;
+  level?: InputMaybe<ContentLevel>;
   /** List of objectives for the program */
   objectives?: InputMaybe<Array<ProgramObjectiveInput>>;
   /** List of requirements for the program */
