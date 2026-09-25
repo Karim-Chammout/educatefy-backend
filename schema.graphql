@@ -237,7 +237,7 @@ type Course {
   description: JSON!
 
   """The difficulty level of this course."""
-  level: CourseLevel!
+  level: ContentLevel!
 
   """A link to an external resource."""
   external_resource_link: String
@@ -307,8 +307,8 @@ The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://
 """
 scalar JSON
 
-"""The difficulty level of a course."""
-enum CourseLevel {
+"""The difficulty level of a course or program."""
+enum ContentLevel {
   beginner
   intermediate
   advanced
@@ -1094,7 +1094,7 @@ type Program {
   description: JSON!
 
   """The difficulty level of this program."""
-  level: ProgramLevel!
+  level: ContentLevel!
 
   """A flag to indicate whether this program is published or not."""
   is_published: Boolean!
@@ -1138,13 +1138,6 @@ type Program {
 
   """The instructor of this program."""
   instructor: Teacher!
-}
-
-"""The difficulty level of a program."""
-enum ProgramLevel {
-  beginner
-  intermediate
-  advanced
 }
 
 """The program objective info"""
@@ -1954,7 +1947,7 @@ input CourseInfoInput {
   language: String!
 
   """The difficulty level of this course."""
-  level: CourseLevel!
+  level: ContentLevel!
 
   """The image of this course."""
   image: String
@@ -2062,7 +2055,7 @@ input ProgramInfoInput {
   description: JSON!
 
   """The difficulty level of this program."""
-  level: ProgramLevel!
+  level: ContentLevel!
 
   """The image of this program."""
   image: String
@@ -2485,7 +2478,7 @@ input UpdateCourseInfoInput {
   language: String
 
   """The difficulty level of this course"""
-  level: CourseLevel
+  level: ContentLevel
 
   """The image of this course"""
   image: String
@@ -2665,7 +2658,7 @@ input UpdateProgramInfoInput {
   description: JSON
 
   """The difficulty level of this program"""
-  level: ProgramLevel
+  level: ContentLevel
 
   """The image of this program"""
   image: String
