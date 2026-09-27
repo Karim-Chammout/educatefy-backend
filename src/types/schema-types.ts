@@ -210,6 +210,12 @@ export type ContentComponentProgressResult = {
 /** A rankable content item, which can be either a course or a program. */
 export type ContentItem = Course | Program;
 
+/** Restricts a mixed course/program result to a single content type. */
+export enum ContentKind {
+  Course = 'course',
+  Program = 'program'
+}
+
 /** The difficulty level of a course or program. */
 export enum ContentLevel {
   Advanced = 'advanced',
@@ -1394,6 +1400,8 @@ export type Query = {
   editableProgram?: Maybe<Program>;
   /** List of courses the user is enrolled in */
   enrolledCourses: Array<Course>;
+  /** Courses and programs to discover from the teachers the account follows, grouped per teacher. Only published content is included, anything the account is already enrolled in is left out, and a teacher with nothing new to offer is not returned. */
+  followingFeedByTeachers: Array<TeacherContent>;
   /** Retrieve the instructor (teacher) account by its id */
   instructor?: Maybe<Teacher>;
   /** List of languages */
@@ -1444,6 +1452,12 @@ export type QueryEditableCourseArgs = {
 
 export type QueryEditableProgramArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type QueryFollowingFeedByTeachersArgs = {
+  maxTeachers?: Scalars['Int']['input'];
+  teachersFirst?: Scalars['Int']['input'];
 };
 
 
@@ -1911,6 +1925,8 @@ export type Teacher = {
   avatar_url?: Maybe<Scalars['String']['output']>;
   /** A short biography of the teacher */
   bio?: Maybe<Scalars['String']['output']>;
+  /** A page of this teacher's published courses and programs, newest first. Drafts and unpublished content are never returned here; use the teacher management queries for those. */
+  content: ContentPaginatedResult;
   /** List of courses created by the teacher */
   courses: Array<Course>;
   /** A detailed description of the teacher */
@@ -1937,6 +1953,14 @@ export type Teacher = {
   socialLinks: Array<SocialLink>;
   /** Represents the subjects a teacher is specialized in for teaching. */
   subjects: Array<Subject>;
+};
+
+
+/** The properties of a teacher account */
+export type TeacherContentArgs = {
+  first?: Scalars['Int']['input'];
+  offset?: Scalars['Int']['input'];
+  type?: InputMaybe<ContentKind>;
 };
 
 /** Aggregated analytics data for a teacher. */
@@ -1970,6 +1994,17 @@ export type TeacherAnalytics = {
   totalReviewsCount: Scalars['Int']['output'];
   /** Total number of unique students enrolled in any course by the teacher. */
   totalUniqueStudents: Scalars['Int']['output'];
+};
+
+/** A followed teacher together with a bounded page of their qualifying published content. */
+export type TeacherContent = {
+  __typename?: 'TeacherContent';
+  /** The teacher items for the requested page. */
+  items: Array<ContentItem>;
+  /** The teacher these items belong to. */
+  teacher: Teacher;
+  /** The total number of qualifying items this teacher has for the account. */
+  totalCount: Scalars['Int']['output'];
 };
 
 /** A page of teachers together with the total number of available teachers. */
