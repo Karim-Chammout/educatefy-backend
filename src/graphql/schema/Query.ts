@@ -16,8 +16,15 @@ import {
 } from '../../types/db-generated-types.js';
 import { ContextType } from '../../types/types.js';
 import { ErrorType } from '../../utils/ErrorType.js';
+import { filterError } from '../utils/filterError.js';
 import { authenticated } from '../utils/auth.js';
 import { canUserAccessProgram } from '../utils/contentUtils.js';
+import {
+  FOLLOWING_FEED_MAX_ITEMS_PER_TEACHERS,
+  FOLLOWING_FEED_MAX_TEACHERS,
+  assertFollowingFeedByTeachersArgs,
+  getFollowingFeedByTeachers,
+} from '../utils/followingFeed.js';
 import { hasTeacherRole } from '../utils/hasTeacherRole.js';
 import { isQuizAttemptExpired } from '../utils/quizTimeLimit.js';
 import { Account } from './types/Account.js';
@@ -34,6 +41,7 @@ import { SessionDevice } from './types/SessionDevice.js';
 import { Subject } from './types/Subject.js';
 import { Teacher } from './types/Teacher.js';
 import { TeacherAnalytics } from './types/TeacherAnalytics.js';
+import { TeacherContent } from './types/TeacherContent.js';
 import { TeachersPaginatedResult } from './types/TeachersPaginatedResult.js';
 
 const Query = new GraphQLObjectType<any, ContextType>({
@@ -428,6 +436,61 @@ const Query = new GraphQLObjectType<any, ContextType>({
         };
       },
     },
+    followingFeedByTeachers: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(TeacherContent))),
+      description:
+        'Courses and programs to discover from the teachers the account follows, grouped per teacher. Only published content is included, anything the account is already enrolled in is left out, and a teacher with nothing new to offer is not returned.',
+      args: {
+        teachersFirst: {
+          type: new GraphQLNonNull(GraphQLInt),
+          defaultValue: 3,
+          description: `The number of items to return for each teacher. Must be between 1 and ${FOLLOWING_FEED_MAX_ITEMS_PER_TEACHERS}.`,
+        },
+        maxTeachers: {
+          type: new GraphQLNonNull(GraphQLInt),
+          defaultValue: 12,
+          description: `The maximum number of teacher groups to return. Must be between 1 and ${FOLLOWING_FEED_MAX_TEACHERS}.`,
+        },
+      },
+      resolve: authenticated(
+        async (
+          _,
+          { teachersFirst, maxTeachers }: { teachersFirst: number; maxTeachers: number },
+          { db, loaders, user },
+        ) => {
+          assertFollowingFeedByTeachersArgs(teachersFirst, maxTeachers);
+
+          const teacherGroups = await getFollowingFeedByTeachers(db, user.id, {
+            teachersFirst,
+            maxTeachers,
+          });
+
+          if (teacherGroups.length === 0) {
+            return [];
+          }
+
+          const teacherIds = teacherGroups.map((group) => group.teacherId);
+          const teachers = await filterError(loaders.Account.loadManyByIds(teacherIds));
+          const teachersById = new Map(teachers.map((teacher) => [Number(teacher.id), teacher]));
+
+          return teacherGroups
+            .map((group) => {
+              const teacher = teachersById.get(group.teacherId);
+
+              if (!teacher) {
+                return null;
+              }
+
+              return {
+                teacher,
+                items: group.items,
+                totalCount: group.totalCount,
+              };
+            })
+            .filter((group) => group !== null);
+        },
+      ),
+    },
     enrolledCourses: {
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Course))),
       description: 'List of courses the user is enrolled in',
@@ -446,11 +509,7 @@ const Query = new GraphQLObjectType<any, ContextType>({
           .filter((item) => (item.status as unknown as CourseStatus) === CourseStatus.Enrolled)
           .map((enrollment) => enrollment.course_id);
 
-        const courses = await loaders.Course.loadManyByIds(courseIds);
-
-        if (!courses) {
-          return [];
-        }
+        const courses = await filterError(loaders.Course.loadManyByIds(courseIds));
 
         return courses;
       },
@@ -473,11 +532,7 @@ const Query = new GraphQLObjectType<any, ContextType>({
           .filter((item) => (item.status as unknown as CourseStatus) === CourseStatus.Completed)
           .map((enrollment) => enrollment.course_id);
 
-        const courses = await loaders.Course.loadManyByIds(courseIds);
-
-        if (!courses) {
-          return [];
-        }
+        const courses = await filterError(loaders.Course.loadManyByIds(courseIds));
 
         return courses;
       },

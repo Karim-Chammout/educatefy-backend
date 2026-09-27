@@ -14,10 +14,17 @@ import { ContextType } from '../../../types/types.js';
 import { getImageURL } from '../../../utils/getImageURL.js';
 import { filterProgramsWithValidVersions } from '../../utils/contentUtils.js';
 import { filterPublishedContent } from '../../utils/filterPublishedContent.js';
+import {
+  CONTENT_MAX_PAGE_SIZE,
+  assertTeacherContentPagination,
+  getTeacherContentPage,
+} from '../../utils/contentFeed.js';
+import { ContentPaginatedResult } from './ContentPaginatedResult.js';
 import { Course } from './Course.js';
 import { Program } from './Program.js';
 import { SocialLink } from './SocialLink.js';
 import { Subject } from './Subject.js';
+import ContentKind from './enum/ContentKind.js';
 
 export const Teacher = new GraphQLObjectType<AccountType, ContextType>({
   name: 'Teacher',
@@ -156,6 +163,32 @@ export const Teacher = new GraphQLObjectType<AccountType, ContextType>({
         }
 
         return filterPublishedContent(filteredPrograms);
+      },
+    },
+    content: {
+      type: new GraphQLNonNull(ContentPaginatedResult),
+      description:
+        "A page of this teacher's published courses and programs, newest first. Drafts and unpublished content are never returned here; use the teacher management queries for those.",
+      args: {
+        first: {
+          type: new GraphQLNonNull(GraphQLInt),
+          defaultValue: 8,
+          description: `The number of items to return per page. Must be between 1 and ${CONTENT_MAX_PAGE_SIZE}.`,
+        },
+        offset: {
+          type: new GraphQLNonNull(GraphQLInt),
+          defaultValue: 0,
+          description: 'The number of items to skip, for pagination.',
+        },
+        type: {
+          type: ContentKind,
+          description: 'Restricts the page to courses or to programs. Omit to mix both.',
+        },
+      },
+      resolve: async (parent, { first, offset, type }, { db }) => {
+        assertTeacherContentPagination(first, offset);
+
+        return getTeacherContentPage(db, parent.id, { first, offset, kind: type });
       },
     },
   }),
