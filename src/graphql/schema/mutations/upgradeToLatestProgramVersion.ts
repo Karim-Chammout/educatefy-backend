@@ -71,6 +71,7 @@ const upgradeToLatestProgramVersion: GraphQLFieldConfig<null, ContextType> = {
         updated_at: db.fn.now(),
       });
 
+      loaders.AccountProgram.clearByAccountIdAndProgramId(user.id, parsedProgramId);
       loaders.Program.loaders.byIdLoader.clear(parsedProgramId);
       const updatedProgram = await loaders.Program.loadById(parsedProgramId);
 

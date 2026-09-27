@@ -79,6 +79,21 @@ type Query {
     offset: Int! = 0
   ): ContentPaginatedResult!
 
+  """
+  Courses and programs to discover from the teachers the account follows, grouped per teacher. Only published content is included, anything the account is already enrolled in is left out, and a teacher with nothing new to offer is not returned.
+  """
+  followingFeedByTeachers(
+    """
+    The number of items to return for each teacher. Must be between 1 and 8.
+    """
+    teachersFirst: Int! = 3
+
+    """
+    The maximum number of teacher groups to return. Must be between 1 and 20.
+    """
+    maxTeachers: Int! = 12
+  ): [TeacherContent!]!
+
   """List of courses the user is enrolled in"""
   enrolledCourses: [Course!]!
 
@@ -1044,6 +1059,20 @@ type Teacher {
 
   """List of programs created by the teacher"""
   programs: [Program!]!
+
+  """
+  A page of this teacher's published courses and programs, newest first. Drafts and unpublished content are never returned here; use the teacher management queries for those.
+  """
+  content(
+    """The number of items to return per page. Must be between 1 and 50."""
+    first: Int! = 8
+
+    """The number of items to skip, for pagination."""
+    offset: Int! = 0
+
+    """Restricts the page to courses or to programs. Omit to mix both."""
+    type: ContentKind
+  ): ContentPaginatedResult!
 }
 
 """A social media link attached to an account."""
@@ -1225,6 +1254,26 @@ type ProgramVersionCourseEntry {
   prerequisiteCourseId: ID
 }
 
+"""
+A page of content items together with the total number of available items.
+"""
+type ContentPaginatedResult {
+  """The content items for the requested page."""
+  items: [ContentItem!]!
+
+  """The total number of available content items across all pages."""
+  totalCount: Int!
+}
+
+"""A rankable content item, which can be either a course or a program."""
+union ContentItem = Course | Program
+
+"""Restricts a mixed course/program result to a single content type."""
+enum ContentKind {
+  course
+  program
+}
+
 """Statistics info for the current user."""
 type Statistics {
   """The number of enrolled courses by the user"""
@@ -1276,18 +1325,18 @@ type TeachersPaginatedResult {
 }
 
 """
-A page of content items together with the total number of available items.
+A followed teacher together with a bounded page of their qualifying published content.
 """
-type ContentPaginatedResult {
-  """The content items for the requested page."""
+type TeacherContent {
+  """The teacher these items belong to."""
+  teacher: Teacher!
+
+  """The teacher items for the requested page."""
   items: [ContentItem!]!
 
-  """The total number of available content items across all pages."""
+  """The total number of qualifying items this teacher has for the account."""
   totalCount: Int!
 }
-
-"""A rankable content item, which can be either a course or a program."""
-union ContentItem = Course | Program
 
 """Aggregated analytics data for a teacher."""
 type TeacherAnalytics {

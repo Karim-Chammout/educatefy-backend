@@ -36,6 +36,7 @@ const unenrollFromProgram: GraphQLFieldConfig<null, ContextType> = {
         deleted_at: db.fn.now(),
       });
 
+      loaders.AccountProgram.clearByAccountIdAndProgramId(user.id, parsedProgramId);
       loaders.Program.loaders.byIdLoader.clear(parsedProgramId);
       const program = await loaders.Program.loadById(parsedProgramId);
 

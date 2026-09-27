@@ -10,7 +10,7 @@ type RankedContentRow = {
 export const ContentItem = new GraphQLUnionType({
   name: 'ContentItem',
   description: 'A rankable content item, which can be either a course or a program.',
-  types: [Course, Program],
+  types: () => [Course, Program],
   resolveType(value: RankedContentRow) {
     return value.kind === 'program' ? 'Program' : 'Course';
   },
