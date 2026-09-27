@@ -8,6 +8,7 @@ import {
 import { ContextType } from '../../../types/types.js';
 import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
+import { replaceContentSubjects, validateContentSubjects } from '../../utils/contentSubjects.js';
 import { getSelectedLanguageId } from '../../utils/getSelectedLanguageId.js';
 import { isValidSlug } from '../../utils/isValidSlug.js';
 import logger from '../../../utils/logger.js';
@@ -123,36 +124,37 @@ const updateCourse: GraphQLFieldConfig<null, ContextType> = {
           ...(start_date && { start_date }),
         };
 
+        // An omitted `subjectIds` leaves the stored tags untouched, but a supplied value must
+        // always resolve to at least one existing subject.
+        const subjectsValidation =
+          subjectIds === undefined || subjectIds === null
+            ? null
+            : await validateContentSubjects(db, subjectIds, {
+                kind: 'course',
+                contentId: course.id,
+              });
+
+        if (subjectsValidation && !subjectsValidation.success) {
+          return {
+            success: false,
+            errors: [new Error(subjectsValidation.error)],
+            course: null,
+          };
+        }
+
         const updatedCourse = await db.transaction(async (transaction) => {
-          const [courseToUpdate] = await db('course')
+          const [courseToUpdate] = await transaction('course')
             .where('id', course.id)
-            .update({ ...filteredUpdatedCourseInfo, updated_at: db.fn.now() })
+            .update({ ...filteredUpdatedCourseInfo, updated_at: transaction.fn.now() })
             .returning('*');
 
-          if (subjectIds && subjectIds.length > 0) {
-            // Verify that all subject IDs exist
-            const subjects = await transaction('subject').whereIn('id', subjectIds);
-            if (subjects.length !== subjectIds.length) {
-              return {
-                success: false,
-                errors: [new Error(ErrorType.INVALID_SUBJECTS)],
-                course: null,
-              };
-            }
-
-            // Only update the "course__subject" table if the subject IDs have changed
-            const existingSubjects = await loaders.Subject.loadByCourseId(course.id);
-            const existingSubjectIds = existingSubjects.map((subject) => String(subject.id));
-            if (!lodash.isEqual(subjectIds, existingSubjectIds)) {
-              await transaction('course__subject').where('course_id', course.id).del();
-
-              for (const subjectId of subjectIds) {
-                await transaction('course__subject').insert({
-                  course_id: course.id,
-                  subject_id: subjectId,
-                });
-              }
-            }
+          if (subjectsValidation) {
+            await replaceContentSubjects(
+              transaction,
+              'course',
+              course.id,
+              subjectsValidation.subjectIds,
+            );
           }
 
           if (objectives && objectives.length > 0) {
@@ -199,6 +201,8 @@ const updateCourse: GraphQLFieldConfig<null, ContextType> = {
         });
 
         loaders.Course.loaders.byIdLoader.clear(course.id);
+        loaders.Subject.loaders.byCourseIdLoader.clear(course.id);
+        loaders.Subject.loaders.byLinkedContentLoader.clear(1);
 
         return {
           success: true,

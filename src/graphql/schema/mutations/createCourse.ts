@@ -7,6 +7,7 @@ import {
 import { ContextType } from '../../../types/types.js';
 import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
+import { replaceContentSubjects, validateContentSubjects } from '../../utils/contentSubjects.js';
 import { getSelectedLanguageId } from '../../utils/getSelectedLanguageId.js';
 import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
 import { isValidSlug } from '../../utils/isValidSlug.js';
@@ -112,27 +113,27 @@ const createCourse: GraphQLFieldConfig<null, ContextType> = {
           teacher_id: user.id,
         };
 
+        const subjectsValidation = await validateContentSubjects(db, subjectIds, {
+          kind: 'course',
+        });
+
+        if (!subjectsValidation.success) {
+          return {
+            success: false,
+            errors: [new Error(subjectsValidation.error)],
+            course: null,
+          };
+        }
+
         const createdCourse = await db.transaction(async (transaction) => {
           const [course] = await transaction('course').insert(filteredCourseInfo).returning('id');
 
-          if (subjectIds && subjectIds.length > 0) {
-            // Verify that all subject IDs exist
-            const subjects = await transaction('subject').whereIn('id', subjectIds);
-            if (subjects.length !== subjectIds.length) {
-              return {
-                success: false,
-                errors: [new Error(ErrorType.INVALID_SUBJECTS)],
-                course: null,
-              };
-            }
-
-            for (const subjectId of subjectIds) {
-              await transaction('course__subject').insert({
-                course_id: course.id,
-                subject_id: subjectId,
-              });
-            }
-          }
+          await replaceContentSubjects(
+            transaction,
+            'course',
+            course.id,
+            subjectsValidation.subjectIds,
+          );
 
           if (objectives && objectives.length > 0) {
             for (const objective of objectives) {
@@ -154,6 +155,8 @@ const createCourse: GraphQLFieldConfig<null, ContextType> = {
 
           return course;
         });
+
+        loaders.Subject.loaders.byLinkedContentLoader.clear(1);
 
         return {
           success: true,

@@ -8,6 +8,7 @@ import {
 import { ContextType } from '../../../types/types.js';
 import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
+import { replaceContentSubjects, validateContentSubjects } from '../../utils/contentSubjects.js';
 import { hasTeacherRole } from '../../utils/hasTeacherRole.js';
 import { isValidSlug } from '../../utils/isValidSlug.js';
 import logger from '../../../utils/logger.js';
@@ -94,6 +95,18 @@ const createProgram: GraphQLFieldConfig<null, ContextType> = {
           teacher_id: user.id,
         };
 
+        const subjectsValidation = await validateContentSubjects(db, subjectIds, {
+          kind: 'program',
+        });
+
+        if (!subjectsValidation.success) {
+          return {
+            success: false,
+            errors: [new Error(subjectsValidation.error)],
+            program: null,
+          };
+        }
+
         const createdProgram = await db.transaction(async (transaction) => {
           const [program] = await transaction('program')
             .insert(filteredProgramInfo)
@@ -106,24 +119,12 @@ const createProgram: GraphQLFieldConfig<null, ContextType> = {
             status: ProgramVersionStatusType.Draft,
           });
 
-          if (subjectIds && subjectIds.length > 0) {
-            // Verify that all subject IDs exist
-            const subjects = await transaction('subject').whereIn('id', subjectIds);
-            if (subjects.length !== subjectIds.length) {
-              return {
-                success: false,
-                errors: [new Error(ErrorType.INVALID_SUBJECTS)],
-                program: null,
-              };
-            }
-
-            for (const subjectId of subjectIds) {
-              await transaction('program__subject').insert({
-                program_id: program.id,
-                subject_id: subjectId,
-              });
-            }
-          }
+          await replaceContentSubjects(
+            transaction,
+            'program',
+            program.id,
+            subjectsValidation.subjectIds,
+          );
 
           if (objectives && objectives.length > 0) {
             for (const objective of objectives) {
@@ -145,6 +146,8 @@ const createProgram: GraphQLFieldConfig<null, ContextType> = {
 
           return program;
         });
+
+        loaders.Subject.loaders.byLinkedContentLoader.clear(1);
 
         return {
           success: true,

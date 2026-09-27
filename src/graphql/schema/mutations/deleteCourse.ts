@@ -48,6 +48,7 @@ const deleteCourse: GraphQLFieldConfig<null, ContextType> = {
 
       // Clear the loader cache for this course
       loaders.Course.loaders.byIdLoader.clear(course.id);
+      loaders.Subject.loaders.byLinkedContentLoader.clear(1);
 
       return {
         success: true,

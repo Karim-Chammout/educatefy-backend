@@ -48,6 +48,7 @@ const deleteProgram: GraphQLFieldConfig<null, ContextType> = {
 
       // Clear the loader cache for this program
       loaders.Program.loaders.byIdLoader.clear(program.id);
+      loaders.Subject.loaders.byLinkedContentLoader.clear(1);
 
       return {
         success: true,

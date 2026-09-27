@@ -8,6 +8,7 @@ import {
 import { ContextType } from '../../../types/types.js';
 import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
+import { replaceContentSubjects, validateContentSubjects } from '../../utils/contentSubjects.js';
 import { isValidSlug } from '../../utils/isValidSlug.js';
 import logger from '../../../utils/logger.js';
 import UpdateProgramInfoInput from '../inputs/UpdateProgramInfo.js';
@@ -108,35 +109,37 @@ const updateProgram: GraphQLFieldConfig<null, ContextType> = {
           ...(image !== undefined && { image }),
         };
 
+        // An omitted `subjectIds` leaves the stored tags untouched, but a supplied value must
+        // always resolve to at least one existing subject.
+        const subjectsValidation =
+          subjectIds === undefined || subjectIds === null
+            ? null
+            : await validateContentSubjects(db, subjectIds, {
+                kind: 'program',
+                contentId: program.id,
+              });
+
+        if (subjectsValidation && !subjectsValidation.success) {
+          return {
+            success: false,
+            errors: [new Error(subjectsValidation.error)],
+            program: null,
+          };
+        }
+
         const updatedProgram = await db.transaction(async (transaction) => {
           const [programToUpdate] = await transaction('program')
             .where('id', program.id)
-            .update({ ...filteredUpdatedProgramInfo, updated_at: db.fn.now() })
+            .update({ ...filteredUpdatedProgramInfo, updated_at: transaction.fn.now() })
             .returning('*');
 
-          if (subjectIds && subjectIds.length > 0) {
-            // Verify that all subject IDs exist
-            const subjects = await transaction('subject').whereIn('id', subjectIds);
-            if (subjects.length !== subjectIds.length) {
-              return {
-                success: false,
-                errors: [new Error(ErrorType.INVALID_SUBJECTS)],
-                program: null,
-              };
-            }
-
-            // Only update the "program__subject" table if the subject IDs have changed
-            const existingSubjects = await loaders.Subject.loadByProgramId(program.id);
-            const existingSubjectIds = existingSubjects.map((subject) => String(subject.id));
-            if (!lodash.isEqual(subjectIds, existingSubjectIds)) {
-              await transaction('program__subject').where('program_id', program.id).del();
-              for (const subjectId of subjectIds) {
-                await transaction('program__subject').insert({
-                  program_id: program.id,
-                  subject_id: subjectId,
-                });
-              }
-            }
+          if (subjectsValidation) {
+            await replaceContentSubjects(
+              transaction,
+              'program',
+              program.id,
+              subjectsValidation.subjectIds,
+            );
           }
 
           if (objectives && objectives.length > 0) {
@@ -185,6 +188,8 @@ const updateProgram: GraphQLFieldConfig<null, ContextType> = {
         });
 
         loaders.Program.loaders.byIdLoader.clear(program.id);
+        loaders.Subject.loaders.byProgramIdLoader.clear(program.id);
+        loaders.Subject.loaders.byLinkedContentLoader.clear(1);
 
         return {
           success: true,
