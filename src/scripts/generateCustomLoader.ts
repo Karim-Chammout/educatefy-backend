@@ -71,31 +71,36 @@ export class ${className}Reader extends ${className}Base {
   constructor(db: ConstructorParameters<typeof AccountProgramBase>[0]) {
     super(db);
 
-    this.byAccountIdAndProgramIdLoader = new DataLoader(async (keys) => {
-      if (keys.length === 0) {
-        return [];
-      }
+    this.byAccountIdAndProgramIdLoader = new DataLoader(
+      async (keys) => {
+        if (keys.length === 0) {
+          return [];
+        }
 
-      const rows = await this.db
-        .table('account__program')
-        .whereNull('deleted_at')
-        .where((builder) =>
-          keys.forEach((key) =>
-            builder.orWhere({
-              account_id: key.accountId,
-              program_id: key.programId,
-            }),
-          ),
-        )
-        .select()
-        .then((results) =>
-          keys.map((key) =>
-            results.find((x) => x.account_id === key.accountId && x.program_id === key.programId),
-          ),
-        );
+        const rows = await this.db
+          .table('account__program')
+          .whereNull('deleted_at')
+          .where((builder) =>
+            keys.forEach((key) =>
+              builder.orWhere({
+                account_id: key.accountId,
+                program_id: key.programId,
+              }),
+            ),
+          )
+          .select()
+          .then((results) =>
+            keys.map((key) =>
+              results.find((x) => x.account_id === key.accountId && x.program_id === key.programId),
+            ),
+          );
 
-      return rows;
-    });
+        return rows;
+      },
+      {
+        cacheKeyFn: (key) => \`\${key.accountId}:\${key.programId}\`,
+      },
+    );
   }
 
   get loaders() {
@@ -107,6 +112,12 @@ export class ${className}Reader extends ${className}Base {
 
   loadByAccountIdAndProgramId(accountId: number, programId: number): Promise<AccountProgramType> {
     return this.byAccountIdAndProgramIdLoader.load({ accountId, programId });
+  }
+
+  clearByAccountIdAndProgramId(accountId: number, programId: number): void {
+    this.byAccountIdAndProgramIdLoader.clear({ accountId, programId });
+    this.loaders.byProgramIdLoader.clear(programId);
+    this.loaders.byAccountIdLoader.clear(accountId);
   }
 }
 `;
