@@ -1,9 +1,11 @@
 import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
+import type { Knex } from 'knex';
 
 import {
   CourseStatus,
   CourseStatusInput as CourseStatusInputType,
 } from '../../../types/schema-types.js';
+import { notify } from '../../../notification/notify.js';
 import { ContextType } from '../../../types/types.js';
 import { ErrorType } from '../../../utils/ErrorType.js';
 import { authenticated } from '../../utils/auth.js';
@@ -21,6 +23,30 @@ const ALLOWED_TRANSITIONS: Record<string, CourseStatus[]> = {
   [CourseStatus.Enrolled]: [CourseStatus.Unenrolled],
   [CourseStatus.Unenrolled]: [CourseStatus.Enrolled],
 };
+
+async function notifyCourseEnrollment(
+  transaction: Knex.Transaction,
+  course: { id: number; denomination: string; teacher_id: number },
+  studentId: number,
+) {
+  if (!course.teacher_id) {
+    return;
+  }
+
+  const student = await transaction('account').where('id', studentId).select('name').first();
+
+  await notify({
+    accountId: course.teacher_id,
+    type: 'course_enrolled',
+    data: {
+      studentName: student?.name ?? '',
+      courseTitle: course.denomination,
+      courseId: course.id,
+    },
+    actorId: studentId,
+    trx: transaction,
+  });
+}
 
 const updateCourseStatus: GraphQLFieldConfig<null, ContextType> = {
   type: UpdateCourseStatusResult,
@@ -112,6 +138,8 @@ const updateCourseStatus: GraphQLFieldConfig<null, ContextType> = {
               new_status: status,
             });
 
+            await notifyCourseEnrollment(transaction, course, user.id);
+
             return {
               success: true,
               errors: [],
@@ -163,6 +191,10 @@ const updateCourseStatus: GraphQLFieldConfig<null, ContextType> = {
             old_status: existingEnrollment.status,
             new_status: status,
           });
+
+          if (status === CourseStatus.Enrolled) {
+            await notifyCourseEnrollment(transaction, course, user.id);
+          }
 
           return {
             success: true,

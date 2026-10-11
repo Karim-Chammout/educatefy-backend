@@ -1,5 +1,6 @@
 import type { Knex } from 'knex';
 
+import { notify } from '../../notification/notify.js';
 import { EnrollmentStatusType } from '../../types/db-generated-types.js';
 import { computeCourseProgress, CourseProgressType } from './computeCourseProgress.js';
 
@@ -69,6 +70,34 @@ export const recomputeProgressAndAutoCompleteCourse = async (
     enrollment_id: enrollment.id,
     old_status: enrollment.status,
     new_status: EnrollmentStatusType.Completed,
+  });
+
+  const course = await transaction('course')
+    .where('id', courseId)
+    .select('id', 'denomination', 'slug', 'teacher_id')
+    .first();
+
+  // Notify the teacher and the student about the course completion.
+  // The teacher is notified that a student has completed their course
+  const student = await transaction('account').where('id', accountId).select('name').first();
+  await notify({
+    accountId: course.teacher_id,
+    type: 'course_completed_by_student',
+    data: {
+      studentName: student?.name ?? '',
+      courseTitle: course.denomination,
+      courseId: course.id,
+    },
+    actorId: accountId,
+    trx: transaction,
+  });
+
+  // The student is notified that they have completed the course.
+  await notify({
+    accountId,
+    type: 'course_completed',
+    data: { courseTitle: course.denomination, courseSlug: course.slug },
+    trx: transaction,
   });
 
   return { courseCompleted: true, progress };

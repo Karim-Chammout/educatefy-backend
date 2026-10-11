@@ -13,10 +13,12 @@ import deleteCourse from './mutations/deleteCourse.js';
 import deleteCourseRating from './mutations/deleteCourseRating.js';
 import deleteCourseSection from './mutations/deleteCourseSection.js';
 import deleteCourseSectionItem from './mutations/deleteCourseSectionItem.js';
+import deleteNotifications from './mutations/deleteNotifications.js';
 import deleteProgram from './mutations/deleteProgram.js';
 import enrollInProgram from './mutations/enrollInProgram.js';
 import followTeacher from './mutations/followTeacher.js';
 import publishProgramVersion from './mutations/publishProgramVersion.js';
+import readNotifications from './mutations/readNotifications.js';
 import rateCourse from './mutations/rateCourse.js';
 import removeProfilePicture from './mutations/removeProfilePicture.js';
 import revokeAllSessions from './mutations/revokeAllSessions.js';
@@ -35,6 +37,7 @@ import updateCourseSectionItemRanks from './mutations/updateCourseSectionItemRan
 import updateCourseSectionRanks from './mutations/updateCourseSectionRank.js';
 import updateCourseStatus from './mutations/updateCourseStatus.js';
 import updateLesson from './mutations/updateLesson.js';
+import updateNotificationPreference from './mutations/updateNotificationPreference.js';
 import updateProfile from './mutations/updateProfile.js';
 import updateProgram from './mutations/updateProgram.js';
 import updateProgramVersionCourses from './mutations/updateProgramVersionCourses.js';
@@ -59,10 +62,12 @@ const Mutation = new GraphQLObjectType({
     deleteCourseRating,
     deleteCourseSection,
     deleteCourseSectionItem,
+    deleteNotifications,
     deleteProgram,
     enrollInProgram,
     followTeacher,
     publishProgramVersion,
+    readNotifications,
     rateCourse,
     removeProfilePicture,
     revokeAllSessions,
@@ -81,6 +86,7 @@ const Mutation = new GraphQLObjectType({
     updateCourseSectionItemRanks,
     updateCourseStatus,
     updateLesson,
+    updateNotificationPreference,
     updateProfile,
     updateProgram,
     updateProgramVersionCourses,

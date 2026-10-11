@@ -6,12 +6,15 @@ import helmet from 'helmet';
 
 import config from './config.js';
 import GraphQL from './graphql/index.js';
+import { attachWebSocketServer } from './graphql/ws.js';
 import { attachToken } from './middleware/attachToken.js';
 import { errorHandler, httpLogger } from './middleware/logging.js';
 import { renewToken } from './middleware/renewToken.js';
+import { startNotificationServices } from './notification/index.js';
 import api from './routes/index.js';
 import { corsOptions } from './utils/corsOptions.js';
 import logger from './utils/logger.js';
+import { registerShutdown } from './utils/shutdown.js';
 
 const app = express();
 
@@ -33,11 +36,16 @@ app.use(renewToken);
 
 app.use('/api', api);
 
-app.use('/graphql/', GraphQL());
+app.use('/graphql', GraphQL());
 
 app.use(errorHandler);
 
 const PORT = config.PORT || 9090;
-app.listen(PORT, () => {
+
+const server = app.listen(PORT, () => {
   logger.info({ port: PORT }, `Server is running at http://localhost:${PORT}`);
 });
+
+attachWebSocketServer(server);
+
+registerShutdown({ server, stop: startNotificationServices().stop });

@@ -1,5 +1,6 @@
 import { GraphQLFieldConfig, GraphQLID, GraphQLNonNull } from 'graphql';
 
+import { notify } from '../../../notification/notify.js';
 import { ProgramVersionStatusType } from '../../../types/db-generated-types.js';
 import { ContextType } from '../../../types/types.js';
 import { ErrorType } from '../../../utils/ErrorType.js';
@@ -58,10 +59,27 @@ const enrollInProgram: GraphQLFieldConfig<null, ContextType> = {
         };
       }
 
-      await db('account__program').insert({
-        account_id: user.id,
-        program_id: parsedProgramId,
-        program_version_id: latestPublishedVersion.id,
+      await db.transaction(async (transaction) => {
+        await transaction('account__program').insert({
+          account_id: user.id,
+          program_id: parsedProgramId,
+          program_version_id: latestPublishedVersion.id,
+        });
+
+        if (program.teacher_id) {
+          const student = await transaction('account').where('id', user.id).select('name').first();
+
+          await notify({
+            accountId: program.teacher_id,
+            type: 'program_enrolled',
+            data: {
+              studentName: student?.name ?? '',
+              programTitle: program.denomination,
+            },
+            actorId: user.id,
+            trx: transaction,
+          });
+        }
       });
 
       loaders.AccountProgram.clearByAccountIdAndProgramId(user.id, parsedProgramId);

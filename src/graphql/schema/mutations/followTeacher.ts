@@ -1,5 +1,6 @@
 import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
 
+import { notify } from '../../../notification/notify.js';
 import { FollowTeacherInput as FollowTeacherInputType } from '../../../types/schema-types.js';
 import { ContextType } from '../../../types/types.js';
 import { ErrorType } from '../../../utils/ErrorType.js';
@@ -92,6 +93,18 @@ const followTeacher: GraphQLFieldConfig<null, ContextType> = {
             is_following: true,
           });
           isFollowing = true;
+        }
+
+        // Only a follow notifies; unfollowing is not an event.
+        if (isFollowing) {
+          const follower = await db('account').where('id', user.id).select('name').first();
+
+          await notify({
+            accountId: parsedTeacherId,
+            type: 'new_follower',
+            data: { studentName: follower?.name ?? '' },
+            actorId: user.id,
+          });
         }
 
         return {

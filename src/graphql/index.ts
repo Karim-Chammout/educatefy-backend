@@ -9,14 +9,16 @@ import { createLoaders } from './ctx/db/index.js';
 import { createFsContext } from './ctx/fs/index.js';
 import { createUserContext } from './ctx/user/index.js';
 import { useGraphQLLogger } from './plugins/useGraphQLLogger.js';
+import { useNotificationPushFlush } from './plugins/useNotificationPushFlush.js';
 import Schema from './schema/Schema.js';
 
 export const yoga = createYoga({
   schema: Schema,
   landingPage: false,
-  graphqlEndpoint: '/',
+  graphqlEndpoint: '/graphql',
   plugins: [
     useGraphQLLogger,
+    useNotificationPushFlush,
     EnvelopArmorPlugin({
       maxDepth: {
         n: 7,
@@ -49,7 +51,7 @@ export const yoga = createYoga({
 export default function GraphQL() {
   const graphQLEndpoint = express();
 
-  graphQLEndpoint.use(yoga.graphqlEndpoint, yoga);
+  graphQLEndpoint.use(yoga);
 
   return graphQLEndpoint;
 }

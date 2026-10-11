@@ -28,7 +28,11 @@ import { FileReader } from './loaders/File.js';
 import { ImageContentBase as ImageContentReader } from './loaders/ImageContent.generated.js';
 import { LanguageBase as LanguageReader } from './loaders/Language.generated.js';
 import { LessonBase as LessonReader } from './loaders/Lesson.generated.js';
+import { NotificationBase as NotificationReader } from './loaders/Notification.generated.js';
+import { NotificationPreferenceBase as NotificationPreferenceReader } from './loaders/NotificationPreference.generated.js';
+import { NotificationTypeBase as NotificationTypeReader } from './loaders/NotificationType.generated.js';
 import { OpenidClientBase as OpenidClientReader } from './loaders/OpenidClient.generated.js';
+import { OutboxBase as OutboxReader } from './loaders/Outbox.generated.js';
 import { ProgramReader } from './loaders/Program.js';
 import { ProgramObjectiveBase as ProgramObjectiveReader } from './loaders/ProgramObjective.generated.js';
 import { ProgramRequirementBase as ProgramRequirementReader } from './loaders/ProgramRequirement.generated.js';
@@ -73,7 +77,11 @@ export type ReadersType = {
   ImageContent: ImageContentReader;
   Language: LanguageReader;
   Lesson: LessonReader;
+  Notification: NotificationReader;
+  NotificationPreference: NotificationPreferenceReader;
+  NotificationType: NotificationTypeReader;
   OpenidClient: OpenidClientReader;
+  Outbox: OutboxReader;
   Program: ProgramReader;
   ProgramObjective: ProgramObjectiveReader;
   ProgramRequirement: ProgramRequirementReader;
@@ -120,7 +128,11 @@ export function createLoaders(db: Knex): ReadersType {
     ImageContent: new ImageContentReader(db),
     Language: new LanguageReader(db),
     Lesson: new LessonReader(db),
+    Notification: new NotificationReader(db),
+    NotificationPreference: new NotificationPreferenceReader(db),
+    NotificationType: new NotificationTypeReader(db),
     OpenidClient: new OpenidClientReader(db),
+    Outbox: new OutboxReader(db),
     Program: new ProgramReader(db),
     ProgramObjective: new ProgramObjectiveReader(db),
     ProgramRequirement: new ProgramRequirementReader(db),

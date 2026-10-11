@@ -1,5 +1,6 @@
 import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
 
+import { notify } from '../../../notification/notify.js';
 import { RateCourse as RateCourseType } from '../../../types/schema-types.js';
 import { EnrollmentStatusType } from '../../../types/db-generated-types.js';
 import { ContextType } from '../../../types/types.js';
@@ -84,22 +85,45 @@ const rateCourse: GraphQLFieldConfig<null, ContextType> = {
           courseReview = sanitizeText(review);
         }
 
-        if (existingRating) {
-          await db('course_rating')
-            .where('id', existingRating.id)
-            .update({
+        await db.transaction(async (transaction) => {
+          if (existingRating) {
+            await transaction('course_rating')
+              .where('id', existingRating.id)
+              .update({
+                rating: rating || null,
+                review: courseReview,
+                updated_at: transaction.fn.now(),
+              });
+          } else {
+            await transaction('course_rating').insert({
+              course_id: course.id,
+              account_id: user.id,
               rating: rating || null,
               review: courseReview,
-              updated_at: db.fn.now(),
             });
-        } else {
-          await db('course_rating').insert({
-            course_id: course.id,
-            account_id: user.id,
-            rating: rating || null,
-            review: courseReview,
-          });
-        }
+
+            if (course.teacher_id) {
+              const student = await transaction('account')
+                .where('id', user.id)
+                .select('name')
+                .first();
+
+              await notify({
+                accountId: course.teacher_id,
+                type: 'course_rated',
+                data: {
+                  studentName: student?.name ?? '',
+                  courseTitle: course.denomination,
+                  courseId: course.id,
+                  rating: rating || 0,
+                  review: courseReview,
+                },
+                actorId: user.id,
+                trx: transaction,
+              });
+            }
+          }
+        });
 
         loaders.CourseRating.loaders.byAccountIdAndCourseIdLoader.clear({
           accountId: user.id,
