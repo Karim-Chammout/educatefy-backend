@@ -7,10 +7,12 @@ import path from 'path';
 import config from '../../config.js';
 import Mutation from './Mutation.js';
 import Query from './Query.js';
+import Subscription from './Subscription.js';
 
 const Schema = new GraphQLSchema({
   query: Query,
   mutation: Mutation,
+  subscription: Subscription,
 });
 
 if (config.APP_ENV === 'development') {

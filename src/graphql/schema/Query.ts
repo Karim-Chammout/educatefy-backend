@@ -1,4 +1,5 @@
 import {
+  GraphQLBoolean,
   GraphQLError,
   GraphQLID,
   GraphQLInt,
@@ -27,6 +28,12 @@ import {
 } from '../utils/followingFeed.js';
 import { hasTeacherRole } from '../utils/hasTeacherRole.js';
 import { isQuizAttemptExpired } from '../utils/quizTimeLimit.js';
+import {
+  audienceFor,
+  configurableTypes,
+  countUnreadNotifications,
+  readNotificationPreference,
+} from '../utils/notificationPreferences.js';
 import { Account } from './types/Account.js';
 import { AccountRoleEnum } from './types/enum/AccountRole.js';
 import { ContentPaginatedResult } from './types/ContentPaginatedResult.js';
@@ -34,6 +41,10 @@ import { Country } from './types/Country.js';
 import { Course } from './types/Course.js';
 import { CourseDetailAnalytics } from './types/CourseDetailAnalytics.js';
 import { Language } from './types/Language.js';
+import { NotificationPreferences } from './types/NotificationPreference.js';
+import { NotificationTypeInfo } from './types/NotificationTypeInfo.js';
+import { NotificationsPaginatedResult } from './types/NotificationsPaginatedResult.js';
+import NotificationCategoryEnum from './types/enum/NotificationCategory.js';
 import { OpenidClient } from './types/OpenidClient.js';
 import { Program } from './types/Program.js';
 import { QuizAttemptQuestion } from './types/QuizAttemptQuestion.js';
@@ -648,6 +659,117 @@ const Query = new GraphQLObjectType<any, ContextType>({
           .orderBy('last_active', 'desc');
 
         return rows;
+      }),
+    },
+    notifications: {
+      type: new GraphQLNonNull(NotificationsPaginatedResult),
+      description: "The account's in-app notifications.",
+      args: {
+        first: {
+          type: new GraphQLNonNull(GraphQLInt),
+          defaultValue: 20,
+          description: 'The number of notifications to return per page.',
+        },
+        offset: {
+          type: new GraphQLNonNull(GraphQLInt),
+          defaultValue: 0,
+          description: 'The number of notifications to skip, for pagination.',
+        },
+        categories: {
+          type: new GraphQLList(new GraphQLNonNull(NotificationCategoryEnum)),
+          description: 'Only return notifications of these categories. Omit for all categories.',
+        },
+        unreadOnly: {
+          type: new GraphQLNonNull(GraphQLBoolean),
+          defaultValue: false,
+          description: 'Only return unread notifications.',
+        },
+      },
+      resolve: authenticated(
+        async (
+          _,
+          {
+            first,
+            offset,
+            categories,
+            unreadOnly,
+          }: {
+            first: number;
+            offset: number;
+            categories?: Array<string> | null;
+            unreadOnly: boolean;
+          },
+          { db, user },
+        ) => {
+          const filtered = db('notification').where('account_id', user.id).whereNull('deleted_at');
+
+          if (categories && categories.length > 0) {
+            void filtered.whereIn(
+              'type_id',
+              db('notification_type').whereIn('category', categories).select('id'),
+            );
+          }
+
+          if (unreadOnly) {
+            void filtered.whereNull('read_at');
+          }
+
+          const availableCategories = db('notification')
+            .join('notification_type', 'notification_type.id', 'notification.type_id')
+            .where('notification.account_id', user.id)
+            .whereNull('notification.deleted_at')
+            .groupBy('notification_type.category')
+            .orderByRaw('min(notification_type.rank)')
+            .select<Array<{ category: string }>>('notification_type.category as category');
+
+          const [items, total, unreadCount, categoryRows] = await Promise.all([
+            filtered
+              .clone()
+              .select('*')
+              .orderBy([
+                { column: 'created_at', order: 'desc' },
+                { column: 'id', order: 'desc' },
+              ])
+              .limit(first)
+              .offset(offset),
+            filtered.clone().count<Array<{ count: string }>>('* as count').first(),
+            countUnreadNotifications(db, user.id),
+            availableCategories,
+          ]);
+
+          return {
+            items,
+            totalCount: Number(total?.count ?? 0),
+            unreadCount,
+            availableCategories: categoryRows.map((row) => row.category),
+          };
+        },
+      ),
+    },
+    unreadNotificationCount: {
+      type: new GraphQLNonNull(GraphQLInt),
+      description: "The authenticated account's unread notification total, for the bell badge.",
+      resolve: authenticated(async (_, __, { db, user }) => countUnreadNotifications(db, user.id)),
+    },
+    notificationTypes: {
+      type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(NotificationTypeInfo))),
+      description: 'The notification types this account may configure, in display order.',
+      resolve: authenticated(async (_, __, { db, user, loaders }) => {
+        const audience = await audienceFor(loaders, user.roleId);
+
+        return configurableTypes(db, audience);
+      }),
+    },
+    notificationPreference: {
+      type: new GraphQLNonNull(NotificationPreferences),
+      description: "The authenticated account's notification preferences.",
+      resolve: authenticated(async (_, __, { db, user, loaders }) => {
+        const audience = await audienceFor(loaders, user.roleId);
+        const items = await readNotificationPreference(db, user.id, audience);
+
+        return {
+          items,
+        };
       }),
     },
   },
