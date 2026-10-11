@@ -596,6 +596,19 @@ export type DeleteCourseRatingInput = {
   courseRateId: Scalars['ID']['input'];
 };
 
+/** The result of deleting notifications, with the updated unread total. */
+export type DeleteNotificationsResult = {
+  __typename?: 'DeleteNotificationsResult';
+  /** How many notifications this call deleted. */
+  deletedCount: Scalars['Int']['output'];
+  /** A list of errors that occurred executing this mutation. */
+  errors: Array<Error>;
+  /** Indicates if the mutation was successful. */
+  success: Scalars['Boolean']['output'];
+  /** The recipient's unread total after the change. */
+  unreadCount: Scalars['Int']['output'];
+};
+
 export type DemographicBucket = {
   __typename?: 'DemographicBucket';
   /** Number of students in this demographic bucket. */
@@ -855,6 +868,8 @@ export type Mutation = {
   deleteCourseSection?: Maybe<MutationResult>;
   /** Deletes a course section item. */
   deleteCourseSectionItem?: Maybe<MutationResult>;
+  /** Delete the authenticated account's notifications. */
+  deleteNotifications: DeleteNotificationsResult;
   /** Deletes a program. */
   deleteProgram?: Maybe<MutationResult>;
   /** Enrolls an account in a program. */
@@ -865,6 +880,8 @@ export type Mutation = {
   publishProgramVersion?: Maybe<PublishProgramVersionResult>;
   /** Rate a course. */
   rateCourse?: Maybe<RateCourseResult>;
+  /** Mark the authenticated account's notifications as read. */
+  readNotifications: ReadNotificationsResult;
   /** Remove the profile picture of a user. */
   removeProfilePicture?: Maybe<ChangeProfilePictureResult>;
   /** Revokes all sessions except the current one. */
@@ -899,6 +916,8 @@ export type Mutation = {
   updateCourseStatus?: Maybe<UpdateCourseStatusResult>;
   /** Updates a lesson. */
   updateLesson?: Maybe<CreateOrUpdateLessonResult>;
+  /** Set one notification type's channel switches for this account. */
+  updateNotificationPreference: UpdateNotificationPreferenceResult;
   /** Updates a user profile details. */
   updateProfile?: Maybe<UpdateProfileResult>;
   /** Updates a program. */
@@ -989,6 +1008,11 @@ export type MutationDeleteCourseSectionItemArgs = {
 };
 
 
+export type MutationDeleteNotificationsArgs = {
+  ids: Array<Scalars['String']['input']>;
+};
+
+
 export type MutationDeleteProgramArgs = {
   id: Scalars['ID']['input'];
 };
@@ -1011,6 +1035,11 @@ export type MutationPublishProgramVersionArgs = {
 
 export type MutationRateCourseArgs = {
   ratingInfo: RateCourse;
+};
+
+
+export type MutationReadNotificationsArgs = {
+  ids?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
 
@@ -1096,6 +1125,13 @@ export type MutationUpdateLessonArgs = {
 };
 
 
+export type MutationUpdateNotificationPreferenceArgs = {
+  emailEnabled?: InputMaybe<Scalars['Boolean']['input']>;
+  inAppEnabled?: InputMaybe<Scalars['Boolean']['input']>;
+  type: NotificationType;
+};
+
+
 export type MutationUpdateProfileArgs = {
   profileDetails: ProfileDetailsInput;
 };
@@ -1137,6 +1173,110 @@ export type MutationResult = {
   errors: Array<Error>;
   /** Indicates if the mutation was successful. */
   success: Scalars['Boolean']['output'];
+};
+
+/** An in-app notification. */
+export type Notification = {
+  __typename?: 'Notification';
+  /** The account that triggered the event, if any. */
+  actor?: Maybe<Account>;
+  /** The bucket this notification belongs to, used for grouping and filtering. */
+  category: NotificationCategory;
+  /** When the notification was generated. */
+  created_at: Scalars['Date']['output'];
+  /** A unique id of this notification. */
+  id: Scalars['ID']['output'];
+  /** Whether the recipient has read this notification. */
+  is_read: Scalars['Boolean']['output'];
+  /** Relative in-app route this notification points at, or null if informational. */
+  link?: Maybe<Scalars['String']['output']>;
+  /** Raw event data for this notification. Localize it on the client. */
+  payload: Scalars['JSON']['output'];
+  /** When the notification was read, or null if it is unread. */
+  read_at?: Maybe<Scalars['Date']['output']>;
+  /** The kind of event this notification was generated from. */
+  type: NotificationType;
+};
+
+/** A live in-app notification and the unread total for the authenticated account. */
+export type NotificationActivity = {
+  __typename?: 'NotificationActivity';
+  /** The new notification, or null when only the unread total changed. */
+  notification?: Maybe<Notification>;
+  /** The recipient's unread total after this change. */
+  unreadCount: Scalars['Int']['output'];
+};
+
+/** The grouping a notification type belongs to, used to lay out the preferences UI. */
+export enum NotificationCategory {
+  /** Account lifecycle events (e.g. welcome). */
+  Account = 'account',
+  /** Events about the learner's own progress and content updates (course completion, program version published). */
+  Learning = 'learning',
+  /** Events about follower and social graph activity. */
+  Social = 'social',
+  /** Events about activity in the teacher's own courses and programs (enrollments, ratings, student completions). */
+  Teaching = 'teaching'
+}
+
+/** A notification type's channel switches for the signed-in account. */
+export type NotificationPreference = {
+  __typename?: 'NotificationPreference';
+  /** Whether an email is sent for this type. */
+  emailEnabled: Scalars['Boolean']['output'];
+  /** Whether an in-app row is created for this type. */
+  inAppEnabled: Scalars['Boolean']['output'];
+  /** The notification type these switches apply to. */
+  type: NotificationType;
+};
+
+/** The signed-in account's notification preferences. */
+export type NotificationPreferences = {
+  __typename?: 'NotificationPreferences';
+  /** Switches for every type this account may receive, in display order. */
+  items: Array<NotificationPreference>;
+};
+
+/** The kind of event a notification was generated from. */
+export enum NotificationType {
+  /** Sent to the student when they finish all required content of a course. */
+  CourseCompleted = 'course_completed',
+  /** Sent to the teacher when a student completes their course. */
+  CourseCompletedByStudent = 'course_completed_by_student',
+  /** Sent to the teacher when a student enrolls in their course. */
+  CourseEnrolled = 'course_enrolled',
+  /** Sent to the teacher when a student rates their course. */
+  CourseRated = 'course_rated',
+  /** Sent to the teacher when another account starts following them. */
+  NewFollower = 'new_follower',
+  /** Sent to the teacher when a student enrolls in their program. */
+  ProgramEnrolled = 'program_enrolled',
+  /** Sent to enrolled students when the teacher publishes a new program version. */
+  ProgramVersionPublished = 'program_version_published',
+  /** Sent once when a new account is created (email only, not configurable). */
+  Welcome = 'welcome'
+}
+
+/** A type the platform can notify about, as offered in the preferences UI. */
+export type NotificationTypeInfo = {
+  __typename?: 'NotificationTypeInfo';
+  /** The stable code stored on notifications and outbox rows. */
+  code: Scalars['String']['output'];
+  /** A unique id of this notification type. */
+  id: Scalars['ID']['output'];
+};
+
+/** A page of the recipient's notifications together with the unread totals for the bell badge. */
+export type NotificationsPaginatedResult = {
+  __typename?: 'NotificationsPaginatedResult';
+  /** The categories the recipient actually has notifications for, ordered for display. Drives the filter chips — an empty list means no filter besides 'all'. */
+  availableCategories: Array<NotificationCategory>;
+  /** The notifications for the requested page, newest first. */
+  items: Array<Notification>;
+  /** The total number of notifications across all pages, ignoring the type filter. */
+  totalCount: Scalars['Int']['output'];
+  /** The recipient's current unread total, across every type. */
+  unreadCount: Scalars['Int']['output'];
 };
 
 /** The open id client providers to use for auth */
@@ -1408,6 +1548,12 @@ export type Query = {
   languages: Array<Language>;
   /** The current user */
   me: Account;
+  /** The authenticated account's notification preferences. */
+  notificationPreference: NotificationPreferences;
+  /** The notification types this account may configure, in display order. */
+  notificationTypes: Array<NotificationTypeInfo>;
+  /** The account's in-app notifications. */
+  notifications: NotificationsPaginatedResult;
   /** List of OpenId clients */
   openIdClients: Array<OpenidClient>;
   /** Retrieve a program by its slug */
@@ -1432,6 +1578,8 @@ export type Query = {
   teachers: TeachersPaginatedResult;
   /** A popularity-ranked feed combining published courses and programs, page by page. Each item is either a course or a program. */
   topContent: ContentPaginatedResult;
+  /** The authenticated account's unread notification total, for the bell badge. */
+  unreadNotificationCount: Scalars['Int']['output'];
 };
 
 
@@ -1463,6 +1611,14 @@ export type QueryFollowingFeedByTeachersArgs = {
 
 export type QueryInstructorArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type QueryNotificationsArgs = {
+  categories?: InputMaybe<Array<NotificationCategory>>;
+  first?: Scalars['Int']['input'];
+  offset?: Scalars['Int']['input'];
+  unreadOnly?: Scalars['Boolean']['input'];
 };
 
 
@@ -1814,6 +1970,19 @@ export type RatingBucket = {
   stars: Scalars['Int']['output'];
 };
 
+/** The result of marking notifications as read, with the updated unread total. */
+export type ReadNotificationsResult = {
+  __typename?: 'ReadNotificationsResult';
+  /** A list of errors that occurred executing this mutation. */
+  errors: Array<Error>;
+  /** Indicates if the mutation was successful. */
+  success: Scalars['Boolean']['output'];
+  /** The recipient's unread total after the change. */
+  unreadCount: Scalars['Int']['output'];
+  /** How many notifications this call marked as read. */
+  updatedCount: Scalars['Int']['output'];
+};
+
 export type SectionCompletionStat = {
   __typename?: 'SectionCompletionStat';
   completedCount: Scalars['Int']['output'];
@@ -1916,6 +2085,13 @@ export type SubmitQuizResult = {
   quizAttempt?: Maybe<QuizAttempt>;
   /** Indicates if the mutation was successful. */
   success: Scalars['Boolean']['output'];
+};
+
+/** Live updates pushed to the authenticated account. */
+export type Subscription = {
+  __typename?: 'Subscription';
+  /** Live notifications and unread totals for this account. */
+  notificationActivity?: Maybe<NotificationActivity>;
 };
 
 /** The properties of a teacher account */
@@ -2154,6 +2330,17 @@ export type UpdateLessonInfoInput = {
   id: Scalars['ID']['input'];
   /** A flag to indicate whether this lesson is published or not. */
   is_published?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** The recipient's notification preferences after the change. */
+export type UpdateNotificationPreferenceResult = {
+  __typename?: 'UpdateNotificationPreferenceResult';
+  /** A list of errors that occurred executing this mutation. */
+  errors: Array<Error>;
+  /** Switches for every type this account may receive, in display order. */
+  items: Array<NotificationPreference>;
+  /** Indicates if the mutation was successful. */
+  success: Scalars['Boolean']['output'];
 };
 
 /** The result of the updateProfile mutation. */
