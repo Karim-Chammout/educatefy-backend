@@ -1,4 +1,5 @@
 import { CorsOptions } from 'cors';
+import config from '../config.js';
 
 /*
  * https://educatefy-backend.onrender.com - Render.com preview domain
@@ -7,6 +8,7 @@ import { CorsOptions } from 'cors';
 const allowedDomains = [
   'https://educatefy-backend.onrender.com',
   'https://educatefy-frontend.vercel.app',
+  config.APP_URL,
 ];
 
 export const corsOptions: CorsOptions = {
