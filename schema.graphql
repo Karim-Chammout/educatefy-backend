@@ -124,6 +124,34 @@ type Query {
 
   """Active sessions grouped by device/browser."""
   sessionDevices: [SessionDevice!]!
+
+  """The account's in-app notifications."""
+  notifications(
+    """The number of notifications to return per page."""
+    first: Int! = 20
+
+    """The number of notifications to skip, for pagination."""
+    offset: Int! = 0
+
+    """
+    Only return notifications of these categories. Omit for all categories.
+    """
+    categories: [NotificationCategory!]
+
+    """Only return unread notifications."""
+    unreadOnly: Boolean! = false
+  ): NotificationsPaginatedResult!
+
+  """
+  The authenticated account's unread notification total, for the bell badge.
+  """
+  unreadNotificationCount: Int!
+
+  """The notification types this account may configure, in display order."""
+  notificationTypes: [NotificationTypeInfo!]!
+
+  """The authenticated account's notification preferences."""
+  notificationPreference: NotificationPreferences!
 }
 
 """The properties of the account"""
@@ -1527,6 +1555,142 @@ type SessionDevice {
   last_active: Date!
 }
 
+"""
+A page of the recipient's notifications together with the unread totals for the bell badge.
+"""
+type NotificationsPaginatedResult {
+  """The notifications for the requested page, newest first."""
+  items: [Notification!]!
+
+  """
+  The total number of notifications across all pages, ignoring the type filter.
+  """
+  totalCount: Int!
+
+  """The recipient's current unread total, across every type."""
+  unreadCount: Int!
+
+  """
+  The categories the recipient actually has notifications for, ordered for display. Drives the filter chips — an empty list means no filter besides 'all'.
+  """
+  availableCategories: [NotificationCategory!]!
+}
+
+"""An in-app notification."""
+type Notification {
+  """A unique id of this notification."""
+  id: ID!
+
+  """The kind of event this notification was generated from."""
+  type: NotificationType!
+
+  """
+  The bucket this notification belongs to, used for grouping and filtering.
+  """
+  category: NotificationCategory!
+
+  """Raw event data for this notification. Localize it on the client."""
+  payload: JSON!
+
+  """
+  Relative in-app route this notification points at, or null if informational.
+  """
+  link: String
+
+  """Whether the recipient has read this notification."""
+  is_read: Boolean!
+
+  """When the notification was read, or null if it is unread."""
+  read_at: Date
+
+  """When the notification was generated."""
+  created_at: Date!
+
+  """The account that triggered the event, if any."""
+  actor: Account
+}
+
+"""The kind of event a notification was generated from."""
+enum NotificationType {
+  """
+  Sent once when a new account is created (email only, not configurable).
+  """
+  welcome
+
+  """Sent to the teacher when a student enrolls in their course."""
+  course_enrolled
+
+  """Sent to the teacher when a student enrolls in their program."""
+  program_enrolled
+
+  """Sent to the teacher when a student rates their course."""
+  course_rated
+
+  """Sent to the teacher when another account starts following them."""
+  new_follower
+
+  """Sent to the student when they finish all required content of a course."""
+  course_completed
+
+  """Sent to the teacher when a student completes their course."""
+  course_completed_by_student
+
+  """
+  Sent to enrolled students when the teacher publishes a new program version.
+  """
+  program_version_published
+}
+
+"""
+The grouping a notification type belongs to, used to lay out the preferences UI.
+"""
+enum NotificationCategory {
+  """Account lifecycle events (e.g. welcome)."""
+  account
+
+  """
+  Events about the learner's own progress and content updates (course completion, program version published).
+  """
+  learning
+
+  """
+  Events about activity in the teacher's own courses and programs (enrollments, ratings, student completions).
+  """
+  teaching
+
+  """Events about follower and social graph activity."""
+  social
+}
+
+"""
+A type the platform can notify about, as offered in the preferences UI.
+"""
+type NotificationTypeInfo {
+  """A unique id of this notification type."""
+  id: ID!
+
+  """The stable code stored on notifications and outbox rows."""
+  code: String!
+}
+
+"""The signed-in account's notification preferences."""
+type NotificationPreferences {
+  """Switches for every type this account may receive, in display order."""
+  items: [NotificationPreference!]!
+}
+
+"""A notification type's channel switches for the signed-in account."""
+type NotificationPreference {
+  """The notification type these switches apply to."""
+  type: NotificationType!
+
+  """Whether an email is sent for this type."""
+  emailEnabled: Boolean!
+
+  """Whether an in-app row is created for this type."""
+  inAppEnabled: Boolean!
+}
+
 type Mutation {
   """Change the profile picture of a user."""
   changeProfilePicture(
@@ -1632,6 +1796,12 @@ type Mutation {
     id: ID!
   ): MutationResult
 
+  """Delete the authenticated account's notifications."""
+  deleteNotifications(
+    """The IDs of the notifications to delete."""
+    ids: [String!]!
+  ): DeleteNotificationsResult!
+
   """Deletes a program."""
   deleteProgram(
     """The ID of the program to delete."""
@@ -1655,6 +1825,14 @@ type Mutation {
     """The ID of the program to publish a version for."""
     programId: ID!
   ): PublishProgramVersionResult
+
+  """Mark the authenticated account's notifications as read."""
+  readNotifications(
+    """
+    Only mark these ids as read. If omitted, mark all unread notifications as read.
+    """
+    ids: [String!]
+  ): ReadNotificationsResult!
 
   """Rate a course."""
   rateCourse(
@@ -1782,6 +1960,18 @@ type Mutation {
     """The lesson information"""
     lessonInfo: UpdateLessonInfoInput!
   ): CreateOrUpdateLessonResult
+
+  """Set one notification type's channel switches for this account."""
+  updateNotificationPreference(
+    """The notification type these switches apply to."""
+    type: NotificationType!
+
+    """Turn the email channel on or off."""
+    emailEnabled: Boolean
+
+    """Turn the in-app channel on or off."""
+    inAppEnabled: Boolean
+  ): UpdateNotificationPreferenceResult!
 
   """Updates a user profile details."""
   updateProfile(
@@ -2268,6 +2458,21 @@ input DeleteCourseRatingInput {
   courseRateId: ID!
 }
 
+"""The result of deleting notifications, with the updated unread total."""
+type DeleteNotificationsResult {
+  """Indicates if the mutation was successful."""
+  success: Boolean!
+
+  """A list of errors that occurred executing this mutation."""
+  errors: [Error!]!
+
+  """How many notifications this call deleted."""
+  deletedCount: Int!
+
+  """The recipient's unread total after the change."""
+  unreadCount: Int!
+}
+
 """The result of the enrolling or unenrolling from a program."""
 type UpdateProgramStatusResult {
   """Indicates if the mutation was successful."""
@@ -2308,6 +2513,23 @@ type PublishProgramVersionResult {
 
   """The newly published program version."""
   programVersion: ProgramVersion
+}
+
+"""
+The result of marking notifications as read, with the updated unread total.
+"""
+type ReadNotificationsResult {
+  """Indicates if the mutation was successful."""
+  success: Boolean!
+
+  """A list of errors that occurred executing this mutation."""
+  errors: [Error!]!
+
+  """How many notifications this call marked as read."""
+  updatedCount: Int!
+
+  """The recipient's unread total after the change."""
+  unreadCount: Int!
 }
 
 """The result of the rateCourse mutation."""
@@ -2641,6 +2863,18 @@ input UpdateLessonInfoInput {
   duration: Int
 }
 
+"""The recipient's notification preferences after the change."""
+type UpdateNotificationPreferenceResult {
+  """Indicates if the mutation was successful."""
+  success: Boolean!
+
+  """A list of errors that occurred executing this mutation."""
+  errors: [Error!]!
+
+  """Switches for every type this account may receive, in display order."""
+  items: [NotificationPreference!]!
+}
+
 """The result of the updateProfile mutation."""
 type UpdateProfileResult {
   """Indicates if the mutation was successful."""
@@ -2925,4 +3159,21 @@ type UpgradeToLatestProgramVersionResult {
 
   """The program after the version upgrade."""
   program: Program
+}
+
+"""Live updates pushed to the authenticated account."""
+type Subscription {
+  """Live notifications and unread totals for this account."""
+  notificationActivity: NotificationActivity
+}
+
+"""
+A live in-app notification and the unread total for the authenticated account.
+"""
+type NotificationActivity {
+  """The new notification, or null when only the unread total changed."""
+  notification: Notification
+
+  """The recipient's unread total after this change."""
+  unreadCount: Int!
 }
