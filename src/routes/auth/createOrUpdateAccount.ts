@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 import { db } from '../../db/index.js';
+import { notify } from '../../notification/notify.js';
 import { ErrorType } from '../../utils/ErrorType.js';
 import { uploadFile } from '../../utils/fileStorageHandler.js';
 import logger from '../../utils/logger.js';
@@ -89,6 +90,13 @@ const createOrUpdateAccount = async (
           role_id: role.id,
         })
         .returning('id');
+
+      // New accounts only, not on every login. Runs after the insert committed.
+      await notify({
+        accountId: account.id,
+        type: 'welcome',
+        data: { firstName: given_name ?? name ?? null },
+      });
 
       return account;
     }

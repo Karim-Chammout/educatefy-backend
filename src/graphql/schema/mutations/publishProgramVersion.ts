@@ -1,5 +1,6 @@
 import { GraphQLFieldConfig, GraphQLID, GraphQLNonNull } from 'graphql';
 
+import { notifyMany } from '../../../notification/notify.js';
 import { ProgramVersionStatusType } from '../../../types/db-generated-types.js';
 import { ContextType } from '../../../types/types.js';
 import { ErrorType } from '../../../utils/ErrorType.js';
@@ -92,6 +93,23 @@ const publishProgramVersion: GraphQLFieldConfig<null, ContextType> = {
             updated_at: db.fn.now(),
           })
           .returning('*');
+
+        // Learners of the previously published version; `actorId` skips the teacher.
+        const learners = await transaction('account__program')
+          .where('program_id', parsedProgramId)
+          .whereNull('deleted_at')
+          .pluck('account_id');
+
+        await notifyMany(learners as number[], {
+          type: 'program_version_published',
+          data: {
+            programTitle: program.denomination,
+            programSlug: program.slug,
+            versionNumber: programVersion.version_number,
+          },
+          actorId: user.id,
+          trx: transaction,
+        });
 
         return programVersion;
       });
