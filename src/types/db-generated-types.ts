@@ -40,6 +40,13 @@ export enum GenderType {
   Unknown = "unknown",
 }
 
+export enum OutboxStatusType {
+  Pending = "pending",
+  Processing = "processing",
+  Sent = "sent",
+  Failed = "failed",
+}
+
 export enum ProgramLevelEnumType {
   Beginner = "beginner",
   Intermediate = "intermediate",
@@ -107,7 +114,11 @@ export enum Table {
   Lesson = "lesson",
   Migrations = "migrations",
   MigrationsLock = "migrations_lock",
+  Notification = "notification",
+  NotificationPreference = "notification_preference",
+  NotificationType = "notification_type",
   OpenidClient = "openid_client",
+  Outbox = "outbox",
   Program = "program",
   ProgramSubject = "program__subject",
   ProgramObjective = "program_objective",
@@ -155,7 +166,11 @@ export type Tables = {
   "lesson": Lesson,
   "migrations": Migrations,
   "migrations_lock": MigrationsLock,
+  "notification": Notification,
+  "notification_preference": NotificationPreference,
+  "notification_type": NotificationType,
   "openid_client": OpenidClient,
+  "outbox": Outbox,
   "program": Program,
   "program__subject": ProgramSubject,
   "program_objective": ProgramObjective,
@@ -450,6 +465,41 @@ export type MigrationsLock = {
   is_locked: number | null;
 };
 
+export type Notification = {
+  id: number;
+  account_id: number;
+  type_id: number;
+  actor_id: number | null;
+  payload: Record<string, unknown>;
+  link: string | null;
+  read_at: Date | null;
+  deleted_at: Date | null;
+  created_at: Date;
+  updated_at: Date;
+};
+
+export type NotificationPreference = {
+  id: number;
+  account_id: number;
+  type_id: number;
+  email_enabled: boolean;
+  in_app_enabled: boolean;
+  created_at: Date;
+  updated_at: Date;
+};
+
+export type NotificationType = {
+  id: number;
+  code: string;
+  category: string;
+  audience: string;
+  rank: number;
+  is_active: boolean;
+  is_configurable: boolean;
+  created_at: Date;
+  updated_at: Date;
+};
+
 export type OpenidClient = {
   id: number;
   denomination: string;
@@ -457,6 +507,25 @@ export type OpenidClient = {
   button_text: string | null;
   button_icon: string | null;
   button_background_color: string | null;
+  created_at: Date;
+  updated_at: Date;
+};
+
+export type Outbox = {
+  id: number;
+  account_id: number;
+  type_id: number;
+  payload: Record<string, unknown>;
+  status: OutboxStatusType;
+  attempts: number;
+  available_at: Date;
+  locked_at: Date | null;
+  sent_at: Date | null;
+  recipient: string | null;
+  subject: string | null;
+  provider: string | null;
+  provider_message_id: string | null;
+  last_error: string | null;
   created_at: Date;
   updated_at: Date;
 };
