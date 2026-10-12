@@ -1,0 +1,19 @@
+name: Deploy
+on:
+  push:
+    branches: [main]
+concurrency: deploy
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DROPLET_HOST }}
+          username: ${{ secrets.DROPLET_USER }}
+          password: ${{ secrets.DROPLET_SSH_PASSWORD }}
+          script: |
+            cd /opt/educatefy/educatefy-deploy
+            git pull --ff-only
+            ./deploy.sh backend
